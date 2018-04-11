@@ -13,7 +13,7 @@ end or_gen;
 
 architecture Structural of or_gen is
 begin
-	ANDs: for i in 0 to N-1 generate
-		AND_i: C(i) <= A(i) or B(i);
+	ORs: for i in 0 to N-1 generate
+		OR_i: C(i) <= A(i) or B(i);
 	end generate;
 end Structural;
