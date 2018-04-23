@@ -29,6 +29,7 @@ architecture Structural of Datapath is
 				Y:	out	std_logic_vector(N-1 downto 0));
 	end component;
 	
+	a
 	component ALU
 		generic ( N : integer := 32);
 		port ( FUNC			: in	AluOp;
