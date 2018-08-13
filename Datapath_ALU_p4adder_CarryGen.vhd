@@ -4,7 +4,6 @@ use work.logarithm.all;
 
 entity CarryGen is
 	generic (	N: integer := 32);
-				--LogN: integer := 5);
 	port (	A	: in	std_logic_vector(N downto 1);
 			B	: in	std_logic_vector(N downto 1);
 			Cin	: in	std_logic;

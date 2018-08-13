@@ -13,7 +13,7 @@ end xor_gen;
 
 architecture Structural of xor_gen is
 begin
-	ANDs: for i in 0 to N-1 generate
-		AND_i: C(i) <= A(i) xor B(i);
+	XORs: for i in 0 to N-1 generate
+		XOR_i: C(i) <= A(i) xor B(i);
 	end generate;
 end Structural;
