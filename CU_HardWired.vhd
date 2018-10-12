@@ -34,31 +34,60 @@ end DLX_CU_HardWired;
 architecture Implementation of DLX_CU_HardWired is
 	type op_array is array (integer range 0 to OP_NUMB - 1) of std_logic_vector(CW_SIZE - 1 downto 0);
 	signal cw_array : op_array := (	"1111110110001", --ADD  --order of control signal is like the following one (not the same as in port declaration)
-									"1111110110001", --SUB				
+									"-------------", --ADDU
+									"1111110110001", --SUB	
+									"-------------", --SUBU			
 									"1111110110001", --AND               
 									"1111110110001", --OR  
 									"1111110110001", --XOR
 									"1111110110001", --SLL
 									"1111110110001", --SRL
+									"-------------", --SRA
+									"-------------", --SGT
+									"-------------", --SGTU
 									"1111110110001", --SGE
+									"-------------", --SGEU
+									"-------------", --SEQ
 									"1111110110001", --SLE
+									"-------------", --SLT
+									"-------------", --SLTU
 									"1111110110001", --SNE
-									"1111110010001", --ADDI			    
-									"1111110010001", --SUBI             
+									"-------------", --MULT		///
+									
+									"1111110010001", --ADDI	
+									"-------------", --ADDUI		    
+									"1111110010001", --SUBI   
+									"-------------", --SUBUI          
 									"1111110010001", --ANDI             
 									"1111110010001", --ORI
 									"1111110010001", --XORI
 									"1111110010001", --SLLI
 									"1111110010001", --SRLI
+									"-------------", --SRAI
+									"-------------", --SGTI
+									"-------------", --SGTUI
 									"1111110010001", --SGEI
+									"-------------", --SGEUI
+									"-------------", --SEQI
 									"1111110010001", --SLEI
+									"-------------", --SLTI
+									"-------------", --SLTUI
 									"1111110010001", --SNEI
+									
 									"-------------", --BEQZ
 									"-------------", --BNEZ
 									"-------------", --J
+									"-------------", --JR
 									"-------------", --JAL
+									"-------------", --JALR
+									
 									"-------------", --LW
+									"-------------", --LB
+									"-------------", --LBU
+									"-------------", --LHI
+									"-------------", --LHU
 									"-------------", --SW
+									"-------------", --SB
 									"0000000000000");--NOP
 									
 	signal cw : std_logic_vector(CW_SIZE - 1 downto 0); -- full control word read from cw_array
