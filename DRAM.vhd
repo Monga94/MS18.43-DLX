@@ -13,8 +13,7 @@ ENTITY DRAM IS
 END DRAM;
 
 ARCHITECTURE Behavior OF DRAM IS
-	SIGNAL Dat : UNSIGNED(L-1 DOWNTO 0) := (OTHERS => '1');
-	TYPE Reg_Typ IS ARRAY(0 TO (TO_INTEGER(Dat))) OF STD_LOGIC_VECTOR(B-1 DOWNTO 0);
+	TYPE Reg_Typ IS ARRAY(0 TO 2**L-1)) OF STD_LOGIC_VECTOR(B-1 DOWNTO 0);
 	
 	SIGNAL RegFile_r : Reg_Typ;
 	
@@ -23,7 +22,7 @@ BEGIN
 	BEGIN
 		IF CS = '1' THEN
 			IF RD = '0' THEN
-				RegFile_r(TO_INTEGER(UNSIGNED(Address))) <= Data_In; --scrive dato in ingresso
+				RegFile_r(TO_INTEGER(UNSIGNED(Address))) <= Data_In;
 			END IF;
 		END IF;
 	END PROCESS;

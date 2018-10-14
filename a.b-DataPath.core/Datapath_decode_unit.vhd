@@ -80,7 +80,7 @@ begin
 		port map(Rd_Itype,Rd_Rtype,MuxRd_Sel,Wr_Add);
 	REG_FILE: register_file_gen
 		generic map(Nbit);
-		port map(,RST,RF_WR,RF_RD1,RF_RD2,Wr_Add,Rs1,Rs2,OUT1,OUT2);
+		port map(CLK,RST,RF_WR,RF_RD1,RF_RD2,Wr_Add,Rs1,Rs2,OUT1,OUT2);
 	REGA: D_Reg_generic
 		generic map(Nbit);
 		port map(OUT1,CLK,RST,REG_EN,DataA);
@@ -96,7 +96,7 @@ begin
 	REGNPC: D_Reg_generic
 		generic map(Nbit);
 		port map(NPC,CLK,RST,REG_EN,NPCOut);
-	REGPC: D_Reg_generic
+	REGPC: D_Reg_generic								-- to be checked. Not in drawing @00.48_20181015
 		generic map(Nbit);
 		port map(PCDataOut_IMem,CLK,RST,REG_EN,PCOut);
 		

@@ -61,20 +61,20 @@ begin
 	
 	MUXA: MUX21_GENERIC
 		generic map(Nbit);
-		port map(DataA,DataIMM,MuxA_Sel,Op1);
+		port map(DataA,NPC_In,MuxA_Sel,Op1);
 	MUXB: MUX21_GENERIC
 		generic map(Nbit);
-		port map(DataB,NPC_In,MuxB_Sel,Op2);
+		port map(DataB,DataIMM,MuxB_Sel,Op2);
 	ALU: ALU
 		generic map(Nbit);
 		port map(ALU_Config,Op1,Op2,ALU_res);
 	REGALU: D_Reg_generic
 		generic map(Nbit);
 		port map(ALU_res,CLK,RST,REG_EN,ALU_Out);
-	REGNPC: D_Reg_generic
+	REGNPC: D_Reg_generic							-- to be checked. Not in drawing @01.17_20181015
 		generic map(Nbit);
 		port map(NPC_In,CLK,RST,REG_EN,NPCOut);
-	COMP: Comparator
+	COMP: Comparator								-- to be checked. Not in drawing @01.29_20181015
 		generic map(Nbit);
 		port map(DataA,NPC_In,Equal,Less,Great);
 		-- 000 EQ

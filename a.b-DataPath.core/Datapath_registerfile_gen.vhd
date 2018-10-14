@@ -27,7 +27,6 @@ architecture BEHAVIORAL of register_file_gen is
     subtype REG_ADDR is natural range 0 to Nreg-1; -- using natural type
 	type REG_ARRAY is array(REG_ADDR) of std_logic_vector(Nbit-1 downto 0); 
 	signal REGISTERS:	REG_ARRAY; 
-	constant LogN:		natural := log2_N(Nreg);
 	
 begin 
 
