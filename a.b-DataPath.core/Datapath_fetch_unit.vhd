@@ -19,6 +19,7 @@ entity FetchUnit is
 	end FetchUnit;
 	
 architecture Behavioral of FetchUnit is
+	signal FOUR_SIG,PCToAdder: std_logic_vector(31 downto 0);
 	
 	component D_Reg_generic
 		generic (N: integer := 32);
@@ -30,7 +31,7 @@ architecture Behavioral of FetchUnit is
 	end component;
 	
 	component MUX21_GENERIC
-		generic ( N: integer := 32);
+		generic (N: integer := 32);
 		port (	A:	in	std_logic_vector(N-1 downto 0) ;
 				B:	in	std_logic_vector(N-1 downto 0);
 				S:	in	std_logic;
@@ -38,7 +39,7 @@ architecture Behavioral of FetchUnit is
 	end component;
 	
 	component RCA_gen is 
-		generic ( N: integer := 8);
+		generic (N: integer := 8);
 		port (	A:	In	std_logic_vector(N-1 downto 0);
 				B:	In	std_logic_vector(N-1 downto 0);
 				Ci:	In	std_logic;
@@ -46,26 +47,23 @@ architecture Behavioral of FetchUnit is
 				Co:	Out	std_logic);
 	end component;
 	
-	signal FOUR_SIG,PCToAdder: std_logic_vector(31 downto 0);
-	
 begin
 	
 	FOUR_SIG <= "0x0001";
 	
 	PC:	D_Reg_generic
-						generic map();
-						port map(AddIn_Mux,CLK,RST,PC_EN,PCToAdder);	
+		generic map();
+		port map(AddIn_Mux,CLK,RST,PC_EN,PCToAdder);	
 	IR: D_Reg_generic
-						generic map();
-						port map(DataIn_IMem,CLK,RST,IR_EN,InstrToDecode);
+		generic map();
+		port map(DataIn_IMem,CLK,RST,IR_EN,InstrToDecode);
 	ADDER: RCA_gen
-						generic map();
-						port map(PCToAdder,FOUR_SIG,'0',AdderToNPC,open);
+		generic map();
+		port map(PCToAdder,FOUR_SIG,'0',AdderToNPC,open);
 	NPC: D_Reg_generic
-						generic map();
-						port map(AdderToNPC,CLK,RST,NPC_EN,NPC_Add);
+		generic map();
+		port map(AdderToNPC,CLK,RST,NPC_EN,NPC_Add);
 						
 	PCDataOut_IMem <= PCToAdder;	
-
 
 end Behavioral; 

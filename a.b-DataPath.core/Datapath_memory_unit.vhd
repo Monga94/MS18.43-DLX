@@ -30,16 +30,15 @@ architecture Structural of MemoryUnit is
 				Q:		out	std_logic_vector(N-1 downto 0));
 	end component;
 	
-	
 begin
-	
 	Add_DMem <= DataIn_ALU;
 	DataOut_Store <= DataIn_RegB;
+	
 	LMD: D_Reg_generic
-		generic map();
+		generic map(Nbit);
 		port map(DataIn_DMem,CLK,RST,LMD_EN,DataOut_Load);
 	BRANCH_REG: D_Reg_generic
-		generic map();
+		generic map(Nbit);
 		port map(DataIn_ALU,CLK,RST,LMD_EN,DataOut_Branch);
 		
 end Structural;

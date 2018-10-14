@@ -5,7 +5,7 @@ use ieee.std_logic_arith.all;
 use work.myStuff.all;
 
 entity DecodeUnit is
-		generic();
+		generic(Nbit: integer := 32);
 		port(	CLK:			in std_logic;
 				RST:			in std_logic;
 				RF_RD1:			in std_logic;
@@ -25,7 +25,10 @@ entity DecodeUnit is
 				Func:			out std_logic_vector(10 downto 0));
 end DecodeUnit;
 
-architecture Structural of DecodeUnit is
+architecture Structural of DecodeUnit is	
+	signal Rs1,Rs2,Rd 			: std_logic_vector(4 downto 0);
+	signal Extended,MuxIMM_Out	: std_logic_vector(Nbit-1 downto 0);
+	signal Offset				: std_logic_vector(15 downto 0);
 
 	component register_file_gen
 		generic (	Nbit:	integer := 32;
@@ -54,16 +57,12 @@ architecture Structural of DecodeUnit is
 	end component;
 	
 	component MUX21_GENERIC
-		generic ( N: integer := 32);
+		generic (N: integer := 32);
 		port (	A:	in	std_logic_vector(N-1 downto 0) ;
 				B:	in	std_logic_vector(N-1 downto 0);
 				S:	in	std_logic;
 				Y:	out	std_logic_vector(N-1 downto 0));
 	end component;
-	
-	signal Rs1,Rs2,Rd : std_logic_vector(4 downto 0);
-	signal Extended,MuxIMM_Out	: std_logic_vector(Nbit-1 downto 0);
-	signal Offset :	std_logic_vector(15 downto 0);
 	
 begin
 	

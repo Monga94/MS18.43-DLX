@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.std_logic_1164.all; --  libreria IEEE con definizione tipi standard logic
 
 entity MUX21_GENERIC is
-	generic ( N: integer := 8);
+	generic (N: integer := 8);
 	port (	A:	In	std_logic_vector(N-1 downto 0) ;
 			B:	In	std_logic_vector(N-1 downto 0);
 			S:	In	std_logic;

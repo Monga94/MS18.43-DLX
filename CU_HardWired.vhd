@@ -10,23 +10,23 @@ entity DLX_CU_HardWired is
 			FUNC		: in  std_logic_vector(FUNC_SIZE - 1 downto 0);              
 			Clk			: in  std_logic;
 			Rst			: in  std_logic;					-- Active Low
-			-- FIRST PIPE STAGE OUTPUTS
+			-- FETCH STAGE OUTPUTS
 			IR_EN		: out std_logic;					-- enables the instruction register
 			NPC_EN		: out std_logic;					-- enables the NPC register
-			-- SECOND PIPE STAGE OUTPUTS
+			-- DECODE STAGE OUTPUTS
 			DEC_EN		: out std_logic;					-- enables the register file and the pipeline registers
 			RF_RD1		: out std_logic;					-- enables the read port 1 of the register file
 			RF_RD2		: out std_logic;					-- enables the read port 2 of the register file
-			-- THIRD PIPE STAGE OUTPUTS						
+			-- EXECUTE STAGE OUTPUTS						
 			EXEC_EN		: out std_logic;					-- enables the pipe registers
 			MuxA_Sel	: out std_logic;					-- input selection of the first multiplexer 0=A 1=INP1
 			MuxB_Sel	: out std_logic;					-- input selection of the second multiplexer 1=B 0=INP2
 			Alu_Sel		: out AluOp;						-- alu control bit
-			-- FOURTH PIPE STAGE OUTPUTS
+			-- MEMORY STAGE OUTPUTS
 			MEM_EN		: out std_logic;					-- enables the memory and the pipeline registers
 			MEM_RD		: out std_logic;					-- enables the read-out of the memory
 			MEM_WR		: out std_logic;					-- enables the write-in of the memory
-			-- FIFTH PIPE STAGE OUTPUTS
+			-- WRITEBACK STAGE OUTPUTS
 			WB_Sel		: out std_logic;					-- input selection of the multiplexer 1=mem 0=aluout
 			RF_WR		: out std_logic);					-- enables the write port of the register file
 end DLX_CU_HardWired;

@@ -5,29 +5,27 @@ use ieee.std_logic_arith.all;
 use work.myStuff.all;
 
 entity Datapath is
-	generic ( Nbit : integer := 32)
-	port (		CLK: 			in std_logic;
-				RST:			in std_logic;
-				IR_EN:      	in std_logic;
-				NPC_EN:     	in std_logic;
-				PC_EN:			in std_logic;
-				DataIn_IMem:	???
-				RF_RD1:			in std_logic;
-				RF_RD2:			in std_logic;
-				RF_WR:			in std_logic;
-				REG_EN_DEC:		in std_logic;
-				MuxIMM_Sel:		in std_logic;
-				REG_EN_EX:		in std_logic;
-				MuxA_Sel:		in std_logic;
-				MuxB_Sel:		in std_logic;
-				ALU_Config:		in AluOp;
-				Condition:		in std_logic_vector(2 downto 0);				
-				MEM_EN:			in std_logic;
-				MEM_RD_WRn:		in std_logic;
-				WB_EN:			in std_logic;
-				WBMux_sel:		in std_logic;
-				);
-	
+	generic (Nbit : integer := 32)
+	port (	CLK: 			in std_logic;
+			RST:			in std_logic;
+			IR_EN:      	in std_logic;
+			NPC_EN:     	in std_logic;
+			PC_EN:			in std_logic;
+			DataIn_IMem:	???
+			RF_RD1:			in std_logic;
+			RF_RD2:			in std_logic;
+			RF_WR:			in std_logic;
+			REG_EN_DEC:		in std_logic;
+			MuxIMM_Sel:		in std_logic;
+			REG_EN_EX:		in std_logic;
+			MuxA_Sel:		in std_logic;
+			MuxB_Sel:		in std_logic;
+			ALU_Config:		in AluOp;
+			Condition:		in std_logic_vector(2 downto 0);				
+			MEM_EN:			in std_logic;
+			MEM_RD_WRn:		in std_logic;
+			WB_EN:			in std_logic;
+			WBMux_sel:		in std_logic);
 end Datapath;
             	
 architecture Structural of Datapath is
@@ -47,7 +45,7 @@ architecture Structural of Datapath is
 	end component;
 	
 	component DecodeUnit is
-		generic();
+		generic(Nbit: integer := 32);
 		port(	CLK:			in std_logic;
 				RST:			in std_logic;
 				RF_RD1:			in std_logic;
@@ -68,21 +66,22 @@ architecture Structural of Datapath is
 	end component;
 	
 	component ExecutionUnit is 
-	port(	CLK:			in std_logic;
-			RST:		    in std_logic;
-			REG_EN:			in std_logic;
-			MuxA_Sel:		in std_logic;
-			MuxB_Sel:		in std_logic;
-			ALU_Config:		in AluOp;
-			Condition:		in std_logic_vector(2 downto 0);
-			NPC_In:		    in std_logic_vector(Nbit-1 downto 0);
-			DataA:			in std_logic_vector(Nbit-1 downto 0);
-			DataB:		    in std_logic_vector(Nbit-1 downto 0);
-			DataIMM:		in std_logic_vector(Nbit-1 downto 0);	
-			NPCOut:			out std_logic_vector(Nbit-1 downto 0);
-			ALU_Out:		out std_logic_vector(Nbit-1 downto 0);	
-			DataBtoDMem:	out std_logic_vector(Nbit-1 downto 0);	
-			Taken:			out std_logic;
+		generic(Nbit: integer := 32);
+		port(	CLK:			in std_logic;
+				RST:		    in std_logic;
+				REG_EN:			in std_logic;
+				MuxA_Sel:		in std_logic;
+				MuxB_Sel:		in std_logic;
+				ALU_Config:		in AluOp;
+				Condition:		in std_logic_vector(2 downto 0);
+				NPC_In:		    in std_logic_vector(Nbit-1 downto 0);
+				DataA:			in std_logic_vector(Nbit-1 downto 0);
+				DataB:		    in std_logic_vector(Nbit-1 downto 0);
+				DataIMM:		in std_logic_vector(Nbit-1 downto 0);	
+				NPCOut:			out std_logic_vector(Nbit-1 downto 0);
+				ALU_Out:		out std_logic_vector(Nbit-1 downto 0);	
+				DataBtoDMem:	out std_logic_vector(Nbit-1 downto 0);	
+				Taken:			out std_logic;
 	end component;
 	
 	component MemoryUnit 
@@ -97,7 +96,6 @@ architecture Structural of Datapath is
 				DataOut_ALU:	out std_logic_vector(Nbit-1 downto 0);
 				DataOut_DMem:	out std_logic_vector(Nbit-1 downto 0));	
 	end component;
-	
 	
 	component WritebackUnit is 
 		generic(Nbit: integer := 32);
