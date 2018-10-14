@@ -6,18 +6,18 @@ use work.myStuff.all;
 
 entity Datapath is
 	generic ( Nbit : integer := 32)
-	port (		CLK: 				in std_logic;
-				RST:				in std_logic;
-				IR_EN:      		in std_logic;
-				NPC_EN:     		in std_logic;
-				PC_EN:				in std_logic;
-				DataIn_IMem
+	port (		CLK: 			in std_logic;
+				RST:			in std_logic;
+				IR_EN:      	in std_logic;
+				NPC_EN:     	in std_logic;
+				PC_EN:			in std_logic;
+				DataIn_IMem:	???
 				RF_RD1:			in std_logic;
 				RF_RD2:			in std_logic;
 				RF_WR:			in std_logic;
-				REG_EN_DEC:			in std_logic;
+				REG_EN_DEC:		in std_logic;
 				MuxIMM_Sel:		in std_logic;
-				REG_EN_EX:			in std_logic;
+				REG_EN_EX:		in std_logic;
 				MuxA_Sel:		in std_logic;
 				MuxB_Sel:		in std_logic;
 				ALU_Config:		in AluOp;
@@ -121,6 +121,5 @@ begin
 		port map(CLK,RST,MEM_EN,MEM_RD_WRn,ALU_Out,DataBtoDMem,Add_DMem,DataOut_ALU,DataOut_DMem);
 	WBU:
 		port map(CLK,RST,WB_EN,WBMux_sel,DataOut_DMem,DataOut_ALU,WB_DataOut)
-		
-		
+				
 end Structural;
