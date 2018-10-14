@@ -76,27 +76,28 @@ begin
 	Func <= InstrToDecode(10 downto 0);
 	
 	MUXD: MUX21_GENERIC
-		generic map();
+		generic map(Nbit);
 		port map(Rd_Itype,Rd_Rtype,MuxRd_Sel,Wr_Add);
 	REG_FILE: register_file_gen
-		generic map();
+		generic map(Nbit);
 		port map(,RST,RF_WR,RF_RD1,RF_RD2,Wr_Add,Rs1,Rs2,OUT1,OUT2);
 	REGA: D_Reg_generic
-		generic map();
+		generic map(Nbit);
 		port map(OUT1,CLK,RST,REG_EN,DataA);
 	REGB: D_Reg_generic
-		generic map();
+		generic map(Nbit);
 		port map(OUT2,CLK,RST,REG_EN,DataB);
 	MUXIMM: MUX21_GENERIC
-		generic map();
+		generic map(Nbit);
 		port map(Extended16to32,Extended16to?,MuxIMM_Sel,MuxIMM_Out);
 	REGIMM: D_Reg_generic	
-		generic map();
+		generic map(Nbit);
 		port map(MuxIMM_Out,CLK,RST,REG_EN,DataIMM);
 	REGNPC: D_Reg_generic
-		generic map();
+		generic map(Nbit);
 		port map(NPC,CLK,RST,REG_EN,NPCOut);
 	REGPC: D_Reg_generic
-		generic map();
+		generic map(Nbit);
 		port map(PCDataOut_IMem,CLK,RST,REG_EN,PCOut);
+		
 end Structural;

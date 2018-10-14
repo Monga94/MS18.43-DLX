@@ -52,16 +52,16 @@ begin
 	FOUR_SIG <= "0x0001";
 	
 	PC:	D_Reg_generic
-		generic map();
+		generic map(Nbit);
 		port map(AddIn_Mux,CLK,RST,PC_EN,PCToAdder);	
 	IR: D_Reg_generic
-		generic map();
+		generic map(Nbit);
 		port map(DataIn_IMem,CLK,RST,IR_EN,InstrToDecode);
 	ADDER: RCA_gen
-		generic map();
+		generic map(Nbit);
 		port map(PCToAdder,FOUR_SIG,'0',AdderToNPC,open);
 	NPC: D_Reg_generic
-		generic map();
+		generic map(Nbit);
 		port map(AdderToNPC,CLK,RST,NPC_EN,NPC_Add);
 						
 	PCDataOut_IMem <= PCToAdder;	

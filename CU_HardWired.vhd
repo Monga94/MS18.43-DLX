@@ -49,6 +49,7 @@ architecture Implementation of DLX_CU_HardWired is
 									"-------------", --SGEU
 									"-------------", --SEQ
 									"1111110110001", --SLE
+									"1111110110001", --SLEU
 									"-------------", --SLT
 									"-------------", --SLTU
 									"1111110110001", --SNE
@@ -70,6 +71,7 @@ architecture Implementation of DLX_CU_HardWired is
 									"-------------", --SGEUI
 									"-------------", --SEQI
 									"1111110010001", --SLEI
+									"1111110010001", --SLEUI
 									"-------------", --SLTI
 									"-------------", --SLTUI
 									"1111110010001", --SNEI
@@ -84,10 +86,12 @@ architecture Implementation of DLX_CU_HardWired is
 									"-------------", --LW
 									"-------------", --LB
 									"-------------", --LBU
+									"-------------", --LH
 									"-------------", --LHI
 									"-------------", --LHU
 									"-------------", --SW
 									"-------------", --SB
+									"-------------", --SH
 									"0000000000000");--NOP
 									
 	signal cw : std_logic_vector(CW_SIZE - 1 downto 0); -- full control word read from cw_array
