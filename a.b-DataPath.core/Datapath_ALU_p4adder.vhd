@@ -16,7 +16,6 @@ architecture Structural of p4adder is
 
 	component CarryGen
 		generic (	N: integer := 32);
-					--LogN: integer := 5);
 		port (	A	: in	std_logic_vector(N downto 1);
 				B	: in	std_logic_vector(N downto 1);
 				Cin	: in	std_logic;
@@ -34,7 +33,7 @@ architecture Structural of p4adder is
 	
 begin
 	Cgen: CarryGen
-				generic map (N)--, 5) -- to be fixed
+				generic map (N)
 				port map (A, B, Cin, C);
 	Sgen: SumGen
 				generic map (N)
