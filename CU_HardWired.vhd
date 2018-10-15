@@ -177,7 +177,7 @@ architecture Implementation of DLX_CU_HardWired is
 					when 2 => aluOpcode_i <= SUB; 	
 					when 3 => aluOpcode_i <= BITAND;
 					when 4 => aluOpcode_i <= BITOR; 
-					when others => aluOpcode_i <= IDLE;
+					when others => aluOpcode_i <= IDLE; --add xor
 				end case;
 			when 1  => aluOpcode_i <= ADD; 		
 			when 2  => aluOpcode_i <= SUB; 		
