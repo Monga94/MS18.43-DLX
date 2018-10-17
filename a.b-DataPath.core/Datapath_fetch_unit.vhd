@@ -13,7 +13,7 @@ entity FetchUnit is
 			PC_EN:				in std_logic;
 			AddIn_Mux			in std_logic_vector(Nbit-1 downto 0);
 			DataIn_IMem:		in std_logic_vector(Nbit-1 downto 0);			
-			PCDataOut_IMem:		out std_logic_vector(Nbit-1 downto 0);
+			PCToAdder:			out std_logic_vector(Nbit-1 downto 0);
 			InstrToDecode:		out std_logic_vector(Nbit-1 downto 0);
 			NPC_Add: 			out std_logic_vector(Nbit-1 downto 0));
 	end FetchUnit;
@@ -63,7 +63,5 @@ begin
 	NPC: D_Reg_generic
 		generic map(Nbit);
 		port map(AdderToNPC,CLK,RST,NPC_EN,NPC_Add);
-						
-	PCDataOut_IMem <= PCToAdder;	
 
 end Behavioral; 
