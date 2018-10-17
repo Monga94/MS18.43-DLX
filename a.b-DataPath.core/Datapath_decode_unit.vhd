@@ -72,7 +72,7 @@ begin
 	Rs2 <= InstrToDecode(20 downto 16);
 	Rd_Rtype <= InstrToDecode(15 downto 11);
 	Rd_Itype <= InstrToDecode(20 downto 16);
-	Opcode <= InstrToDecode(31 downto 26);
+	Opcode <= InstrToDecode(31 downto 26);		-- better to be sended to CU in Fetch state
 	Func <= InstrToDecode(10 downto 0);
 	
 	MUXD: MUX21_GENERIC
