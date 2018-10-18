@@ -21,7 +21,7 @@ entity FetchUnit is
 	end FetchUnit;
 	
 architecture Behavioral of FetchUnit is
-	signal FOUR_SIG,PCToAdder: std_logic_vector(31 downto 0);
+	signal FOUR_SIG,PCToAdder,AdderToNPC: std_logic_vector(31 downto 0);
 	
 	component D_Reg_generic
 		generic (N: integer := 32);
