@@ -6,16 +6,18 @@ use work.myStuff.all;
 
 entity FetchUnit is
 	generic(Nbit: integer := 32);
-	port(	CLK: 				in std_logic;
-			RST:				in std_logic;
-			IR_EN:      		in std_logic;
-			NPC_EN:     		in std_logic;
-			PC_EN:				in std_logic;
-			AddIn_Mux:			in std_logic_vector(Nbit-1 downto 0);
-			DataIn_IMem:		in std_logic_vector(Nbit-1 downto 0);			
-			IMem_Addr:			out std_logic_vector(Nbit-1 downto 0);
-			InstrToDecode:		out std_logic_vector(Nbit-1 downto 0);
-			NPC:	 			out std_logic_vector(Nbit-1 downto 0));
+	port(	CLK: 			in	std_logic;
+			RST:			in	std_logic;
+			IR_EN:      	in	std_logic;
+			NPC_EN:     	in	std_logic;
+			PC_EN:			in	std_logic;
+			--AddIn_Mux:		in	std_logic_vector(Nbit-1 downto 0);
+			IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);			
+			IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
+			InstrToDecode:	out std_logic_vector(Nbit-1 downto 0);
+			NPCToDecode:	out std_logic_vector(Nbit-1 downto 0);
+			Opcode:			out std_logic_vector(5 downto 0);
+			Func:			out std_logic_vector(10 downto 0));
 	end FetchUnit;
 	
 architecture Behavioral of FetchUnit is
@@ -51,17 +53,22 @@ begin
 	
 	FOUR_SIG <= "0x0001";
 	
+	Opcode <= IMem_Instr(31 downto 26);
+	Func <= IMem_Instr(10 downto 0);
+	
 	PC:	D_Reg_generic
 		generic map(Nbit);
-		port map(AddIn_Mux,CLK,RST,PC_EN,PCToAdder);	
+		port map(AdderToNPC,CLK,RST,PC_EN,PCToAdder);	
 	IR: D_Reg_generic
 		generic map(Nbit);
-		port map(DataIn_IMem,CLK,RST,IR_EN,InstrToDecode);
+		port map(IMem_Instr,CLK,RST,IR_EN,InstrToDecode);
 	ADDER: RCA_gen
 		generic map(Nbit);
 		port map(PCToAdder,FOUR_SIG,'0',AdderToNPC,open);
 	NPC: D_Reg_generic
 		generic map(Nbit);
-		port map(AdderToNPC,CLK,RST,NPC_EN,NPC_Add);
+		port map(AdderToNPC,CLK,RST,NPC_EN,NPC_Addr);
+		
+	IMem_Addr <= PCToAdder;
 
 end Behavioral; 

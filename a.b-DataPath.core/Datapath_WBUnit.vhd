@@ -6,12 +6,11 @@ use work.myStuff.all;
 
 entity WritebackUnit is 
 	generic(Nbit: integer := 32);
-	port(	CLK:			in std_logic;
-			RST:			in std_logic;
-			WB_EN:			in std_logic;
-			WBMux_sel:		in std_logic;
-			DataIn_DMem:	in std_logic_vector(Nbit-1);
-			DataIn_ALU:		in std_logic_vector(Nbit-1);
+	port(	CLK:			in	std_logic;
+			RST:			in	std_logic;
+			WBMux_sel:		in	std_logic;
+			DataIn_DMem:	in	std_logic_vector(Nbit-1);
+			DataIn_ALU:		in	std_logic_vector(Nbit-1);
 			WB_DataOut:		out std_logic_vector(Nbit-1));			
 end WritebackUnit;
 
@@ -25,22 +24,10 @@ architecture Structural of WritebackUnit is
 				Y:	out	std_logic_vector(N-1 downto 0));
 	end component;
 	
-	component D_Reg_generic
-		generic (N: integer := 32);
-		port (	D:		in	std_logic_vector(N-1 downto 0);
-				CLK:	in	std_logic;
-				RESET:	in	std_logic;
-				ENABLE:	in	std_logic;
-				Q:		out	std_logic_vector(N-1 downto 0));
-	end component;
-	
 begin
 
 	WB_MUX: MUX21_GENERIC 
 		generic map(Nbit);
-		port map(DataIn_DMem,DataIn_ALU,WBMux_sel,WBMux_DataOut);
-	WB_REG: D_Reg_generic	
-		generic map(Nbit);
-		port map(WBMux_DataOut,CLK,RST,WB_EN,WB_DataOut);
+		port map(DataIn_DMem,DataIn_ALU,WBMux_sel,WB_DataOut);
 
 end Structural;

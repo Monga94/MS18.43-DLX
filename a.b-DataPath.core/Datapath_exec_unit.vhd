@@ -6,21 +6,22 @@ use work.myStuff.all;
 
 entity ExecutionUnit is 
 	generic(Nbit: integer := 32);
-	port(	CLK:			in std_logic;
-			RST:		    in std_logic;
-			REG_EN:			in std_logic;
-			MuxA_Sel:		in std_logic;
-			MuxB_Sel:		in std_logic;
-			ALU_Config:		in AluOp;
-			Condition:		in std_logic_vector(2 downto 0);
-			NPC_In:		    in std_logic_vector(Nbit-1 downto 0);
-			DataA:			in std_logic_vector(Nbit-1 downto 0);
-			DataB:		    in std_logic_vector(Nbit-1 downto 0);
-			DataIMM:		in std_logic_vector(Nbit-1 downto 0);	
-			NPCOut:			out std_logic_vector(Nbit-1 downto 0);
-			ALU_Out:		out std_logic_vector(Nbit-1 downto 0);	
-			DataBtoDMem:	out std_logic_vector(Nbit-1 downto 0);	
-			Taken:			out std_logic;
+	port(	CLK:			in	std_logic;
+			RST:		    in	std_logic;
+			REG_EN_E:		in	std_logic;
+			MuxA_Sel:		in	std_logic;
+			MuxB_Sel:		in	std_logic;
+			ALU_Config:		in	AluOp;
+			Condition:		in	std_logic_vector(2 downto 0);
+			NPC_In:		    in	std_logic_vector(Nbit-1 downto 0);
+			DataA:			in	std_logic_vector(Nbit-1 downto 0);
+			DataB:		    in	std_logic_vector(Nbit-1 downto 0);
+			DataIMM:		in	std_logic_vector(Nbit-1 downto 0);
+			Wr_Addr_D		in	std_logic_vector(OP_REG_SIZE-1 downto 0);
+			ALU_Out:		out std_logic_vector(Nbit-1 downto 0);
+			DataBtoDMem:	out std_logic_vector(Nbit-1 downto 0);
+			Wr_Addr_E:		out std_logic_vector(OP_REG_SIZE-1 downto 0);
+			Taken:			out std_logic);
 end ExecutionUnit;
 
 architecture Behavioural of ExecutionUnit is
@@ -46,9 +47,10 @@ architecture Behavioural of ExecutionUnit is
 	
 	component ALU
 		generic (N: integer := 32);
-		port ( FUNC			: in	AluOp;
-			   DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
-			   OUTALU		: out 	std_logic_vector(N-1 downto 0));
+		port ( FUNC:			in	AluOp;
+			   DATA1, DATA2:	in 	std_logic_vector(N-1 downto 0);
+			   OUTALU:			out	std_logic_vector(N-1 downto 0);
+			   Cout:			out std_logic);
 	end component;
 	
 	component Comparator 
@@ -70,11 +72,14 @@ begin
 		port map(ALU_Config,Op1,Op2,ALU_res);
 	REGALU: D_Reg_generic
 		generic map(Nbit);
-		port map(ALU_res,CLK,RST,REG_EN,ALU_Out);
-	REGNPC: D_Reg_generic							-- to be checked. Not in drawing @01.17_20181015
+		port map(ALU_res,CLK,RST,REG_EN_E,ALU_Out);
+	REGWR: D_Reg_generic
+		generic map(OP_REG_SIZE);
+		port map(Wr_Addr_D,CLK,RST,REG_EN_E,Wr_Addr_E);
+	REGB: D_Reg_generic
 		generic map(Nbit);
-		port map(NPC_In,CLK,RST,REG_EN,NPCOut);
-	COMP: Comparator								-- to be checked. Not in drawing @01.29_20181015
+		port map(DataB,CLK,RST,REG_EN_E,DataBtoDMem);
+	COMP: Comparator
 		generic map(Nbit);
 		port map(DataA,NPC_In,Equal,Less,Great);
 		-- 000 EQ

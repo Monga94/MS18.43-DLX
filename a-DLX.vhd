@@ -12,31 +12,37 @@ architecture RTL Of DLX is
 
 	component Datapath is
 		generic (Nbit : integer := 32)
-		port (	CLK: 			in std_logic;
-				RST:			in std_logic;
+		port (	CLK: 			in	std_logic;
+				RST:			in	std_logic;
+				Opcode:			out std_logic_vector(5 downto 0); --to CU
+				Func:			out std_logic_vector(10 downto 0); --to CU
 				--Fetch Stage
-				IR_EN:      	in std_logic;
-				NPC_EN:     	in std_logic;
-				PC_EN:			in std_logic;
-				IMemToIR_Data:	in std_logic_vector(Nbit-1 downto 0);
+				IR_EN:      	in	std_logic;
+				NPC_EN:     	in	std_logic;
+				PC_EN:			in	std_logic;
+				IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
+				IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
 				--Decode Stage
-				RF_RD1:			in std_logic;
-				RF_RD2:			in std_logic;
-				RF_WR:			in std_logic;
-				REG_EN_DEC:		in std_logic;
-				MuxIMM_Sel:		in std_logic;
+				RF_RD1:			in	std_logic;
+				RF_RD2:			in	std_logic;
+				RF_WR:			in	std_logic;
+				REG_EN_D:		in	std_logic;	
+				MuxIMM_Sel:		in	std_logic;
+				MuxRd_Sel:		in	std_logic;
 				--Execution Stage
-				REG_EN_EX:		in std_logic;
-				MuxA_Sel:		in std_logic;
-				MuxB_Sel:		in std_logic;
-				ALU_Config:		in AluOp;
-				Condition:		in std_logic_vector(2 downto 0);
+				REG_EN_E:		in	std_logic;
+				MuxA_Sel:		in	std_logic;
+				MuxB_Sel:		in	std_logic;
+				ALU_Config:		in	AluOp;
+				Condition:		in	std_logic_vector(2 downto 0);
+				Taken:			out std_logic;
 				--Memory Stage
-				MEM_EN:			in std_logic;
-				MEM_RD_WRn:		in std_logic;
+				REG_EN_M:		in	std_logic;
+				DMemToLMD:		in	std_logic_vector(Nbit-1 downto 0);
+				Addr_DMem:		out std_logic_vector(Nbit-1 downto 0);
+				BRegToDMem:		out std_logic_vector(Nbit-1 downto 0);
 				--Writeback Stage
-				WB_EN:			in std_logic;
-				WBMux_sel:		in std_logic);
+				WBMux_sel:		in	std_logic);
 	end component;
 
 	component DLX_CU_HardWired is 

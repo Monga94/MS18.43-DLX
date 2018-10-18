@@ -9,6 +9,7 @@ package myStuff is
     constant OP_CODE_SIZE	: integer := 6;                                     		-- OPCODE field size
     constant FUNC_SIZE		: integer := 11;                                    		-- FUNC field size
 	constant OP_NUMB		: integer := 27;											-- Number Of Operations that can be executed
+	constant OP_REG_SIZE	: integer := 5;
 	constant F_CTRL			: integer := 4;
 	constant D_CTRL			: integer := 6;
 	constant E_CTRL			: integer := 5;
