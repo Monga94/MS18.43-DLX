@@ -98,11 +98,11 @@ architecture Implementation of DLX_CU_HardWired is
 	
 	
 	-- control word is shifted to the correct stage
-	signal cw1 : std_logic_vector(CW_SIZE - 1 downto 0); -- first stage
-	signal cw2 : std_logic_vector(CW_SIZE - 3 downto 0); -- second stage
-	signal cw3 : std_logic_vector(CW_SIZE - 6 downto 0); -- third stage
-	signal cw4 : std_logic_vector(CW_SIZE - 10 downto 0); -- fourth stage
-	signal cw5 : std_logic_vector(CW_SIZE - 13 downto 0); -- fifth stage
+	signal F_cw : std_logic_vector(CW_SIZE - 1 downto 0); -- first stage
+	signal D_cw : std_logic_vector(CW_SIZE - 1 - F_CTRL downto 0); -- second stage
+	signal E_cw : std_logic_vector(CW_SIZE - 1 - F_CTRL - D_CTRL downto 0); -- third stage
+	signal M_cw : std_logic_vector(CW_SIZE - 1 - F_CTRL - D_CTRL - E_CTRL downto 0); -- fourth stage
+	signal W_cw : std_logic_vector(CW_SIZE - 1 - F_CTRL - D_CTRL - E_CTRL - M_CTRL downto 0); -- fifth stage
 	
 	signal aluOpcode_i : aluOp := IDLE; -- ALUOP defined in package
 	signal aluOpcode1 : aluOp := IDLE;
@@ -114,45 +114,45 @@ architecture Implementation of DLX_CU_HardWired is
 	cw <= cw_array(conv_integer(OPCODE));
 	
 	-- FIRST PIPE STAGE OUTPUTS			--order here is the same as in cw_array
-	IR_EN		<=	cw1(CW_SIZE-1);
-	NPC_EN		<=	cw1(CW_SIZE-2);
+	IR_EN		<=	F_cw(CW_SIZE-1);
+	NPC_EN		<=	F_cw(CW_SIZE-2);
 										-- SECOND PIPE STAGE OUTPUTS
-	DEC_EN		<=	cw2(CW_SIZE-3);
-	RF_RD1		<=	cw2(CW_SIZE-4);
-	RF_RD2		<=	cw2(CW_SIZE-5);
+	DEC_EN		<=	D_cw(CW_SIZE-3);
+	RF_RD1		<=	D_cw(CW_SIZE-4);
+	RF_RD2		<=	D_cw(CW_SIZE-5);
 										-- THIRD PIPE STAGE OUTPUTS	
-	EXEC_EN		<=	cw3(CW_SIZE-6);
-	MuxA_Sel	<=	cw3(CW_SIZE-7);
-	MuxB_Sel	<=	cw3(CW_SIZE-8);
+	EXEC_EN		<=	E_cw(CW_SIZE-6);
+	MuxA_Sel	<=	E_cw(CW_SIZE-7);
+	MuxB_Sel	<=	E_cw(CW_SIZE-8);
 	Alu_Sel		<=	aluOpcode3;
 										-- FOURTH PIPE STAGE OUTPUTS
-	MEM_EN		<=	cw4(CW_SIZE-9);
-	MEM_RD		<=	cw4(CW_SIZE-10);
-	MEM_WR		<=	cw4(CW_SIZE-11);
+	MEM_EN		<=	M_cw(CW_SIZE-9);
+	MEM_RD		<=	M_cw(CW_SIZE-10);
+	MEM_WR		<=	M_cw(CW_SIZE-11);
 										-- FIFTH PIPE STAGE OUTPUTS
-	WB_Sel		<=	cw5(CW_SIZE-12);
-	RF_WR		<=	cw5(CW_SIZE-13);
+	WB_Sel		<=	W_cw(CW_SIZE-12);
+	RF_WR		<=	W_cw(CW_SIZE-13);
 	
 	-- process to pipeline control words
 	CW_PIPE: process (Clk, Rst)
 	begin  -- process Clk			
 		if Clk'event and Clk = '1' then  		-- rising clock edge
 			if Rst = '0' then					-- synchronous reset (active low)
-				cw1 <= (others => '0');
-				cw2 <= (others => '0');
-				cw3 <= (others => '0');
-				cw4 <= (others => '0');
-				cw5 <= (others => '0');
+				F_cw <= (others => '0');
+				D_cw <= (others => '0');
+				E_cw <= (others => '0');
+				M_cw <= (others => '0');
+				W_cw <= (others => '0');
 				
 				aluOpcode1 <= IDLE;	
 				aluOpcode2 <= IDLE;
 				aluOpcode3 <= IDLE;		
 			else
-				cw1 <= cw;
-				cw2 <= cw1(CW_SIZE - 3 downto 0);
-				cw3 <= cw2(CW_SIZE - 6 downto 0);
-				cw4 <= cw3(CW_SIZE - 9 downto 0);
-				cw5 <= cw4(CW_SIZE - 12 downto 0);
+				F_cw <= cw;
+				D_cw <= F_cw(CW_SIZE - 1 - F_CTRL downto 0);
+				E_cw <= D_cw(CW_SIZE - 1 - F_CTRL - D_CTRL downto 0);
+				M_cw <= E_cw(CW_SIZE - 1 - F_CTRL - D_CTRL - E_CTRL downto 0);
+				W_cw <= M_cw(CW_SIZE - 1 - F_CTRL - D_CTRL - E_CTRL - M_CTRL downto 0);
 			
 				aluOpcode1 <= aluOpcode_i;
 				aluOpcode2 <= aluOpcode1;

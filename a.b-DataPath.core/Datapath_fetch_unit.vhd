@@ -11,11 +11,11 @@ entity FetchUnit is
 			IR_EN:      		in std_logic;
 			NPC_EN:     		in std_logic;
 			PC_EN:				in std_logic;
-			AddIn_Mux			in std_logic_vector(Nbit-1 downto 0);
+			AddIn_Mux:			in std_logic_vector(Nbit-1 downto 0);
 			DataIn_IMem:		in std_logic_vector(Nbit-1 downto 0);			
-			PCToAdder:			out std_logic_vector(Nbit-1 downto 0);
+			IMem_Addr:			out std_logic_vector(Nbit-1 downto 0);
 			InstrToDecode:		out std_logic_vector(Nbit-1 downto 0);
-			NPC_Add: 			out std_logic_vector(Nbit-1 downto 0));
+			NPC:	 			out std_logic_vector(Nbit-1 downto 0));
 	end FetchUnit;
 	
 architecture Behavioral of FetchUnit is

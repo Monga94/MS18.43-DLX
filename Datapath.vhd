@@ -9,7 +9,7 @@ entity Datapath is
 	port (	CLK: 			in std_logic;
 			RST:			in std_logic;
 			Opcode:			out std_logic_vector(5 downto 0); --to CU
-			Func:			out std_logic_vector(10 downto 0)); --to CU
+			Func:			out std_logic_vector(10 downto 0); --to CU
 			--Fetch Stage
 			IR_EN:      	in std_logic;
 			NPC_EN:     	in std_logic;

@@ -9,12 +9,12 @@ package myStuff is
     constant OP_CODE_SIZE	: integer := 6;                                     		-- OPCODE field size
     constant FUNC_SIZE		: integer := 11;                                    		-- FUNC field size
 	constant OP_NUMB		: integer := 27;											-- Number Of Operations that can be executed
-	constant CW_SIZE		: integer := 13;											-- Control Word Size
-	constant F_CTRL			: integer := 3;
-	constant D_CTRL			: integer := ;
-	constant E_CTRL			: integer := ;
-	constant M_CTRL			: integer := ;
-	constant WB_CTRL		: integer := ;
+	constant F_CTRL			: integer := 4;
+	constant D_CTRL			: integer := 6;
+	constant E_CTRL			: integer := 5;
+	constant M_CTRL			: integer := 2;
+	constant WB_CTRL		: integer := 2;
+	constant CW_SIZE		: integer := F_CTRL+D_CTRL+E_CTRL+M_CTRL+WB_CTRL;			-- Control Word Size
 
 -- R-Type instruction -> OPCODE field
     constant RTYPE : std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "000000";		-- for ADD, SUB, AND, OR register-to-register operation
