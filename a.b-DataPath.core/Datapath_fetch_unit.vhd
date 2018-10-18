@@ -16,10 +16,10 @@ entity FetchUnit is
 			IMem_Addr:			out std_logic_vector(Nbit-1 downto 0);
 			InstrToDecode:		out std_logic_vector(Nbit-1 downto 0);
 			NPC:	 			out std_logic_vector(Nbit-1 downto 0));
-	end FetchUnit;
+end FetchUnit;
 	
 architecture Behavioral of FetchUnit is
-	signal FOUR_SIG,PCToAdder: std_logic_vector(31 downto 0);
+	signal FOUR_SIG,PCToAdder,AdderToNPC: std_logic_vector(31 downto 0);
 	
 	component D_Reg_generic
 		generic (N: integer := 32);
