@@ -85,7 +85,7 @@ package myStuff is
     constant ITYPE_SGEUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111101";		-- i,0x3d
 	
 -- Alu Possible Operations
-	type AluOp is (ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, FUNCASL, FUNCASR, NOP);
+	type AluOp is (ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, FUNCASR, NOP);
 
 end myStuff;
 
