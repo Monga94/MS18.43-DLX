@@ -5,20 +5,21 @@ use ieee.std_logic_arith.all;
 use work.myStuff.all;
 
 entity MemoryUnit 
-	generic(Nbit: integer := 32);
+	generic(Nbit:		integer := 32;
+			Addr_bit:	integer := 5);
 	port(	CLK: 			in	std_logic;
 			RST:			in	std_logic;
 			REG_EN_M:		in	std_logic;
 			--Branch_taken:	in	std_logic;
-			DataIn_ALU:		in	std_logic_vector(Nbit-1 downto 0);
 			DataIn_DMem:	in	std_logic_vector(Nbit-1 downto 0);
+			DataIn_ALU:		in	std_logic_vector(Nbit-1 downto 0);
 			DataIn_RegB:	in	std_logic_vector(Nbit-1 downto 0);
-			WR_Addr_E:		out std_logic_vector(OP_REG_SIZE-1 downto 0);
-			Addr_DMem:		out	std_logic_vector(Nbit-1 downto 0);
-			DataOut_Branch:	out std_logic_vector(Nbit-1 downto 0);
+			WR_Addr_E:		in	std_logic_vector(Addr_bit-1 downto 0);
 			DataOut_Load:	out std_logic_vector(Nbit-1 downto 0);
+			DataOut_Branch:	out std_logic_vector(Nbit-1 downto 0);
+			WB_Address:		out std_logic_vector(Addr_bit-1 downto 0);
 			DataOut_Store:	out std_logic_vector(Nbit-1 downto 0);
-			WB_Address:		out std_logic_vector(OP_REG_SIZE-1 downto 0));	
+			Addr_DMem:		out	std_logic_vector(Nbit-1 downto 0));
 end MemoryUnit;
 
 architecture Structural of MemoryUnit is
@@ -43,7 +44,7 @@ begin
 		generic map(Nbit);
 		port map(DataIn_ALU,CLK,RST,REG_EN_M,DataOut_Branch);
 	REGWR: D_Reg_generic
-		generic map(OP_REG_SIZE);
+		generic map(Addr_bit);
 		port map(WR_Addr_E,CLK,RST,REG_EN_M,WB_Address);
 		
 end Structural;

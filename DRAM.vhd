@@ -3,17 +3,17 @@ USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
 
 ENTITY DRAM IS
-	GENERIC (	B: integer:=8;
-				L: integer:=10);
-	PORT (	Data_In		: IN	STD_LOGIC_VECTOR(B-1 DOWNTO 0);
-			Address		: IN	STD_LOGIC_VECTOR(L-1 DOWNTO 0);
+	GENERIC (	W: integer:=8;
+				D: integer:=10);
+	PORT (	Data_In		: IN	STD_LOGIC_VECTOR(W-1 DOWNTO 0);
+			Address		: IN	STD_LOGIC_VECTOR(D-1 DOWNTO 0);
 			RD			: IN	STD_LOGIC;
 			CS			: IN	STD_LOGIC;
-			Data_Out	: OUT	STD_LOGIC_VECTOR(B-1 DOWNTO 0));
+			Data_Out	: OUT	STD_LOGIC_VECTOR(W-1 DOWNTO 0));
 END DRAM;
 
 ARCHITECTURE Behavior OF DRAM IS
-	TYPE Reg_Typ IS ARRAY(0 TO 2**L-1)) OF STD_LOGIC_VECTOR(B-1 DOWNTO 0);
+	TYPE Reg_Typ IS ARRAY(0 TO 2**D-1) OF STD_LOGIC_VECTOR(W-1 DOWNTO 0);
 	
 	SIGNAL RegFile_r : Reg_Typ;
 	

@@ -11,38 +11,39 @@ end DLX;
 architecture RTL Of DLX is
 
 	component Datapath is
-		generic (Nbit : integer := 32)
+		generic(Nbit : 		integer := 32;
+				Addr_bit:	integer := 5)
 		port (	CLK: 			in	std_logic;
 				RST:			in	std_logic;
-				Opcode:			out std_logic_vector(5 downto 0); --to CU
-				Func:			out std_logic_vector(10 downto 0); --to CU
+				Opcode:			out std_logic_vector(OP_CODE_SIZE downto 0); --to CU
+				Func:			out std_logic_vector(FUNC_SIZE downto 0); --to CU
 				--Fetch Stage
-				IR_EN:      	in	std_logic;
-				NPC_EN:     	in	std_logic;
-				PC_EN:			in	std_logic;
+				F_IR_EN:      	in	std_logic;
+				F_NPC_EN:     	in	std_logic;
+				F_PC_EN:		in	std_logic;
 				IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
 				IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
 				--Decode Stage
-				RF_RD1:			in	std_logic;
-				RF_RD2:			in	std_logic;
-				RF_WR:			in	std_logic;
-				REG_EN_D:		in	std_logic;	
-				MuxIMM_Sel:		in	std_logic;
-				MuxRd_Sel:		in	std_logic;
+				D_RF_RD1:		in	std_logic;
+				D_RF_RD2:		in	std_logic;
+				D_RF_WR:		in	std_logic;
+				D_REG_EN:		in	std_logic;	
+				D_IMM_Sel:		in	std_logic;
+				D_Rd_Sel:		in	std_logic;
 				--Execution Stage
-				REG_EN_E:		in	std_logic;
-				MuxA_Sel:		in	std_logic;
-				MuxB_Sel:		in	std_logic;
-				ALU_Config:		in	AluOp;
-				Condition:		in	std_logic_vector(2 downto 0);
-				Taken:			out std_logic;
+				E_REG_EN:		in	std_logic;
+				E_MuxA_Sel:		in	std_logic;
+				E_MuxB_Sel:		in	std_logic;
+				E_ALU_Conf:		in	AluOp;
+				E_BrCond:		in	std_logic_vector(2 downto 0);
+				E_Taken:		out std_logic;
 				--Memory Stage
-				REG_EN_M:		in	std_logic;
-				DMemToLMD:		in	std_logic_vector(Nbit-1 downto 0);
-				Addr_DMem:		out std_logic_vector(Nbit-1 downto 0);
-				BRegToDMem:		out std_logic_vector(Nbit-1 downto 0);
+				M_REG_EN:		in	std_logic;
+				DMem_DataOut:	in	std_logic_vector(Nbit-1 downto 0);
+				DMem_DataIn:	out std_logic_vector(Nbit-1 downto 0);
+				DMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
 				--Writeback Stage
-				WBMux_sel:		in	std_logic);
+				WB_Mux_sel:		in	std_logic);
 	end component;
 
 	component DLX_CU_HardWired is 
@@ -73,20 +74,20 @@ architecture RTL Of DLX is
 	end component;
 
 	component DRAM is
-		generic (	B: integer:=8;
-					L: integer:=10);
-		port (	Data_In		: in	std_logic_vector(B-1 downto 0);
-				address		: in	std_logic_vector(L-1 downto 0);
+		generic (	W: integer:=8;
+					D: integer:=10);
+		port (	Data_In		: in	std_logic_vector(W-1 downto 0);
+				address		: in	std_logic_vector(D-1 downto 0);
 				rd			: in	std_logic;
 				cs			: in	std_logic;
-				data_out	: out	std_logic_vector(B-1 downto 0));
+				data_out	: out	std_logic_vector(W-1 downto 0));
 	end component;
 
 	component IRAM is
 		generic (	RAM_DEPTH	: integer := 48;
 					I_SIZE		: integer := 32);
 		port (	Rst  : in  std_logic;
-				Addr : in  std_logic_vector(log2_N(RAM_DEPTH) - 1 downto 0);
+				Addr : in  std_logic_vector(RAM_DEPTH - 1 downto 0);
 				Dout : out std_logic_vector(I_SIZE - 1 downto 0));
 	end component;
 

@@ -2,19 +2,21 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 package myStuff is
-	constant Nbit	: integer := 32;
-	constant Nreg	: integer := 32;
+	constant Nbit		: integer := 32;
+	constant Nreg		: integer := 32;
+	constant IRAM_DEPTH	: integer := 10;
+	constant DRAM_DEPTH	: integer := 10;
+	constant RF_SIZE	: integer := 5;
 
 -- Control unit input sizes
     constant OP_CODE_SIZE	: integer := 6;                                     		-- OPCODE field size
     constant FUNC_SIZE		: integer := 11;                                    		-- FUNC field size
 	constant OP_NUMB		: integer := 27;											-- Number Of Operations that can be executed
-	constant OP_REG_SIZE	: integer := 5;
-	constant F_CTRL			: integer := 4;
+	constant F_CTRL			: integer := 3;
 	constant D_CTRL			: integer := 6;
 	constant E_CTRL			: integer := 5;
-	constant M_CTRL			: integer := 2;
-	constant WB_CTRL		: integer := 2;
+	constant M_CTRL			: integer := 1;
+	constant WB_CTRL		: integer := 1;
 	constant CW_SIZE		: integer := F_CTRL+D_CTRL+E_CTRL+M_CTRL+WB_CTRL;			-- Control Word Size
 
 -- R-Type instruction -> OPCODE field
@@ -51,38 +53,38 @@ package myStuff is
     constant JTYPE_JALR		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "010011";		-- jr,0x13
 	
 -- I-TYPE instructions -> OPCODE field
-    constant ITYPE_BEQZ		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "000100";		-- b0,0x04
-    constant ITYPE_BNEZ		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "000101";		-- b0,0x05
-    constant ITYPE_ADDI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001000";		-- i,0x08
-    constant ITYPE_ADDUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001001";		-- i,0x09
+	constant ITYPE_BEQZ		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "000100";		-- b0,0x04
+	constant ITYPE_BNEZ		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "000101";		-- b0,0x05
+	constant ITYPE_ADDI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001000";		-- i,0x08
+	constant ITYPE_ADDUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001001";		-- i,0x09
 	constant ITYPE_SUBI 	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001010";		-- i,0x0a
-    constant ITYPE_SUBUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001011";		-- i,0x0b
-    constant ITYPE_ANDI 	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001100";		-- i,0x0c
-    constant ITYPE_ORI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001101";		-- i,0x0d
-    constant ITYPE_XORI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001110";		-- i,0x0e
-    constant ITYPE_LHI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001111";		-- i1,0x0f
-    constant ITYPE_SLLI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "010100";		-- i,0x14
-    constant ITYPE_NOP		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "010101";		-- n,0x15
-    constant ITYPE_SRLI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "010110";		-- i,0x16
-    constant ITYPE_SRAI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "010111";		-- i,0x17
+	constant ITYPE_SUBUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001011";		-- i,0x0b
+	constant ITYPE_ANDI 	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001100";		-- i,0x0c
+	constant ITYPE_ORI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001101";		-- i,0x0d
+	constant ITYPE_XORI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001110";		-- i,0x0e
+	constant ITYPE_LHI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "001111";		-- i1,0x0f
+	constant ITYPE_SLLI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "010100";		-- i,0x14
+	constant ITYPE_NOP		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "010101";		-- n,0x15
+	constant ITYPE_SRLI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "010110";		-- i,0x16
+	constant ITYPE_SRAI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "010111";		-- i,0x17
 	constant ITYPE_SEQI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011000";		-- i,0x18
-    constant ITYPE_SNEI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011001";		-- i,0x19
-    constant ITYPE_SLTI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011010";		-- i,0x1a
-    constant ITYPE_SGTI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011011";		-- i,0x1b
-    constant ITYPE_SLEI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011100";		-- i,0x1c
+	constant ITYPE_SNEI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011001";		-- i,0x19
+	constant ITYPE_SLTI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011010";		-- i,0x1a
+	constant ITYPE_SGTI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011011";		-- i,0x1b
+	constant ITYPE_SLEI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011100";		-- i,0x1c
 	constant ITYPE_SGEI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011101";		-- i,0x1d
-    constant ITYPE_LB		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100000";		-- l,0x20
-    constant ITYPE_LH		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100001";		-- l,0x21
-    constant ITYPE_LW		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100011";		-- l,0x23
-    constant ITYPE_LBU		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100100";		-- l,0x24
-    constant ITYPE_LHU		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100101";		-- l,0x25
-    constant ITYPE_SB		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "101000";		-- s,0x28
-    constant ITYPE_SH		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "101001";		-- s,0x29
-    constant ITYPE_SW		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "101011";		-- s,0x2b
-    constant ITYPE_SLTUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111010";		-- i,0x3a
+	constant ITYPE_LB		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100000";		-- l,0x20
+	constant ITYPE_LH		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100001";		-- l,0x21
+	constant ITYPE_LW		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100011";		-- l,0x23
+	constant ITYPE_LBU		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100100";		-- l,0x24
+	constant ITYPE_LHU		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100101";		-- l,0x25
+	constant ITYPE_SB		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "101000";		-- s,0x28
+	constant ITYPE_SH		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "101001";		-- s,0x29
+	constant ITYPE_SW		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "101011";		-- s,0x2b
+	constant ITYPE_SLTUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111010";		-- i,0x3a
 	constant ITYPE_SGTUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111011";		-- i,0x3b
-    constant ITYPE_SLEUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111100";		-- i,0x3c
-    constant ITYPE_SGEUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111101";		-- i,0x3d
+	constant ITYPE_SLEUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111100";		-- i,0x3c
+	constant ITYPE_SGEUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111101";		-- i,0x3d
 	
 -- Alu Possible Operations
 	type AluOp is (ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, FUNCASR, NOP);
