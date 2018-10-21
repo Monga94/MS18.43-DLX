@@ -44,14 +44,6 @@ architecture Structural of ALU is
 				Cout: out	std_logic);
 	end component;
 	
-	component MUX21_GENERIC
-		generic (N: integer := 32);
-		port (	A:	in	std_logic_vector(N-1 downto 0) ;
-				B:	in	std_logic_vector(N-1 downto 0);
-				S:	in	std_logic;
-				Y:	out	std_logic_vector(N-1 downto 0));
-	end component;
-	
 	component SHIFTER_GENERIC is
 		generic(N: integer := 32);
 		port(	A: in std_logic_vector(N-1 downto 0);
@@ -59,8 +51,7 @@ architecture Structural of ALU is
 				LOGIC_ARITH: in std_logic;	-- 1 = logic, 0 = arith
 				LEFT_RIGHT: in std_logic;	-- 1 = left, 0 = right
 				SHIFT_ROTATE: in std_logic;	-- 1 = shift, 0 = rotate
-				OUTPUT: out std_logic_vector(N-1 downto 0)
-	);
+				OUTPUT: out std_logic_vector(N-1 downto 0));
 	end component;
 	
 	--component Boothmul is 
@@ -69,6 +60,14 @@ architecture Structural of ALU is
 	--	port( 	A,B : 	In std_logic_vector(N-1 downto 0);
 	--			P 	: 	Out std_logic_vector(N+logN downto 0));
 	--end component;
+	
+	component MUX21_GENERIC
+		generic (N: integer := 32);
+		port (	A:	in	std_logic_vector(N-1 downto 0) ;
+				B:	in	std_logic_vector(N-1 downto 0);
+				S:	in	std_logic;
+				Y:	out	std_logic_vector(N-1 downto 0));
+	end component;
 	
 	component mux51_generic is
 		generic (	N: integer:= 32);			
@@ -108,43 +107,43 @@ begin
 		--port map(DATA1,DATA2,Mul_Out);
 		
 	process(FUNC)
-	--(ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, MULT, FUNCASL, FUNCASR,NOP);
+	--(ADD,SUB,BITAND,BITOR,BITXOR,FUNCLSL,FUNCLSR,FUNCRL,FUNCRR,MULT,FUNCASL,FUNCASR,NOP);
 	begin
 		
 		case FUNC is
-			when ADD => 	Mux_sel <= "000"; --add
-						Cin <= '0';
-			when SUB =>  	Mux_sel <= "000"; --sub
-						Cin <= '1';
-			when BITAND => 	Mux_sel <= "001"; --and
-			when BITOR => 	Mux_sel <= "010"; --or
-			when BITXOR => 	Mux_sel <= "011"; --xor 
-			when FUNCLSL =>	Mux_sel <= "100";
-						L_A <= '1';				--FUNCLSL
-						L_R <= '1';
-						S_R <= '1';
-			when FUNCLSR =>	L_A <= '1';				--FUNCLSR
-			            L_R <= '0';
-			            S_R <= '1';
-						Mux_sel <= "100";
-			when FUNCRL =>	L_A <= '1';				--FUNCRL
-			            L_R <= '1';
-			            S_R <= '0';
-						Mux_sel <= "100";
-			when FUNCRR =>	L_A <= '1';				--FUNCRR
-			            L_R <= '0';
-			            S_R <= '0';
-						Mux_sel <= "100";
-			--when FUNCASL =>	L_A <= '0';				--FUNCASL
-			--            L_R <= '1';
-			--            S_R <= '1';
-			--			Mux_sel <= "100";
-			when FUNCASR =>	L_A <= '0';				--FUNCASR
-			            L_R <= '1';
-			            S_R <= '1';
-						Mux_sel <= "100";
-			when others => Mux_sel <= "000"; --add
-							Cin <= '0';
+			when ADD		=>	Cin <= '0';				--add
+								Mux_sel <= "000";
+			when SUB 		=>	Cin <= '1';				--sub
+								Mux_sel <= "000";
+			when BITAND 	=>	Mux_sel <= "001";		--and
+			when BITOR		=>	Mux_sel <= "010";		--or
+			when BITXOR 	=>	Mux_sel <= "011";		--xor 
+			when FUNCLSL	=>	L_A <= '1';				--FUNCLSL
+								L_R <= '1';
+								S_R <= '1';
+								Mux_sel <= "100";
+			when FUNCLSR	=>	L_A <= '1';				--FUNCLSR
+								L_R <= '0';
+								S_R <= '1';
+								Mux_sel <= "100";
+			when FUNCRL		=>	L_A <= '1';				--FUNCRL
+								L_R <= '1';
+								S_R <= '0';
+								Mux_sel <= "100";
+			when FUNCRR		=>	L_A <= '1';				--FUNCRR
+								L_R <= '0';
+								S_R <= '0';
+								Mux_sel <= "100";
+			-- when FUNCASL	=>	L_A <= '0';				--FUNCASL
+								-- L_R <= '1';
+								-- S_R <= '1';
+								-- Mux_sel <= "100";
+			when FUNCASR	=>	L_A <= '0';				--FUNCASR
+								L_R <= '1';
+								S_R <= '1';
+								Mux_sel <= "100";
+			when others		=>	Cin <= '0'; 			--add
+								Mux_sel <= "000";
 		end case;	
 		
 	end process;
