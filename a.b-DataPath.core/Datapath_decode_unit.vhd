@@ -30,6 +30,7 @@ end DecodeUnit;
 architecture Structural of DecodeUnit is	
 	signal Rs1,Rs2,Rd_Itype,Rd_Rtype				: std_logic_vector(Addr_bit-1 downto 0);
 	signal U_ext16to32,S_ext16to32,MuxIMM_Out		: std_logic_vector(Nbit-1 downto 0);
+	signal RF_outA,RF_outB							: std_logic_vector(Nbit-1 downto 0);
 	signal WRaddr									: std_logic_vector(Addr_bit-1 downto 0);
 
 	component register_file_gen
@@ -76,28 +77,28 @@ begin
 	Rd_Rtype <= InstrToDecode(15 downto 11);
 	
 	REG_FILE: register_file_gen
-		generic map(Nbit);
-		port map(CLK,RST,RF_WR,RF_RD1,RF_RD2,WB_Addr,Rs1,Rs2,WB_Data,OUT1,OUT2);
+		generic map(Nbit,2**Addr_bit)
+		port map(CLK,RST,'1',RF_WR,RF_RD1,RF_RD2,WB_Addr,Rs1,Rs2,WB_Data,RF_outA,RF_outB);
 	MUXWR: MUX21_GENERIC
-		generic map(Addr_bit);
+		generic map(Addr_bit)
 		port map(Rd_Itype,Rd_Rtype,MuxRd_Sel,WRaddr);
 	MUXIMM: MUX21_GENERIC
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(U_ext16to32,S_ext16to32,MuxIMM_Sel,MuxIMM_Out);
 	REGA: D_Reg_generic
-		generic map(Nbit);
-		port map(OUT1,CLK,RST,REG_EN_D,DataA);
+		generic map(Nbit)
+		port map(RF_outA,CLK,RST,REG_EN_D,DataA);
 	REGB: D_Reg_generic
-		generic map(Nbit);
-		port map(OUT2,CLK,RST,REG_EN_D,DataB);
+		generic map(Nbit)
+		port map(RF_outB,CLK,RST,REG_EN_D,DataB);
 	REGIMM: D_Reg_generic	
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(MuxIMM_Out,CLK,RST,REG_EN_D,DataIMM);
 	REGNPC: D_Reg_generic
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(NPCin,CLK,RST,REG_EN_D,NPCout);
 	REGWR: D_Reg_generic
-		generic map(Addr_bit);
+		generic map(Addr_bit)
 		port map(WRaddr,CLK,RST,REG_EN_D,Wr_Addr_D);
 		
 end Structural;

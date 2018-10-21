@@ -6,11 +6,11 @@ use work.myStuff.all;
 
 entity Datapath is
 	generic(Nbit : 		integer := 32;
-			Addr_bit:	integer := 5)
+			Addr_bit:	integer := 5);
 	port (	CLK: 			in	std_logic;
 			RST:			in	std_logic;
-			Opcode:			out std_logic_vector(OP_CODE_SIZE downto 0); --to CU
-			Func:			out std_logic_vector(FUNC_SIZE downto 0); --to CU
+			Opcode:			out std_logic_vector(OP_CODE_SIZE-1 downto 0); --to CU
+			Func:			out std_logic_vector(FUNC_SIZE-1 downto 0); --to CU
 			--Fetch Stage
 			F_IR_EN:      	in	std_logic;
 			F_NPC_EN:     	in	std_logic;
@@ -60,8 +60,8 @@ architecture Structural of Datapath is
 				InstrToDecode:	out std_logic_vector(Nbit-1 downto 0);
 				NPCToDecode:	out std_logic_vector(Nbit-1 downto 0);			
 				IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
-				Opcode:			out std_logic_vector(OP_CODE_SIZE downto 0);
-				Func:			out std_logic_vector(FUNC_SIZE downto 0));
+				Opcode:			out std_logic_vector(OP_CODE_SIZE-1 downto 0);
+				Func:			out std_logic_vector(FUNC_SIZE-1 downto 0));
 	end component;
 	
 	component DecodeUnit is
@@ -130,9 +130,9 @@ architecture Structural of Datapath is
 		port(	CLK:			in	std_logic;
 				RST:			in	std_logic;
 				WBMux_sel:		in	std_logic;
-				DataIn_DMem:	in	std_logic_vector(Nbit-1);
-				DataIn_ALU:		in	std_logic_vector(Nbit-1);
-				WB_DataOut:		out std_logic_vector(Nbit-1));			
+				DataIn_DMem:	in	std_logic_vector(Nbit-1 downto 0);
+				DataIn_ALU:		in	std_logic_vector(Nbit-1 downto 0);
+				WB_DataOut:		out std_logic_vector(Nbit-1 downto 0));			
 	end component;
 	
 begin
@@ -159,7 +159,7 @@ begin
 		            RF_WR			=> D_RF_WR,
 		            REG_EN_D		=> D_REG_EN,
 		            MuxIMM_Sel		=> D_IMM_Sel,
-		            MuxRd_Sel		=> MuxRd_Sel,
+		            MuxRd_Sel		=> D_Rd_Sel,
 		            InstrToDecode	=> FtoD_instr,
 		            NPC	 			=> FtoD_NPC,
 		            WB_Data			=> WtoD_WRdata,
@@ -179,7 +179,7 @@ begin
 		            MuxB_Sel		=> E_MuxB_Sel,
 		            ALU_Config		=> E_ALU_Conf,
 		            Condition		=> E_BrCond,
-		            NPC_In:			=> DtoE_NPC,
+		            NPC_In			=> DtoE_NPC,
 		            DataA			=> DtoE_DataA,
 		            DataB			=> DtoE_DataB,
 		            DataIMM			=> DtoE_imm,

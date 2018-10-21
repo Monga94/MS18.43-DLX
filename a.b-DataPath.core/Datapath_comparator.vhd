@@ -4,7 +4,7 @@ use ieee.std_logic_unsigned.all;
 use ieee.std_logic_arith.all;
 use work.myStuff.all;
 
-entity Comparator 
+entity Comparator is
 		generic ( Nbit : integer := 32);
 		port(	DATA1,DATA2:	in 	std_logic_vector(Nbit-1 downto 0);
 				EQ,LT,GT:		out std_logic);

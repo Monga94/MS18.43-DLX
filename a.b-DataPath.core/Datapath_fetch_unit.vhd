@@ -16,8 +16,8 @@ entity FetchUnit is
 			InstrToDecode:	out std_logic_vector(Nbit-1 downto 0);
 			NPCToDecode:	out std_logic_vector(Nbit-1 downto 0);			
 			IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
-			Opcode:			out std_logic_vector(OP_CODE_SIZE downto 0);
-			Func:			out std_logic_vector(FUNC_SIZE downto 0));
+			Opcode:			out std_logic_vector(OP_CODE_SIZE-1 downto 0);
+			Func:			out std_logic_vector(FUNC_SIZE-1 downto 0));
 	end FetchUnit;
 	
 architecture Behavioral of FetchUnit is
@@ -34,7 +34,7 @@ architecture Behavioral of FetchUnit is
 	
 	component MUX21_GENERIC
 		generic (N: integer := 32);
-		port (	A:	in	std_logic_vector(N-1 downto 0) ;
+		port (	A:	in	std_logic_vector(N-1 downto 0);
 				B:	in	std_logic_vector(N-1 downto 0);
 				S:	in	std_logic;
 				Y:	out	std_logic_vector(N-1 downto 0));
@@ -57,16 +57,16 @@ begin
 	Func <= IMem_Instr(10 downto 0);
 	
 	PC:	D_Reg_generic
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(AdderToNPC,CLK,RST,PC_EN,PCToAdder);	
 	IR: D_Reg_generic
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(IMem_Instr,CLK,RST,IR_EN,InstrToDecode);
 	ADDER: RCA_gen
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(PCToAdder,FOUR_SIG,'0',AdderToNPC,open);
 	NPC: D_Reg_generic
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(AdderToNPC,CLK,RST,NPC_EN,NPCToDecode);
 		
 	IMem_Addr <= PCToAdder;

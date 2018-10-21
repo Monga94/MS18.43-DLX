@@ -9,9 +9,9 @@ entity WritebackUnit is
 	port(	CLK:			in	std_logic;
 			RST:			in	std_logic;
 			WBMux_sel:		in	std_logic;
-			DataIn_DMem:	in	std_logic_vector(Nbit-1);
-			DataIn_ALU:		in	std_logic_vector(Nbit-1);
-			WB_DataOut:		out std_logic_vector(Nbit-1));			
+			DataIn_DMem:	in	std_logic_vector(Nbit-1 downto 0);
+			DataIn_ALU:		in	std_logic_vector(Nbit-1 downto 0);
+			WB_DataOut:		out std_logic_vector(Nbit-1 downto 0));			
 end WritebackUnit;
 
 architecture Structural of WritebackUnit is
@@ -27,7 +27,7 @@ architecture Structural of WritebackUnit is
 begin
 
 	WB_MUX: MUX21_GENERIC 
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(DataIn_DMem,DataIn_ALU,WBMux_sel,WB_DataOut);
 
 end Structural;

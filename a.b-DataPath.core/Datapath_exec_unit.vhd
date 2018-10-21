@@ -63,25 +63,25 @@ architecture Behavioural of ExecutionUnit is
 begin
 	
 	MUXA: MUX21_GENERIC
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(NPC_In,DataA,MuxA_Sel,Op1);
 	MUXB: MUX21_GENERIC
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(DataB,DataIMM,MuxB_Sel,Op2);
-	ALU: ALU
-		generic map(Nbit);
+	ALUnit: ALU
+		generic map(Nbit)
 		port map(ALU_Config,Op1,Op2,ALU_res,open);
 	REGALU: D_Reg_generic
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(ALU_res,CLK,RST,REG_EN_E,ALU_Out);
 	REGB: D_Reg_generic
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(DataB,CLK,RST,REG_EN_E,DataBtoDMem);
 	REGWR: D_Reg_generic
-		generic map(Addr_bit);
+		generic map(Addr_bit)
 		port map(Wr_Addr_D,CLK,RST,REG_EN_E,Wr_Addr_E);
 	COMP: Comparator
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(DataA,NPC_In,Equal,Less,Great);
 		-- 000 EQ
 		-- 001 NEQ

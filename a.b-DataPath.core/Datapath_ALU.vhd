@@ -135,10 +135,10 @@ begin
 			            L_R <= '0';
 			            S_R <= '0';
 						Mux_sel <= "100";
-			when FUNCASL =>	L_A <= '0';				--FUNCASL
-			            L_R <= '1';
-			            S_R <= '1';
-						Mux_sel <= "100";
+			--when FUNCASL =>	L_A <= '0';				--FUNCASL
+			--            L_R <= '1';
+			--            S_R <= '1';
+			--			Mux_sel <= "100";
 			when FUNCASR =>	L_A <= '0';				--FUNCASR
 			            L_R <= '1';
 			            S_R <= '1';

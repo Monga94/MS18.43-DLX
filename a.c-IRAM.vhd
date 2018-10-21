@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use std.textio.all;
 use ieee.std_logic_textio.all;
-use work.logarithm.all
+use work.logarithm.all;
 
 
 -- Instruction memory for DLX

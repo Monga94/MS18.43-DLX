@@ -4,7 +4,7 @@ use ieee.std_logic_unsigned.all;
 use ieee.std_logic_arith.all;
 use work.myStuff.all;
 
-entity MemoryUnit 
+entity MemoryUnit is
 	generic(Nbit:		integer := 32;
 			Addr_bit:	integer := 5);
 	port(	CLK: 			in	std_logic;
@@ -38,13 +38,13 @@ begin
 	DataOut_Store <= DataIn_RegB;
 	
 	LMD: D_Reg_generic
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(DataIn_DMem,CLK,RST,REG_EN_M,DataOut_Load);
 	BRANCH_REG: D_Reg_generic
-		generic map(Nbit);
+		generic map(Nbit)
 		port map(DataIn_ALU,CLK,RST,REG_EN_M,DataOut_Branch);
 	REGWR: D_Reg_generic
-		generic map(Addr_bit);
+		generic map(Addr_bit)
 		port map(WR_Addr_E,CLK,RST,REG_EN_M,WB_Address);
 		
 end Structural;
