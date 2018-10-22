@@ -6,53 +6,58 @@ use work.myStuff.all;
 
 entity DLX_CU_HW is 
 	port(	-- INPUTS
-			OPCODE		: in  std_logic_vector(OP_CODE_SIZE - 1 downto 0);
-			FUNC		: in  std_logic_vector(FUNC_SIZE - 1 downto 0);              
+			OPCODE		: in  std_logic_vector(OP_CODE_SIZE-1 downto 0);
+			FUNC		: in  std_logic_vector(FUNC_SIZE-1 downto 0);              
 			Clk			: in  std_logic;
 			Rst			: in  std_logic;					-- Active Low
 			-- FETCH STAGE OUTPUTS
-			IR_EN		: out std_logic;					-- enables the instruction register
-			NPC_EN		: out std_logic;					-- enables the NPC register
+			F_PC_EN		: out std_logic;					-- enables the PC register
+			F_NPC_EN	: out std_logic;					-- enables the NPC register
+			F_IR_EN		: out std_logic;					-- enables the instruction register
 			-- DECODE STAGE OUTPUTS
-			DEC_EN		: out std_logic;					-- enables the register file and the pipeline registers
-			RF_RD1		: out std_logic;					-- enables the read port 1 of the register file
-			RF_RD2		: out std_logic;					-- enables the read port 2 of the register file
+			D_REG_EN	: out std_logic;					-- enables the register file and the pipeline registers
+			D_RF_RD1	: out std_logic;					-- enables the read port 1 of the register file
+			D_RF_RD2	: out std_logic;					-- enables the read port 2 of the register file
+			D_IMM_Sel	: out std_logic;					-- input selection of immediate type 0=unsigned 1=signed
+			D_Rd_Sel	: out std_logic;					-- input selection of write address 0=Itype 1=Rtype
 			-- EXECUTE STAGE OUTPUTS						
-			EXEC_EN		: out std_logic;					-- enables the pipe registers
-			MuxA_Sel	: out std_logic;					-- input selection of the first multiplexer 0=A 1=INP1
-			MuxB_Sel	: out std_logic;					-- input selection of the second multiplexer 1=B 0=INP2
-			Alu_Sel		: out AluOp;						-- alu control bit
+			E_REG_EN	: out std_logic;					-- enables the pipeline registers
+			E_MuxA_Sel	: out std_logic;					-- input selection of the first multiplexer 0=NPC 1=A
+			E_MuxB_Sel	: out std_logic;					-- input selection of the second multiplexer 0=B 1=IMM
+			E_ALU_Conf	: out AluOp;						-- alu control word
+			E_Signed	: out std_logic;					-- signed operation identifier 0=unsigned 1=signed
+			E_BrCond	: out std_logic_vector(2 downto 0);	-- condition for branching and jumping
 			-- MEMORY STAGE OUTPUTS
-			MEM_EN		: out std_logic;					-- enables the memory and the pipeline registers
-			MEM_RD		: out std_logic;					-- enables the read-out of the memory
-			MEM_WR		: out std_logic;					-- enables the write-in of the memory
+			M_REG_EN	: out std_logic;					-- enables the pipeline registers
+			DMem_RD		: out std_logic;					-- select read/write mode 1=READ 0=WRITE
+			DMem_CS		: out std_logic;					-- enables the memory
 			-- WRITEBACK STAGE OUTPUTS
-			WB_Sel		: out std_logic;					-- input selection of the multiplexer 1=mem 0=aluout
-			RF_WR		: out std_logic);					-- enables the write port of the register file
+			WB_Mux_sel	: out std_logic;					-- input selection of the multiplexer 0=mem 1=aluout
+			D_RF_WR		: out std_logic);					-- enables the write port of the register file
 end DLX_CU_HW;
 
 architecture Implementation of DLX_CU_HW is
 	type op_array is array (integer range 0 to OP_NUMB - 1) of std_logic_vector(CW_SIZE - 1 downto 0);
-	signal cw_array : op_array := (	"1111110110001", --ADD  --order of control signal is like the following one (not the same as in port declaration)
-									"-------------", --ADDU
-									"1111110110001", --SUB	
-									"-------------", --SUBU			
-									"1111110110001", --AND               
-									"1111110110001", --OR  
-									"1111110110001", --XOR
-									"1111110110001", --SLL
-									"1111110110001", --SRL
-									"-------------", --SRA
-									"-------------", --SGT
-									"-------------", --SGTU
-									"1111110110001", --SGE
-									"-------------", --SGEU
-									"-------------", --SEQ
-									"1111110110001", --SLE
-									"1111110110001", --SLEU
-									"-------------", --SLT
-									"-------------", --SLTU
-									"1111110110001", --SNE
+	signal cw_array : op_array := (	"111 11101 1101111 100 11", --ADD  --order of control signal is like the following one (not the same as in port declaration)
+									"111 11101 1100111 100 11", --ADDU
+									"111 11101 1101111 100 11", --SUB	
+									"111 11101 1100111 100 11", --SUBU			
+									"111 11101 1100111 100 11", --AND               
+									"111 11101 1100111 100 11", --OR  
+									"111 11101 1100111 100 11", --XOR
+									"111 11101 1100111 100 11", --SLL
+									"111 11101 1100111 100 11", --SRL
+									"111 11101 1101111 100 11", --SRA
+									"111 11101 1101111 100 11", --SGT
+									"111 11101 1100111 100 11", --SGTU
+									"111 11101 1101111 100 11", --SGE
+									"111 11101 1100111 100 11", --SGEU
+									"111 11101 1100111 100 11", --SEQ
+									"111 11101 1101111 100 11", --SLE
+									"111 11101 1100111 100 11", --SLEU
+									"111 11101 1101111 100 11", --SLT
+									"111 11101 1100111 100 11", --SLTU
+									"111 11101 1100111 100 11", --SNE
 									"-------------", --MULT		///
 									
 									"1111110010001", --ADDI	
@@ -114,29 +119,39 @@ architecture Implementation of DLX_CU_HW is
 	cw <= cw_array(conv_integer(OPCODE));
 	
 	-- FIRST PIPE STAGE OUTPUTS			--order here is the same as in cw_array
-	IR_EN		<=	F_cw(CW_SIZE-1);
-	NPC_EN		<=	F_cw(CW_SIZE-2);
-										-- SECOND PIPE STAGE OUTPUTS
-	DEC_EN		<=	D_cw(CW_SIZE-3);
-	RF_RD1		<=	D_cw(CW_SIZE-4);
-	RF_RD2		<=	D_cw(CW_SIZE-5);
-										-- THIRD PIPE STAGE OUTPUTS	
-	EXEC_EN		<=	E_cw(CW_SIZE-6);
-	MuxA_Sel	<=	E_cw(CW_SIZE-7);
-	MuxB_Sel	<=	E_cw(CW_SIZE-8);
-	Alu_Sel		<=	aluOpcode3;
-										-- FOURTH PIPE STAGE OUTPUTS
-	MEM_EN		<=	M_cw(CW_SIZE-9);
-	MEM_RD		<=	M_cw(CW_SIZE-10);
-	MEM_WR		<=	M_cw(CW_SIZE-11);
-										-- FIFTH PIPE STAGE OUTPUTS
-	WB_Sel		<=	W_cw(CW_SIZE-12);
-	RF_WR		<=	W_cw(CW_SIZE-13);
+	F_IR_EN		<=	F_cw();
+	F_NPC_EN	<=	F_cw();
+	F_PC_EN		<=	F_cw();
+	
+	-- SECOND PIPE STAGE OUTPUTS
+	D_RF_RD1	<=	D_cw();
+	D_RF_RD2	<=	D_cw();
+	D_REG_EN	<=	D_cw();
+	D_IMM_Sel	<=	D_cw();
+	D_Rd_Sel	<=	D_cw();
+	
+	-- THIRD PIPE STAGE OUTPUTS	
+	E_REG_EN	<=	E_cw();
+	E_MuxA_Sel	<=	E_cw();
+	E_MuxB_Sel	<=	E_cw();
+	E_ALU_Conf	<=	aluOpcode3;
+	E_Signed	<=	E_cw();
+	E_BrCond	<=	E_cw();
+	
+	-- FOURTH PIPE STAGE OUTPUTS
+	M_REG_EN	<=	M_cw();
+	DMem_RD		<=	M_cw();
+	DMem_CS		<=	M_cw();
+	
+	-- FIFTH PIPE STAGE OUTPUTS
+	WB_Mux_sel	<=	W_cw();
+	D_RF_WR		<=	W_cw();
+	
 	
 	-- process to pipeline control words
 	CW_PIPE: process (Clk, Rst)
 	begin  -- process Clk			
-		if Clk'event and Clk = '1' then  		-- rising clock edge
+		if Clk'event and Clk = '0' then  		-- rising clock edge
 			if Rst = '0' then					-- synchronous reset (active low)
 				F_cw <= (others => '0');
 				D_cw <= (others => '0');
@@ -159,14 +174,12 @@ architecture Implementation of DLX_CU_HW is
 				aluOpcode3 <= aluOpcode2;
 			end if;
 		end if;
-	end process CW_PIPE;	
-	
-	-- to be modified
+	end process CW_PIPE;
 	
 	--purpose: Generation of ALU OpCode
 	--type   : combinational
 	--inputs : OPCODE,FUNC
-	--outputs: aluOpcode
+	--outputs: aluOpcode, cw
 	ALU_OP_CODE_P : process (OPCODE, FUNC)
 	begin  -- process ALU_OP_CODE_P
 		case OPCODE is
@@ -175,49 +188,71 @@ architecture Implementation of DLX_CU_HW is
 				
 				case FUNC is
 					when RTYPE_NOP	=> 
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SLL	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SRL	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SRA	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_ADD	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_ADDU =>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SUB	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SUBU =>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_AND	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_OR 	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_XOR	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SEQ	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SNE	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SLT	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SGT	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SLE	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SGE	=>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SLTU =>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SGTU =>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SLEU =>
+						cw <= ;
 						aluOpcode_i <= ;
 					when RTYPE_SGEU =>
+						cw <= ;
 						aluOpcode_i <= ;
 					when others => 
-						aluOpcode_i <= NOP;
+						cw <= ;
+						aluOpcode_i <= ;
 				end case;
 			when JTYPE_J	 =>
 				cw <= ;

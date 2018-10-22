@@ -12,16 +12,16 @@ entity Datapath is
 			Opcode:			out std_logic_vector(OP_CODE_SIZE-1 downto 0); --to CU
 			Func:			out std_logic_vector(FUNC_SIZE-1 downto 0); --to CU
 			--Fetch Stage
-			F_IR_EN:      	in	std_logic;
-			F_NPC_EN:     	in	std_logic;
 			F_PC_EN:		in	std_logic;
+			F_NPC_EN:     	in	std_logic;
+			F_IR_EN:      	in	std_logic;
 			IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
 			IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
 			--Decode Stage
+			D_REG_EN:		in	std_logic;	
 			D_RF_RD1:		in	std_logic;
 			D_RF_RD2:		in	std_logic;
 			D_RF_WR:		in	std_logic;
-			D_REG_EN:		in	std_logic;	
 			D_IMM_Sel:		in	std_logic;
 			D_Rd_Sel:		in	std_logic;
 			--Execution Stage

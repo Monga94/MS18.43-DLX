@@ -18,16 +18,16 @@ architecture RTL Of DLX is
 				Opcode:			out std_logic_vector(OP_CODE_SIZE-1 downto 0); --to CU
 				Func:			out std_logic_vector(FUNC_SIZE-1 downto 0); --to CU
 				--Fetch Stage
-				F_IR_EN:      	in	std_logic;
-				F_NPC_EN:     	in	std_logic;
 				F_PC_EN:		in	std_logic;
+				F_NPC_EN:     	in	std_logic;
+				F_IR_EN:      	in	std_logic;
 				IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
 				IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
 				--Decode Stage
+				D_REG_EN:		in	std_logic;	
 				D_RF_RD1:		in	std_logic;
 				D_RF_RD2:		in	std_logic;
 				D_RF_WR:		in	std_logic;
-				D_REG_EN:		in	std_logic;	
 				D_IMM_Sel:		in	std_logic;
 				D_Rd_Sel:		in	std_logic;
 				--Execution Stage
@@ -54,9 +54,9 @@ architecture RTL Of DLX is
 				Clk			: in  std_logic;
 				Rst			: in  std_logic;					-- Active Low
 				-- FETCH STAGE OUTPUTS
-				F_IR_EN		: out std_logic;					-- enables the instruction register
-				F_NPC_EN	: out std_logic;					-- enables the NPC register
 				F_PC_EN		: out std_logic;					-- enables the PC register
+				F_NPC_EN	: out std_logic;					-- enables the NPC register
+				F_IR_EN		: out std_logic;					-- enables the instruction register
 				-- DECODE STAGE OUTPUTS
 				D_RF_RD1	: out std_logic;					-- enables the read port 1 of the register file
 				D_RF_RD2	: out std_logic;					-- enables the read port 2 of the register file
@@ -72,8 +72,8 @@ architecture RTL Of DLX is
 				E_BrCond	: out std_logic_vector(2 downto 0);	-- condition for branching and jumping
 				-- MEMORY STAGE OUTPUTS
 				M_REG_EN	: out std_logic;					-- enables the pipeline registers
-				MEM_RD		: out std_logic;					-- select read/write mode 1=READ 0=WRITE
-				MEM_CS		: out std_logic;					-- enables the memory
+				DMem_RD		: out std_logic;					-- select read/write mode 1=READ 0=WRITE
+				DMem_CS		: out std_logic;					-- enables the memory
 				-- WRITEBACK STAGE OUTPUTS
 				WB_Mux_sel	: out std_logic;					-- input selection of the multiplexer 0=mem 1=aluout
 				D_RF_WR		: out std_logic);					-- enables the write port of the register file

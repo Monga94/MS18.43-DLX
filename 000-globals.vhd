@@ -14,7 +14,7 @@ package myStuff is
 	constant OP_NUMB		: integer := 27;											-- Number Of Operations that can be executed
 	constant F_CTRL			: integer := 3;
 	constant D_CTRL			: integer := 5;
-	constant E_CTRL			: integer := 5;
+	constant E_CTRL			: integer := 7;
 	constant M_CTRL			: integer := 3;
 	constant WB_CTRL		: integer := 2;
 	constant CW_SIZE		: integer := F_CTRL+D_CTRL+E_CTRL+M_CTRL+WB_CTRL;			-- Control Word Size

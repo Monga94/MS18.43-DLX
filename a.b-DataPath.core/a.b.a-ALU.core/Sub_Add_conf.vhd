@@ -13,9 +13,9 @@ entity Add_gen is
 end Add_gen;
 
 -- architecture RCA_struct of Add_gen is
-	-- signal BS, Sum	: std_logic_vector(N-1 downto 0);
-	-- signal Cout		: std_logic;
-   -- signal CarryVector : std_logic_vector(N-1 downto 0);
+	-- signal BS, Sum		: std_logic_vector(N-1 downto 0);
+	-- signal Cout			: std_logic;
+	-- signal CarryVector	: std_logic_vector(N-1 downto 0);
 	--insert your desired adder here
 	-- component RCA_gen is 
 		-- generic ( N: integer := 8);
@@ -36,6 +36,7 @@ end Add_gen;
 -- begin
 	
 	-- CarryVector <= (others => Ci);
+	
 	-- SUB: xor_gen
 		-- generic map (N)
 		-- port map (B,CarryVector, BS);
@@ -51,7 +52,7 @@ end Add_gen;
 -- end RCA_struct;
 
 architecture p4_struct of Add_gen is
-	signal BS, Sum,CarryVector	: std_logic_vector(N-1 downto 0);
+	signal BS, Sum, CarryVector	: std_logic_vector(N-1 downto 0);
 	signal Cout		: std_logic;
    
 	-- insert your desired adder here
@@ -74,6 +75,7 @@ architecture p4_struct of Add_gen is
 begin
 		
 	CarryVector <= (others => Ci);
+	
 	SUB: xor_gen
 		generic map (N)
 		port map (B, CarryVector, BS);
