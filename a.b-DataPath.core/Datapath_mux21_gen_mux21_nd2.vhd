@@ -12,7 +12,6 @@ end ND2;
 architecture Behavioral of ND2 is
 
 begin
-	-- after NDDELAY; 
 	Y <= not(A and B);
 
 end Behavioral;
