@@ -29,6 +29,7 @@ entity Datapath is
 			E_MuxA_Sel:		in	std_logic;
 			E_MuxB_Sel:		in	std_logic;
 			E_ALU_Conf:		in	AluOp;
+			E_Signed:		in	std_logic;
 			E_BrCond:		in	std_logic_vector(2 downto 0);
 			E_Taken:		out std_logic;
 			--Memory Stage
@@ -95,6 +96,7 @@ architecture Structural of Datapath is
 				MuxA_Sel:		in	std_logic;
 				MuxB_Sel:		in	std_logic;
 				ALU_Config:		in	AluOp;
+				Sign:			in	std_logic;
 				Condition:		in	std_logic_vector(2 downto 0);
 				NPC_In:		    in	std_logic_vector(Nbit-1 downto 0);
 				DataA:			in	std_logic_vector(Nbit-1 downto 0);
@@ -178,6 +180,7 @@ begin
 		            MuxA_Sel		=> E_MuxA_Sel,
 		            MuxB_Sel		=> E_MuxB_Sel,
 		            ALU_Config		=> E_ALU_Conf,
+					Sign			=> E_Signed,
 		            Condition		=> E_BrCond,
 		            NPC_In			=> DtoE_NPC,
 		            DataA			=> DtoE_DataA,

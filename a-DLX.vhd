@@ -15,8 +15,8 @@ architecture RTL Of DLX is
 				Addr_bit:	integer := 5)
 		port (	CLK: 			in	std_logic;
 				RST:			in	std_logic;
-				Opcode:			out std_logic_vector(OP_CODE_SIZE downto 0); --to CU
-				Func:			out std_logic_vector(FUNC_SIZE downto 0); --to CU
+				Opcode:			out std_logic_vector(OP_CODE_SIZE-1 downto 0); --to CU
+				Func:			out std_logic_vector(FUNC_SIZE-1 downto 0); --to CU
 				--Fetch Stage
 				F_IR_EN:      	in	std_logic;
 				F_NPC_EN:     	in	std_logic;
@@ -35,6 +35,7 @@ architecture RTL Of DLX is
 				E_MuxA_Sel:		in	std_logic;
 				E_MuxB_Sel:		in	std_logic;
 				E_ALU_Conf:		in	AluOp;
+				E_Signed:		in	std_logic;
 				E_BrCond:		in	std_logic_vector(2 downto 0);
 				E_Taken:		out std_logic;
 				--Memory Stage
@@ -46,31 +47,36 @@ architecture RTL Of DLX is
 				WB_Mux_sel:		in	std_logic);
 	end component;
 
-	component DLX_CU_HardWired is 
+	component DLX_CU_HW is 
 		port(	-- INPUTS
-				OPCODE		: in  std_logic_vector(OP_CODE_SIZE - 1 downto 0);
-				FUNC		: in  std_logic_vector(FUNC_SIZE - 1 downto 0);              
+				OPCODE		: in  std_logic_vector(OP_CODE_SIZE-1 downto 0);
+				FUNC		: in  std_logic_vector(FUNC_SIZE-1 downto 0);              
 				Clk			: in  std_logic;
 				Rst			: in  std_logic;					-- Active Low
 				-- FETCH STAGE OUTPUTS
-				IR_EN		: out std_logic;					-- enables the instruction register
-				NPC_EN		: out std_logic;					-- enables the NPC register
+				F_IR_EN		: out std_logic;					-- enables the instruction register
+				F_NPC_EN	: out std_logic;					-- enables the NPC register
+				F_PC_EN		: out std_logic;					-- enables the PC register
 				-- DECODE STAGE OUTPUTS
-				DEC_EN		: out std_logic;					-- enables the register file and the pipeline registers
-				RF_RD1		: out std_logic;					-- enables the read port 1 of the register file
-				RF_RD2		: out std_logic;					-- enables the read port 2 of the register file
+				D_RF_RD1	: out std_logic;					-- enables the read port 1 of the register file
+				D_RF_RD2	: out std_logic;					-- enables the read port 2 of the register file
+				D_REG_EN	: out std_logic;					-- enables the register file and the pipeline registers
+				D_IMM_Sel	: out std_logic;					-- input selection of immediate type 0=unsigned 1=signed
+				D_Rd_Sel	: out std_logic;					-- input selection of write address 0=Itype 1=Rtype
 				-- EXECUTE STAGE OUTPUTS						
-				EXEC_EN		: out std_logic;					-- enables the pipe registers
-				MuxA_Sel	: out std_logic;					-- input selection of the first multiplexer 0=A 1=INP1
-				MuxB_Sel	: out std_logic;					-- input selection of the second multiplexer 1=B 0=INP2
-				Alu_Sel		: out AluOp;						-- alu control bit
+				E_REG_EN	: out std_logic;					-- enables the pipeline registers
+				E_MuxA_Sel	: out std_logic;					-- input selection of the first multiplexer 0=NPC 1=A
+				E_MuxB_Sel	: out std_logic;					-- input selection of the second multiplexer 0=B 1=IMM
+				E_ALU_Conf	: out AluOp;						-- alu control word
+				E_Signed	: out std_logic;					-- signed operation identifier 0=unsigned 1=signed
+				E_BrCond	: out std_logic_vector(2 downto 0);	-- condition for branching and jumping
 				-- MEMORY STAGE OUTPUTS
-				MEM_EN		: out std_logic;					-- enables the memory and the pipeline registers
-				MEM_RD		: out std_logic;					-- enables the read-out of the memory
-				MEM_WR		: out std_logic;					-- enables the write-in of the memory
+				M_REG_EN	: out std_logic;					-- enables the pipeline registers
+				MEM_RD		: out std_logic;					-- select read/write mode 1=READ 0=WRITE
+				MEM_CS		: out std_logic;					-- enables the memory
 				-- WRITEBACK STAGE OUTPUTS
-				WB_Sel		: out std_logic;					-- input selection of the multiplexer 1=mem 0=aluout
-				RF_WR		: out std_logic);					-- enables the write port of the register file
+				WB_Mux_sel	: out std_logic;					-- input selection of the multiplexer 0=mem 1=aluout
+				D_RF_WR		: out std_logic);					-- enables the write port of the register file
 	end component;
 
 	component DRAM is

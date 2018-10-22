@@ -78,7 +78,7 @@ begin
 	
 	REG_FILE: register_file_gen
 		generic map(Nbit,2**Addr_bit)
-		port map(CLK,RST,'1',RF_WR,RF_RD1,RF_RD2,WB_Addr,Rs1,Rs2,WB_Data,RF_outA,RF_outB);
+		port map(CLK,RST,REG_EN_D,RF_WR,RF_RD1,RF_RD2,WB_Addr,Rs1,Rs2,WB_Data,RF_outA,RF_outB);
 	MUXWR: MUX21_GENERIC
 		generic map(Addr_bit)
 		port map(Rd_Itype,Rd_Rtype,MuxRd_Sel,WRaddr);
