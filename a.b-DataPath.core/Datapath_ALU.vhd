@@ -35,13 +35,14 @@ architecture Structural of ALU is
 				C	: out	std_logic_vector(N-1 downto 0));
 	end component;
 	
-	component p4adder
-		generic ( N: integer := 32); -- 4n bits
-		port (	A	: in	std_logic_vector(N-1 downto 0);
-				B	: in	std_logic_vector(N-1 downto 0);
-				Cin	: in	std_logic;
-				S	: out	std_logic_vector(N-1 downto 0);
-				Cout: out	std_logic);
+	component Add_gen is 
+		generic ( N: integer := 8);
+		port (	A:		in	std_logic_vector(N-1 downto 0);
+				B:		in	std_logic_vector(N-1 downto 0);
+				Ci:		in	std_logic;
+				S:		out	std_logic_vector(N-1 downto 0);
+				Co:		out	std_logic;
+				OvFl:	out std_logic);
 	end component;
 	
 	component SHIFTER_GENERIC is
@@ -85,8 +86,8 @@ architecture Structural of ALU is
 	signal Add_Out,Shift_Out,Mux0_Out,Mux1_Out,Or_Out,And_Out,Xor_Out: std_logic_vector(N-1 downto 0);
 	
 begin
-	ADDER: p4adder
-		port map(DATA1,DATA2,Cin,Add_Out,Cout);
+	ADDER: Add_gen
+		port map(DATA1,DATA2,Cin,Add_Out,Cout,open);
 	OR_OP: or_gen
 		port map(DATA1,DATA2,Or_Out);
 	AND_OP: and_gen
@@ -148,3 +149,11 @@ begin
 		
 	end process;
 end Structural;
+
+configuration CFG_ALU of ALU is
+	for Structural
+		for ADDER : Add_gen
+			use configuration WORK.CFG_ADDER_P4;
+		end for;
+	end for;
+end CFG_ALU;
