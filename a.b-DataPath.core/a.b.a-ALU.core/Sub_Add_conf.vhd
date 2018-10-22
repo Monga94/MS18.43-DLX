@@ -6,7 +6,7 @@ entity Add_gen is
 	generic ( N: integer := 32);
 	port (	A:		in	std_logic_vector(N-1 downto 0);
 			B:		in	std_logic_vector(N-1 downto 0);
-			Ci:		in	std_logic;
+			sub:	in	std_logic;
 			S:		out	std_logic_vector(N-1 downto 0);
 			Co:		out	std_logic;
 			OvFl:	out std_logic);
@@ -16,6 +16,7 @@ end Add_gen;
 	-- signal BS, Sum		: std_logic_vector(N-1 downto 0);
 	-- signal Cout			: std_logic;
 	-- signal CarryVector	: std_logic_vector(N-1 downto 0);
+	
 	--insert your desired adder here
 	-- component RCA_gen is 
 		-- generic ( N: integer := 8);
@@ -35,7 +36,7 @@ end Add_gen;
 
 -- begin
 	
-	-- CarryVector <= (others => Ci);
+	-- CarryVector <= (others => sub);
 	
 	-- SUB: xor_gen
 		-- generic map (N)
@@ -43,7 +44,7 @@ end Add_gen;
   
 	-- ADDER: RCA_gen
 		-- generic map (N)
-		-- port map (A, BS, Ci, Sum, Cout);
+		-- port map (A, BS, sub, Sum, Cout);
 		
 	-- OvFl <= Cout xor A(N-1) xor BS(N-1) xor Sum(N-1);
 	-- S <= Sum;
@@ -53,7 +54,7 @@ end Add_gen;
 
 architecture p4_struct of Add_gen is
 	signal BS, Sum, CarryVector	: std_logic_vector(N-1 downto 0);
-	signal Cout		: std_logic;
+	signal Cout					: std_logic;
    
 	-- insert your desired adder here
 	component p4adder
@@ -74,7 +75,7 @@ architecture p4_struct of Add_gen is
 
 begin
 		
-	CarryVector <= (others => Ci);
+	CarryVector <= (others => sub);
 	
 	SUB: xor_gen
 		generic map (N)
@@ -82,7 +83,7 @@ begin
   
 	ADDER: p4adder
 		generic map (N)
-		port map (A, BS, Ci, Sum, Cout);
+		port map (A, BS, sub, Sum, Cout);
 		
 	OvFl <= Cout xor A(N-1) xor BS(N-1) xor Sum(N-1);
 	S <= Sum;
