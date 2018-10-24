@@ -10,7 +10,8 @@ end TB_FETCH;
 architecture Test of TB_FETCH is
 
 constant Nbit := 32;
-signal 
+signal Clock,Rst,En_Reg : std_logic;
+signal IMem_to_fetch,Instruction,NPC,PC,Opcode,Func : std_logic_vector(Nbit-1 downto 0);
 
 component FetchUnit is
 	generic(Nbit: integer := 32);
@@ -39,17 +40,25 @@ end component;
 
 begin
 
-
-
-
-
-
-
-
+	DUT : FetchUnit
+		generic map(Nbit);
+		port map(Clock,Rst,En_Reg,IMem_to_fetch,Instruction,NPC,PC,Opcode,Func);
+	RAM : IRAM
+		generic map(Nbit,Nbit);
+		port map(Rst,PC,Instruction);
+	TEST_P : process
+	begin
+		Rst <= '0';
+		wait 5 ns;
+		Rst <= '1';
+		En_Reg <= '1';
+		wait 1 ms;
+		Rst <= '0';
+		wait;
 
 PCLOCK : process(Clock)
 	begin
-		Clock <= not(Clock) after 0.5 ns;	
+		Clock <= not(Clock) after 5 ns;	
 	end process;
 	
 	
