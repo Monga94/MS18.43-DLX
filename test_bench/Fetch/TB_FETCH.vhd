@@ -1,6 +1,8 @@
-library IEEE;
+library ieee;
 
-use IEEE.std_logic_1164.all;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 use WORK.myStuff.all;
 
 
@@ -9,9 +11,11 @@ end TB_FETCH;
 
 architecture Test of TB_FETCH is
 
-constant Nbit := 32;
+--constant Nbit : integer := 32;
 signal Clock,Rst,En_Reg : std_logic;
-signal IMem_to_fetch,Instruction,NPC,PC,Opcode,Func : std_logic_vector(Nbit-1 downto 0);
+signal IMem_to_fetch,Instruction,NPC,PC : std_logic_vector(Nbit-1 downto 0);
+signal Opcode : std_logic_vector(5 downto 0);
+signal Func : std_logic_vector(10 downto 0);
 
 component FetchUnit is
 	generic(Nbit: integer := 32);
@@ -41,22 +45,20 @@ end component;
 begin
 
 	DUT : FetchUnit
-		generic map(Nbit);
-		port map(Clock,Rst,En_Reg,IMem_to_fetch,Instruction,NPC,PC,Opcode,Func);
+		port map(Clock,Rst,En_Reg,En_Reg,En_Reg,IMem_to_fetch,Instruction,NPC,PC,Opcode,Func);
 	RAM : IRAM
-		generic map(Nbit,Nbit);
 		port map(Rst,PC,Instruction);
 	TEST_P : process
 	begin
 		Rst <= '0';
-		wait 5 ns;
+		wait for 20 ns;
 		Rst <= '1';
 		En_Reg <= '1';
-		wait 1 ms;
+		wait for 1 ms;
 		Rst <= '0';
 		wait;
-
-PCLOCK : process(Clock)
+end process;
+	PCLOCK : process(Clock)
 	begin
 		Clock <= not(Clock) after 5 ns;	
 	end process;
