@@ -9,31 +9,31 @@ entity DLX_CU_HW is
 			OPCODE		: in  std_logic_vector(OP_CODE_SIZE-1 downto 0);
 			FUNC		: in  std_logic_vector(FUNC_SIZE-1 downto 0);              
 			Clk			: in  std_logic;
-			Rst			: in  std_logic;					-- Active Low
-			-- FETCH STAGE OUTPUTS
-			F_PC_EN		: out std_logic;					-- enables the PC register
-			F_NPC_EN	: out std_logic;					-- enables the NPC register
-			F_IR_EN		: out std_logic;					-- enables the instruction register
-			-- DECODE STAGE OUTPUTS
-			D_REG_EN	: out std_logic;					-- enables the register file and the pipeline registers
-			D_RF_RD1	: out std_logic;					-- enables the read port 1 of the register file
-			D_RF_RD2	: out std_logic;					-- enables the read port 2 of the register file
-			D_IMM_Sel	: out std_logic;					-- input selection of immediate type 0=unsigned 1=signed
-			D_Rd_Sel	: out std_logic;					-- input selection of write address 0=Itype 1=Rtype
-			-- EXECUTE STAGE OUTPUTS						
-			E_REG_EN	: out std_logic;					-- enables the pipeline registers
-			E_MuxA_Sel	: out std_logic;					-- input selection of the first multiplexer 0=NPC 1=A
-			E_MuxB_Sel	: out std_logic;					-- input selection of the second multiplexer 0=B 1=IMM
-			E_ALU_Conf	: out AluOp;						-- alu control word
-			E_Signed	: out std_logic;					-- signed operation identifier 0=unsigned 1=signed
-			E_BrCond	: out std_logic_vector(2 downto 0);	-- condition for branching and jumping
-			-- MEMORY STAGE OUTPUTS
-			M_REG_EN	: out std_logic;					-- enables the pipeline registers
-			DMem_RD		: out std_logic;					-- select read/write mode 1=READ 0=WRITE
-			DMem_CS		: out std_logic;					-- enables the memory
-			-- WRITEBACK STAGE OUTPUTS
-			WB_Mux_sel	: out std_logic;					-- input selection of the multiplexer 0=mem 1=aluout
-			D_RF_WR		: out std_logic);					-- enables the write port of the register file
+			Rst			: in  std_logic;												-- Active Low
+			-- FETCH STAGE OUTPUTS							
+			F_PC_EN		: out std_logic;												-- enables the PC register
+			F_NPC_EN	: out std_logic;												-- enables the NPC register
+			F_IR_EN		: out std_logic;												-- enables the instruction register
+			-- DECODE STAGE OUTPUTS							
+			D_REG_EN	: out std_logic;												-- enables the register file and the pipeline registers
+			D_RF_RD1	: out std_logic;												-- enables the read port 1 of the register file
+			D_RF_RD2	: out std_logic;												-- enables the read port 2 of the register file
+			D_IMM_Sel	: out std_logic;												-- input selection of immediate type 0=unsigned 1=signed
+			D_Rd_Sel	: out std_logic;												-- input selection of write address 0=Itype 1=Rtype
+			-- EXECUTE STAGE OUTPUTS													
+			E_REG_EN	: out std_logic;												-- enables the pipeline registers
+			E_MuxA_Sel	: out std_logic;												-- input selection of the first multiplexer 0=NPC 1=A
+			E_MuxB_Sel	: out std_logic;												-- input selection of the second multiplexer 0=B 1=IMM
+			E_ALU_Conf	: out AluOp;													-- alu control word
+			E_Signed	: out std_logic;												-- signed operation identifier 0=unsigned 1=signed
+			--E_BrCond	: out std_logic_vector(2 downto 0);								-- condition for branching and jumping
+			-- MEMORY STAGE OUTPUTS							
+			M_REG_EN	: out std_logic;												-- enables the pipeline registers
+			DMem_RD		: out std_logic;												-- select read/write mode 1=READ 0=WRITE
+			DMem_CS		: out std_logic;												-- enables the memory
+			-- WRITEBACK STAGE OUTPUTS							
+			WB_Mux_sel	: out std_logic;												-- input selection of the multiplexer 0=mem 1=aluout
+			D_RF_WR		: out std_logic);												-- enables the write port of the register file
 end DLX_CU_HW;
 
 architecture Implementation of DLX_CU_HW is
@@ -52,34 +52,34 @@ architecture Implementation of DLX_CU_HW is
 									"111 11101 1100111 100 11", --SGTU
 									"111 11101 1101111 100 11", --SGE
 									"111 11101 1100111 100 11", --SGEU
-									"111 11101 1100111 100 11", --SEQ
+									"111 11101 1101111 100 11", --SEQ
 									"111 11101 1101111 100 11", --SLE
 									"111 11101 1100111 100 11", --SLEU
 									"111 11101 1101111 100 11", --SLT
 									"111 11101 1100111 100 11", --SLTU
-									"111 11101 1100111 100 11", --SNE
-									"-------------", --MULT		///
+									"111 11101 1101111 100 11", --SNE
+									"111 11101 1101111 100 11", --MULT		///
 									
-									"1111110010001", --ADDI	
-									"-------------", --ADDUI		    
-									"1111110010001", --SUBI   
-									"-------------", --SUBUI          
-									"1111110010001", --ANDI             
-									"1111110010001", --ORI
-									"1111110010001", --XORI
-									"1111110010001", --SLLI
-									"1111110010001", --SRLI
-									"-------------", --SRAI
-									"-------------", --SGTI
-									"-------------", --SGTUI
-									"1111110010001", --SGEI
-									"-------------", --SGEUI
-									"-------------", --SEQI
-									"1111110010001", --SLEI
-									"1111110010001", --SLEUI
-									"-------------", --SLTI
-									"-------------", --SLTUI
-									"1111110010001", --SNEI
+									"111 11010 1111111 100 11", --ADDI	
+									"111 11000 1110111 100 11", --ADDUI		    
+									"111 11010 1111111 100 11", --SUBI   
+									"111 11000 1110111 100 11", --SUBUI          
+									"111 11000 1110111 100 11", --ANDI             
+									"111 11000 1110111 100 11", --ORI
+									"111 11000 1110111 100 11", --XORI
+									"111 11000 1110111 100 11", --SLLI
+									"111 11000 1110111 100 11", --SRLI
+									"111 11000 1111111 100 11", --SRAI
+									"111 11010 1111111 100 11", --SGTI
+									"111 11000 1110111 100 11", --SGTUI
+									"111 11010 1111111 100 11", --SGEI
+									"111 11000 1110111 100 11", --SGEUI
+									"111 11010 1111111 100 11", --SEQI
+									"111 11010 1111111 100 11", --SLEI
+									"111 11000 1110111 100 11", --SLEUI
+									"111 11010 1111111 100 11", --SLTI
+									"111 11000 1110111 100 11", --SLTUI
+									"111 11010 1111111 100 11", --SNEI
 									
 									"-------------", --BEQZ
 									"-------------", --BNEZ
@@ -88,15 +88,15 @@ architecture Implementation of DLX_CU_HW is
 									"-------------", --JAL
 									"-------------", --JALR
 									
-									"-------------", --LW
-									"-------------", --LB
-									"-------------", --LBU
-									"-------------", --LH
-									"-------------", --LHI
-									"-------------", --LHU
-									"-------------", --SW
-									"-------------", --SB
-									"-------------", --SH
+									"                        ", --LW
+									"                        ", --LB
+									"                        ", --LBU
+									"                        ", --LH
+									"                        ", --LHI
+									"                        ", --LHU
+									"                        ", --SW
+									"                        ", --SB
+									"                        ", --SH
 									"0000000000000");--NOP
 									
 	signal cw : std_logic_vector(CW_SIZE - 1 downto 0); -- full control word read from cw_array

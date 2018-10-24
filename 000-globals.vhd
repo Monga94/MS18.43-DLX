@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use work.logarithm.all;
 
 package myStuff is
 	constant Nbit		: integer := 32;
@@ -18,6 +19,8 @@ package myStuff is
 	constant M_CTRL			: integer := 3;
 	constant WB_CTRL		: integer := 2;
 	constant CW_SIZE		: integer := F_CTRL+D_CTRL+E_CTRL+M_CTRL+WB_CTRL;			-- Control Word Size
+	
+	constant NopALU			: integer := 16;
 
 -- R-Type instruction -> OPCODE field
     constant RTYPE : std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "000000";		-- for ADD, SUB, AND, OR register-to-register operation
@@ -87,7 +90,31 @@ package myStuff is
 	constant ITYPE_SGEUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111101";		-- i,0x3d
 	
 -- Alu Possible Operations
-	type AluOp is (ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, FUNCASR, NOP);
+	subtype AluOp is std_logic_vector(log2_N(NopALU)-1 downto 0);
+	--(ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, FUNCASR, NOP);
+	
+-- Alu Output select codes
+	constant ALU_ADDop		: AluOp := "0000";
+	constant ALU_SUBop		: AluOp := "0001";
+	constant ALU_ANDop		: AluOp := "0010";
+	constant ALU_ORop		: AluOp := "0011";
+	constant ALU_XORop		: AluOp := "0100";
+	constant ALU_SLLop		: AluOp := "0101";
+	constant ALU_SRLop		: AluOp := "0110";
+	constant ALU_SRAop		: AluOp := "0111";
+	constant ALU_RORop		: AluOp := "1000";
+	constant ALU_ROLop		: AluOp := "1001";
+	constant ALU_AeqBop		: AluOp := "1010";
+	constant ALU_AneBop		: AluOp := "1011";
+	constant ALU_AgtBop		: AluOp := "1100";
+	constant ALU_AgeBop		: AluOp := "1101";
+	constant ALU_AltBop		: AluOp := "1110";
+	constant ALU_AleBop		: AluOp := "1111";
+	
+	constant ALU_NOPop		: AluOp := "0000";
+	--constant ALU_ADDop		: AluOp := "0000";
+	--constant ALU_ADDop		: AluOp := "0000";
+	--constant ALU_ADDop		: AluOp := "0000";
 
 end myStuff;
 
