@@ -38,48 +38,48 @@ end DLX_CU_HW;
 
 architecture Implementation of DLX_CU_HW is
 	type op_array is array (integer range 0 to OP_NUMB - 1) of std_logic_vector(CW_SIZE - 1 downto 0);
-	signal cw_array : op_array := (	"111 11101 1101111 100 11", --ADD  --order of control signal is like the following one (not the same as in port declaration)
-									"111 11101 1100111 100 11", --ADDU
-									"111 11101 1101111 100 11", --SUB	
-									"111 11101 1100111 100 11", --SUBU			
-									"111 11101 1100111 100 11", --AND               
-									"111 11101 1100111 100 11", --OR  
-									"111 11101 1100111 100 11", --XOR
-									"111 11101 1100111 100 11", --SLL
-									"111 11101 1100111 100 11", --SRL
-									"111 11101 1101111 100 11", --SRA
-									"111 11101 1101111 100 11", --SGT
-									"111 11101 1100111 100 11", --SGTU
-									"111 11101 1101111 100 11", --SGE
-									"111 11101 1100111 100 11", --SGEU
-									"111 11101 1101111 100 11", --SEQ
-									"111 11101 1101111 100 11", --SLE
-									"111 11101 1100111 100 11", --SLEU
-									"111 11101 1101111 100 11", --SLT
-									"111 11101 1100111 100 11", --SLTU
-									"111 11101 1101111 100 11", --SNE
-									"111 11101 1101111 100 11", --MULT		///
+	signal cw_array : op_array := (	"111 11101 1101 100 11", --ADD  --order of control signal is like the following one (not the same as in port declaration)
+									"111 11101 1100 100 11", --ADDU
+									"111 11101 1101 100 11", --SUB	
+									"111 11101 1100 100 11", --SUBU			
+									"111 11101 1100 100 11", --AND               
+									"111 11101 1100 100 11", --OR  
+									"111 11101 1100 100 11", --XOR
+									"111 11101 1100 100 11", --SLL
+									"111 11101 1100 100 11", --SRL
+									"111 11101 1101 100 11", --SRA
+									"111 11101 1101 100 11", --SGT
+									"111 11101 1100 100 11", --SGTU
+									"111 11101 1101 100 11", --SGE
+									"111 11101 1100 100 11", --SGEU
+									"111 11101 1101 100 11", --SEQ
+									"111 11101 1101 100 11", --SLE
+									"111 11101 1100 100 11", --SLEU
+									"111 11101 1101 100 11", --SLT
+									"111 11101 1100 100 11", --SLTU
+									"111 11101 1101 100 11", --SNE
+									"111 11101 1101 100 11", --MULT		///
 									
-									"111 11010 1111111 100 11", --ADDI	
-									"111 11000 1110111 100 11", --ADDUI		    
-									"111 11010 1111111 100 11", --SUBI   
-									"111 11000 1110111 100 11", --SUBUI          
-									"111 11000 1110111 100 11", --ANDI             
-									"111 11000 1110111 100 11", --ORI
-									"111 11000 1110111 100 11", --XORI
-									"111 11000 1110111 100 11", --SLLI
-									"111 11000 1110111 100 11", --SRLI
-									"111 11000 1111111 100 11", --SRAI
-									"111 11010 1111111 100 11", --SGTI
-									"111 11000 1110111 100 11", --SGTUI
-									"111 11010 1111111 100 11", --SGEI
-									"111 11000 1110111 100 11", --SGEUI
-									"111 11010 1111111 100 11", --SEQI
-									"111 11010 1111111 100 11", --SLEI
-									"111 11000 1110111 100 11", --SLEUI
-									"111 11010 1111111 100 11", --SLTI
-									"111 11000 1110111 100 11", --SLTUI
-									"111 11010 1111111 100 11", --SNEI
+									"111 11010 1111 100 11", --ADDI	
+									"111 11000 1110 100 11", --ADDUI		    
+									"111 11010 1111 100 11", --SUBI   
+									"111 11000 1110 100 11", --SUBUI          
+									"111 11000 1110 100 11", --ANDI             
+									"111 11000 1110 100 11", --ORI
+									"111 11000 1110 100 11", --XORI
+									"111 11000 1110 100 11", --SLLI
+									"111 11000 1110 100 11", --SRLI
+									"111 11000 1111 100 11", --SRAI
+									"111 11010 1111 100 11", --SGTI
+									"111 11000 1110 100 11", --SGTUI
+									"111 11010 1111 100 11", --SGEI
+									"111 11000 1110 100 11", --SGEUI
+									"111 11010 1111 100 11", --SEQI
+									"111 11010 1111 100 11", --SLEI
+									"111 11000 1110 100 11", --SLEUI
+									"111 11010 1111 100 11", --SLTI
+									"111 11000 1110 100 11", --SLTUI
+									"111 11010 1111 100 11", --SNEI
 									
 									"-------------", --BEQZ
 									"-------------", --BNEZ
@@ -88,15 +88,15 @@ architecture Implementation of DLX_CU_HW is
 									"-------------", --JAL
 									"-------------", --JALR
 									
-									"                        ", --LW
-									"                        ", --LB
-									"                        ", --LBU
-									"                        ", --LH
-									"                        ", --LHI
-									"                        ", --LHU
-									"                        ", --SW
-									"                        ", --SB
-									"                        ", --SH
+									"                     ", --LW
+									"                     ", --LB
+									"                     ", --LBU
+									"                     ", --LH
+									"                     ", --LHI
+									"                     ", --LHU
+									"                     ", --SW
+									"                     ", --SB
+									"                     ", --SH
 									"0000000000000");--NOP
 									
 	signal cw : std_logic_vector(CW_SIZE - 1 downto 0); -- full control word read from cw_array
@@ -136,7 +136,7 @@ architecture Implementation of DLX_CU_HW is
 	E_MuxB_Sel	<=	E_cw();
 	E_ALU_Conf	<=	aluOpcode3;
 	E_Signed	<=	E_cw();
-	E_BrCond	<=	E_cw();
+	--E_BrCond	<=	E_cw();
 	
 	-- FOURTH PIPE STAGE OUTPUTS
 	M_REG_EN	<=	M_cw();
@@ -153,15 +153,15 @@ architecture Implementation of DLX_CU_HW is
 	begin  -- process Clk			
 		if Clk'event and Clk = '0' then  		-- rising clock edge
 			if Rst = '0' then					-- synchronous reset (active low)
-				F_cw <= (others => '0');
-				D_cw <= (others => '0');
-				E_cw <= (others => '0');
-				M_cw <= (others => '0');
-				W_cw <= (others => '0');
+				F_cw <= '1' & (others => '0');
+				D_cw <= '1' & (others => '0');
+				E_cw <= '1' & (others => '0');
+				M_cw <= '1' & (others => '0');
+				W_cw <= '1' & (others => '0');
 				
-				aluOpcode1 <= IDLE;	
-				aluOpcode2 <= IDLE;
-				aluOpcode3 <= IDLE;		
+				aluOpcode1 <= ALU_NOPop;	
+				aluOpcode2 <= ALU_NOPop;
+				aluOpcode3 <= ALU_NOPop;		
 			else
 				F_cw <= cw;
 				D_cw <= F_cw(CW_SIZE - 1 - F_CTRL downto 0);
@@ -185,7 +185,6 @@ architecture Implementation of DLX_CU_HW is
 		case OPCODE is
 	        --case of R type requires analysis of FUNC
 			when RTYPE =>
-				
 				case FUNC is
 					when RTYPE_NOP	=> 
 						cw <= ;
@@ -362,7 +361,9 @@ architecture Implementation of DLX_CU_HW is
 			when ITYPE_SGEUI =>
 				cw <= ;
 				aluOpcode_i <= ;			
-			when others => aluOpcode_i <= IDLE;
+			when others => 
+				cw <= (others => '0');
+				aluOpcode_i <= ALU_NOPop;
 		end case;
 	end process ALU_OP_CODE_P;
 	

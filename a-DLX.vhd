@@ -3,7 +3,6 @@ use ieee.std_logic_1164.all;
 use work.all;
 
 entity DLX is 
-	generic(); --?
 	port(	CLK:	in std_logic;
 			RST:	in std_logic);
 end DLX;
@@ -36,8 +35,8 @@ architecture RTL Of DLX is
 				E_MuxB_Sel:		in	std_logic;
 				E_ALU_Conf:		in	AluOp;
 				E_Signed:		in	std_logic;
-				E_BrCond:		in	std_logic_vector(2 downto 0);
-				E_Taken:		out std_logic;
+				--E_BrCond:		in	std_logic_vector(2 downto 0);
+				--E_Taken:		out std_logic;
 				--Memory Stage
 				M_REG_EN:		in	std_logic;
 				DMem_DataOut:	in	std_logic_vector(Nbit-1 downto 0);
@@ -69,7 +68,7 @@ architecture RTL Of DLX is
 				E_MuxB_Sel	: out std_logic;					-- input selection of the second multiplexer 0=B 1=IMM
 				E_ALU_Conf	: out AluOp;						-- alu control word
 				E_Signed	: out std_logic;					-- signed operation identifier 0=unsigned 1=signed
-				E_BrCond	: out std_logic_vector(2 downto 0);	-- condition for branching and jumping
+				--E_BrCond	: out std_logic_vector(2 downto 0);	-- condition for branching and jumping
 				-- MEMORY STAGE OUTPUTS
 				M_REG_EN	: out std_logic;					-- enables the pipeline registers
 				DMem_RD		: out std_logic;					-- select read/write mode 1=READ 0=WRITE
@@ -99,13 +98,13 @@ architecture RTL Of DLX is
 
 begin
 	DATAPATH: Datapath
-		generic map(32);
+		generic map(Nbit,RF_SIZE);
 		port map(CLK,RST,IR_EN,NPC_EN,PC_EN,IMemToIR_Data,RF_RD1,RF_RD2,REG_EN_DEC,)
 	IRAM: IRAM
-		generic map();
+		generic map(IRAM_DEPTH,Nbit);
 		port map(RST,PCToIMem,IMemToIR_Data);
 	DRAM: DRAM
-		generic map();
+		generic map(Nbit,DRAM_DEPTH);
 		port map(DP_DMem,DRamAddress,DMem_DP);
 
 

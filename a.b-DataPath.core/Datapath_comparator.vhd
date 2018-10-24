@@ -16,13 +16,13 @@ architecture Structural of Comparator is
 	signal Cout,Z	: std_logic;
 
 	component Add_gen is 
-		generic ( N: integer := 8);
-		port (	A:		in	std_logic_vector(N-1 downto 0);
-				B:		in	std_logic_vector(N-1 downto 0);
-				sub:	in	std_logic;
-				S:		out	std_logic_vector(N-1 downto 0);
-				Co:		out	std_logic;
-				OvFl:	out std_logic);
+		generic ( N: integer := 32);
+		port (	A:			in	std_logic_vector(N-1 downto 0);
+				B:			in	std_logic_vector(N-1 downto 0);
+				sub:		in	std_logic;
+				S:			out	std_logic_vector(N-1 downto 0);
+				Co:			out	std_logic;
+				Sign_OF:	out std_logic);
 	end component;
 
 begin
