@@ -74,7 +74,7 @@ The first G$-$block generate only G$_{i:j}$ and the other PG$-$block generate bo
 
 \paragraph{Sum Generator}
 
-This block is a Carry$-$Select Adder, each subblock use a Ripple Carry Adder for partial sums; 
+This block is a Carry$-$Select Adder, each subblock use a Ripple Carry Adder for partial sums. 
 
 \begin{figure}[h]
 \centering
@@ -108,16 +108,23 @@ We choose this configuration in order to have the same delay for all bits of ope
 
 \subsection{Comparator}
 
-We use the comparator for conditional instructions. We implement a classic architecture, using an adder in
+We use the comparator for conditional instructions. We choose to implement a classic architecture, using an adder in
 subtraction configuration and gates. The architecture is the following:
 
-\begin{figure}[h]
+\begin{figure}[!h]
 \centering
-\includegraphics[scale = 0.5]{chapters/figures/comparator} 
+\includegraphics[scale = 0.7]{chapters/figures/comparator} 
 \caption{Comparator.}
 \label{fig:comparator}  % here is the figure label
 \end{figure}
 
 \FloatBarrier
+
+Then we implement a process which verifies if the input condition from the C.U. is satisfied or not, and send a signal Taken in output. 
+(Taken = '1' means satisfied and viceversa, See Appendix B for VHDL code).
+
+
+
+
 
  
