@@ -56,6 +56,12 @@ architecture Structural of ALU is
 				OUTPUT: out std_logic_vector(N-1 downto 0));
 	end component;
 	
+	component Comparator 
+		generic (Nbit: integer := 32);
+		port(	DATA1,DATA2:	in 	std_logic_vector(Nbit-1 downto 0);
+				EQ,LT,GT:		out std_logic);
+	end component;
+	
 	--component Boothmul is 
 	--	generic (	N : 	integer := 16
 	--				logN: 	integer := 4);
@@ -63,13 +69,13 @@ architecture Structural of ALU is
 	--			P 	: 	Out std_logic_vector(N+logN downto 0));
 	--end component;
 	
-	component MUX21_GENERIC
-		generic (N: integer := 32);
-		port (	A:	in	std_logic_vector(N-1 downto 0) ;
-				B:	in	std_logic_vector(N-1 downto 0);
-				S:	in	std_logic;
-				Y:	out	std_logic_vector(N-1 downto 0));
-	end component;
+	-- component MUX21_GENERIC
+		-- generic (N: integer := 32);
+		-- port (	A:	in	std_logic_vector(N-1 downto 0) ;
+				-- B:	in	std_logic_vector(N-1 downto 0);
+				-- S:	in	std_logic;
+				-- Y:	out	std_logic_vector(N-1 downto 0));
+	-- end component;
 	
 	component mux51_generic is
 		generic (	N: integer:= 32);			

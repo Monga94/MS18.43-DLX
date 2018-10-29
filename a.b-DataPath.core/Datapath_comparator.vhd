@@ -37,6 +37,26 @@ begin
 	GT <= Cout AND (NOT Z);
 	LT <= NOT Cout;
 	
+		-- 000 NEQ
+		-- 001 EQ
+		-- 010 GT
+		-- 011 GE
+		-- 100 LT
+		-- 101 LE
+			
+	process(Condition,Equal,Less,Great)
+		begin
+			case Condition is
+				when "000" =>	Taken <= NOT(Equal);
+				when "001" =>	Taken <= Equal;
+				when "010" =>	Taken <= Great;
+                when "011" =>	Taken <= Great OR Equal;
+                when "100" =>	Taken <= Less;
+                when "101" =>	Taken <= Less OR Equal;
+				when others => 	Taken <= '0';
+			end case;
+	end process;
+	
 end Structural;
 
 configuration CFG_COMP of Comparator is

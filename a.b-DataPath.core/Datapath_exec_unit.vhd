@@ -28,7 +28,6 @@ end ExecutionUnit;
 
 architecture Behavioural of ExecutionUnit is
 	signal Op1,Op2,ALU_res	: std_logic_vector(Nbit-1 downto 0);
-	signal Equal,Less,Great	: std_logic;
 	
 	component D_Reg_generic
 		generic (N: integer := 32);
@@ -55,12 +54,6 @@ architecture Behavioural of ExecutionUnit is
 				OUTALU			: out 	std_logic_vector(N-1 downto 0);
 				Cout			: out  	std_logic);
 	end component;
-	
-	component Comparator 
-		generic (Nbit: integer := 32);
-		port(	DATA1,DATA2:	in 	std_logic_vector(Nbit-1 downto 0);
-				EQ,LT,GT:		out std_logic);
-	end component;
 
 begin
 	
@@ -82,27 +75,5 @@ begin
 	REGWR: D_Reg_generic
 		generic map(Addr_bit)
 		port map(Wr_Addr_D,CLK,RST,REG_EN_E,Wr_Addr_E);
-	COMP: Comparator
-		generic map(Nbit)
-		port map(DataA,NPC_In,Equal,Less,Great);
-		-- 000 EQ
-		-- 001 NEQ
-		-- 010 GT
-		-- 011 GE
-		-- 100 LT
-		-- 101 LE
-			
-	process(Condition,Equal,Less,Great)
-		begin
-			case Condition is
-				when "000" =>	Taken <= Equal;
-				when "001" =>	Taken <= NOT(Equal);
-				when "010" =>	Taken <= Great;
-                when "011" =>	Taken <= Great OR Equal;
-                when "100" =>	Taken <= Less;
-                when "101" =>	Taken <= Less OR Equal;
-				when others => 	Taken <= '0';
-			end case;
-	end process;
 	
 end Behavioural; 
