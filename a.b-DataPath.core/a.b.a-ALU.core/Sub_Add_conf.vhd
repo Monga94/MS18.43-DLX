@@ -9,7 +9,8 @@ entity Add_gen is
 			sub:		in	std_logic;
 			S:			out	std_logic_vector(N-1 downto 0);
 			Co:			out	std_logic;
-			Sign_OF:	out std_logic);
+			Sign_OF:	out std_logic;
+			Unsign_OF:	out std_logic);
 end Add_gen;
 
 architecture RCA_struct of Add_gen is
@@ -17,7 +18,7 @@ architecture RCA_struct of Add_gen is
 	signal Cout			: std_logic;
 	signal CarryVector	: std_logic_vector(N-1 downto 0);
 	
-	component RCA_gen is 
+	component RCA_gen
 		generic ( N: integer := 8);
 		port (	A:	In	std_logic_vector(N-1 downto 0);
 				B:	In	std_logic_vector(N-1 downto 0);
@@ -26,7 +27,7 @@ architecture RCA_struct of Add_gen is
 				Co:	Out	std_logic);
 	end component;
 	
-	component xor_gen is
+	component xor_gen
 		generic ( N : integer := 32);
 		port (	A	: in	std_logic_vector(N-1 downto 0);
 				B	: in	std_logic_vector(N-1 downto 0);
@@ -46,6 +47,7 @@ begin
 		port map (A, BS, sub, Sum, Cout);
 		
 	Sign_OF <= Cout xor A(N-1) xor BS(N-1) xor Sum(N-1);
+	Unsign_OF <= sub XOR Cout;
 	S <= Sum;
 	Co <= Cout;
 
@@ -84,6 +86,7 @@ begin
 		port map (A, BS, sub, Sum, Cout);
 		
 	Sign_OF <= Cout xor A(N-1) xor BS(N-1) xor Sum(N-1);
+	Unsign_OF <= sub XOR Cout;
 	S <= Sum;
 	Co <= Cout;
 

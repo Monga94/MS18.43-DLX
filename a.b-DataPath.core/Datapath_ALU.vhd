@@ -9,11 +9,14 @@ entity ALU is
 	port (	FUNC			: in	AluOp;
 			Sign			: in	std_logic;
 			DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
-			OUTALU			: out 	std_logic_vector(N-1 downto 0);
-			Cout			: out  	std_logic);
+			OUTALU			: out 	std_logic_vector(N-1 downto 0));
 end ALU;
 
 architecture Structural of ALU is
+
+	signal Cin,L_A,L_R,S_R:	std_logic;
+	signal Mux_sel:	std_logic_vector(2 downto 0);	
+	signal Add_Out,Shift_Out,Mux0_Out,Mux1_Out,Or_Out,And_Out,Xor_Out: std_logic_vector(N-1 downto 0);
 
 	component and_gen
 		generic ( N : integer := 32);
@@ -43,7 +46,8 @@ architecture Structural of ALU is
 				sub:		in	std_logic;
 				S:			out	std_logic_vector(N-1 downto 0);
 				Co:			out	std_logic;
-				Sign_OF:	out std_logic);
+				Sign_OF:	out std_logic;
+				Unsign_OF:	out std_logic);
 	end component;
 	
 	component SHIFTER_GENERIC is
@@ -57,9 +61,16 @@ architecture Structural of ALU is
 	end component;
 	
 	component Comparator 
-		generic (Nbit: integer := 32);
-		port(	DATA1,DATA2:	in 	std_logic_vector(Nbit-1 downto 0);
-				EQ,LT,GT:		out std_logic);
+		generic ( Nbit : integer := 32);
+		port(	Diff:	in 	std_logic_vector(Nbit-1 downto 0);
+				Cout:	in	std_logic;
+				Sign:	in	std_logic;
+				Ne:		out std_logic;
+				Eq:		out std_logic;
+				Gt:		out std_logic;
+				Ge:		out std_logic;
+				Lt:		out std_logic;
+				Le:		out std_logic);
 	end component;
 	
 	--component Boothmul is 
@@ -88,21 +99,15 @@ architecture Structural of ALU is
 				Y:	Out	std_logic_vector(N-1 downto 0));
 	end component;
 	
-	signal Cin,L_A,L_R,S_R:	std_logic;
-	signal Mux_sel:	std_logic_vector(2 downto 0);	
-	signal Add_Out,Shift_Out,Mux0_Out,Mux1_Out,Or_Out,And_Out,Xor_Out: std_logic_vector(N-1 downto 0);
-	
 begin
 	ADDER: Add_gen
-		port map(DATA1,DATA2,Cin,Add_Out,Cout,open);
+		port map(DATA1,DATA2,Cin,Add_Out,Cout,open,open);
 	OR_OP: or_gen
 		port map(DATA1,DATA2,Or_Out);
 	AND_OP: and_gen
 		port map(DATA1,DATA2,And_Out);
 	XOR_OP: xor_gen
 		port map(DATA1,DATA2,Xor_Out);
-	Mux: mux51_generic
-		port map(Add_Out,And_Out,Or_Out,Xor_Out,Shift_Out,Mux_sel,OUTALU);
 	--Mux0: MUX21_GENERIC
 	--	port map(Add_Out,Xor_Out,Mux_sel(0),Mux0_Out);
 	--Mux1: MUX21_GENERIC
@@ -111,8 +116,13 @@ begin
 	--	port map(Mux0_Out,Mux1_Out,Mux_sel(1),OUTALU);
 	SH_ROT:	SHIFTER_GENERIC
 		port map(DATA1,DATA2,L_A,L_R,S_R,Shift_Out);
+	COMP: Comparator
+		generic map(Nbit)
+		port map(DataA,NPC_In,Equal,Less,Great);
 	--MUL: Boothmul
 		--port map(DATA1,DATA2,Mul_Out);
+	Mux: mux51_generic
+		port map(Add_Out,And_Out,Or_Out,Xor_Out,Shift_Out,Mux_sel,OUTALU);
 		
 	process(FUNC)
 	--(ADD,SUB,BITAND,BITOR,BITXOR,FUNCLSL,FUNCLSR,FUNCRL,FUNCRR,MULT,FUNCASL,FUNCASR,NOP);
