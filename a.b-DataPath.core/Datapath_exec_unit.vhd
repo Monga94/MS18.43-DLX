@@ -51,8 +51,7 @@ architecture Behavioural of ExecutionUnit is
 		port (	FUNC			: in	AluOp;
 				Sign			: in	std_logic;
 				DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
-				OUTALU			: out 	std_logic_vector(N-1 downto 0);
-				Cout			: out  	std_logic);
+				OUTALU			: out 	std_logic_vector(N-1 downto 0));
 	end component;
 
 begin
