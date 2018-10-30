@@ -11,7 +11,9 @@ end TB_FETCH;
 
 architecture Test of TB_FETCH is
 
-	signal Clock,Rst,En_Reg : std_logic;
+	signal Clock : std_logic := '0';
+	signal Rst : std_logic := '1';
+	signal En_Reg : std_logic := '0';
 	signal IMem_to_fetch,Instruction,NPC 	: std_logic_vector(Nbit-1 downto 0);
 	signal PC								: std_logic_vector(IRAM_DEPTH-1 downto 0);
 	signal Opcode : std_logic_vector(5 downto 0);
@@ -50,20 +52,25 @@ begin
 		port map(Clock,Rst,En_Reg,En_Reg,En_Reg,IMem_to_fetch,Instruction,NPC,PC,Opcode,Func);
 	RAM : IRAM
 		generic map(IRAM_DEPTH,Nbit)
-		port map(Rst,PC,Instruction);
+		port map(Rst,PC,IMem_to_fetch);
+		
 	TEST_P : process
 	begin
 		Rst <= '0';
-		wait for 20 ns;
+		wait for 100 ns;
 		Rst <= '1';
 		En_Reg <= '1';
 		wait for 1 ms;
 		Rst <= '0';
 		wait;
-end process;
-	PCLOCK : process(Clock)
+	end process;
+	
+	PCLOCK : process
 	begin
-		Clock <= not(Clock) after 5 ns;	
+		Clock <= '1';
+		wait for 5 ns;
+		Clock <= '0';
+		wait for 5 ns;
 	end process;
 	
 	
