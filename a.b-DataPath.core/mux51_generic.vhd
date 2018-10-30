@@ -3,7 +3,7 @@ use IEEE.std_logic_1164.all; --  libreria IEEE con definizione tipi standard log
 
 
 entity mux51_generic is
-	generic (	N: integer:= 32);
+	generic (	N: integer:= 4);
 	port (		A:	In	std_logic_vector(N-1 downto 0);
 				B:	In	std_logic_vector(N-1 downto 0);
 				C:	In	std_logic_vector(N-1 downto 0);

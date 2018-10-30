@@ -104,8 +104,8 @@ package myStuff is
 	constant ALU_SRAop		: AluOp := "0111";
 	constant ALU_RORop		: AluOp := "1000";
 	constant ALU_ROLop		: AluOp := "1001";
-	constant ALU_AeqBop		: AluOp := "1010";
-	constant ALU_AneBop		: AluOp := "1011";
+	constant ALU_AneBop		: AluOp := "1010";
+	constant ALU_AeqBop		: AluOp := "1011";
 	constant ALU_AgtBop		: AluOp := "1100";
 	constant ALU_AgeBop		: AluOp := "1101";
 	constant ALU_AltBop		: AluOp := "1110";

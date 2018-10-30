@@ -4,13 +4,13 @@ use ieee.std_logic_unsigned.all;
 use ieee.std_logic_arith.all;
 
 entity Boothmul is 
-	generic (	N : 	integer := 8
-				logN: 	integer := 3);
+	generic (	N : 	integer := 8);
 	port( 	A,B : 	In std_logic_vector(N-1 downto 0);
 			P 	: 	Out std_logic_vector(N+logN downto 0));
 end Boothmul;
 
 architecture BEHAVIORAL of Boothmul is
+	constant logN : integer := log2_N(N);
 
 	type SignalVector1 is array(logN-1 downto 0) of std_logic_vector(logN-1 downto 0);
 	type SignalVector2 is array(logN-1 downto 0) of std_logic_vector(N+logN downto 0);

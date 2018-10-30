@@ -14,9 +14,11 @@ end ALU;
 
 architecture Structural of ALU is
 
-	signal Cin,L_A,L_R,S_R:	std_logic;
-	signal Mux_sel:	std_logic_vector(2 downto 0);	
-	signal Add_Out,Shift_Out,Mux0_Out,Mux1_Out,Or_Out,And_Out,Xor_Out: std_logic_vector(N-1 downto 0);
+	signal Sub,L_A,L_R,S_R										: std_logic;
+	signal Comp_Sel,Out_Sel										: std_logic_vector(2 downto 0);	
+	signal And_Out,Or_Out,Xor_Out,Add_Out,Shift_Out,Comp_ext	: std_logic_vector(N-1 downto 0);
+	signal AneB,AeqB,AgtB,AgeB,AltB,AleB,Comp_Out				: std_logic;
+	
 
 	component and_gen
 		generic ( N : integer := 32);
@@ -88,83 +90,123 @@ architecture Structural of ALU is
 				-- Y:	out	std_logic_vector(N-1 downto 0));
 	-- end component;
 	
-	component mux51_generic is
+	component mux81_logic
+		port (		A:	In	std_logic;
+					B:	In	std_logic;
+					C:	In	std_logic;
+					D:	In	std_logic;
+					E:	In	std_logic;
+					F:	In	std_logic;
+					G:	In	std_logic;
+					H:	In	std_logic;
+					S:	In	std_logic_vector(2 downto 0);
+					Y:	Out	std_logic);
+	end component;
+	
+	component mux81_generic is
 		generic (	N: integer:= 32);			
-		port (	A:	In	std_logic_vector(N-1 downto 0);
-				B:	In	std_logic_vector(N-1 downto 0);
-				C:	In	std_logic_vector(N-1 downto 0);
-				D:	In	std_logic_vector(N-1 downto 0);
-				E:	In	std_logic_vector(N-1 downto 0);
-				S:	In	std_logic_vector(2 downto 0);
-				Y:	Out	std_logic_vector(N-1 downto 0));
+		port (		A:	In	std_logic_vector(N-1 downto 0);
+					B:	In	std_logic_vector(N-1 downto 0);
+					C:	In	std_logic_vector(N-1 downto 0);
+					D:	In	std_logic_vector(N-1 downto 0);
+					E:	In	std_logic_vector(N-1 downto 0);
+					F:	In	std_logic_vector(N-1 downto 0);
+					G:	In	std_logic_vector(N-1 downto 0);
+					H:	In	std_logic_vector(N-1 downto 0);
+					S:	In	std_logic_vector(2 downto 0);
+					Y:	Out	std_logic_vector(N-1 downto 0));
 	end component;
 	
 begin
-	ADDER: Add_gen
-		port map(DATA1,DATA2,Cin,Add_Out,Cout,open,open);
-	OR_OP: or_gen
-		port map(DATA1,DATA2,Or_Out);
-	AND_OP: and_gen
-		port map(DATA1,DATA2,And_Out);
-	XOR_OP: xor_gen
-		port map(DATA1,DATA2,Xor_Out);
-	--Mux0: MUX21_GENERIC
-	--	port map(Add_Out,Xor_Out,Mux_sel(0),Mux0_Out);
-	--Mux1: MUX21_GENERIC
-	--	port map(And_Out,Or_Out,Mux_sel(0),Mux1_Out);
-	--MuxOut: MUX21_GENERIC
-	--	port map(Mux0_Out,Mux1_Out,Mux_sel(1),OUTALU);
-	SH_ROT:	SHIFTER_GENERIC
-		port map(DATA1,DATA2,L_A,L_R,S_R,Shift_Out);
-	COMP: Comparator
-		generic map(Nbit)
-		port map(DataA,NPC_In,Equal,Less,Great);
-	--MUL: Boothmul
-		--port map(DATA1,DATA2,Mul_Out);
-	Mux: mux51_generic
-		port map(Add_Out,And_Out,Or_Out,Xor_Out,Shift_Out,Mux_sel,OUTALU);
-		
-	process(FUNC)
+
+	ALU_Brain: process(FUNC)
 	--(ADD,SUB,BITAND,BITOR,BITXOR,FUNCLSL,FUNCLSR,FUNCRL,FUNCRR,MULT,FUNCASL,FUNCASR,NOP);
 	begin
-		
-		case FUNC is
-			when ADD		=>	Cin <= '0';				--add
-								Mux_sel <= "000";
-			when SUB 		=>	Cin <= '1';				--sub
-								Mux_sel <= "000";
-			when BITAND 	=>	Mux_sel <= "001";		--and
-			when BITOR		=>	Mux_sel <= "010";		--or
-			when BITXOR 	=>	Mux_sel <= "011";		--xor 
-			when FUNCLSL	=>	L_A <= '1';				--FUNCLSL
+		Sub <= '0';
+		L_A <= '1';
+		L_R <= '1';
+		S_R <= '1';
+		Comp_Sel <= "111";
+		Out_Sel <= "111";
+		case FUNC is  
+			when ALU_ANDop 	=>	Out_Sel <= "000";	
+			when ALU_ORop	=>	Out_Sel <= "001";	
+			when ALU_XORop 	=>	Out_Sel <= "010";
+			when ALU_ADDop	=>	Out_Sel <= "011";   
+			when ALU_SUBop	=>	Sub <= '1';			
+								Out_Sel <= "011"; 	
+			when ALU_SLLop	=>	L_A <= '1';			
+								L_R <= '1';         
+								S_R <= '1';         
+								Out_Sel <= "100";   
+			when ALU_SRLop	=>	L_A <= '1';			
+								L_R <= '0';         
+								S_R <= '1';         
+								Out_Sel <= "100";   
+			when ALU_SRAop	=>	L_A <= '0';			
 								L_R <= '1';
 								S_R <= '1';
-								Mux_sel <= "100";
-			when FUNCLSR	=>	L_A <= '1';				--FUNCLSR
-								L_R <= '0';
-								S_R <= '1';
-								Mux_sel <= "100";
-			when FUNCRL		=>	L_A <= '1';				--FUNCRL
+								Out_Sel <= "100";
+			when ALU_ROLop	=>	L_A <= '1';			
 								L_R <= '1';
 								S_R <= '0';
-								Mux_sel <= "100";
-			when FUNCRR		=>	L_A <= '1';				--FUNCRR
+								Out_Sel <= "100";
+			when ALU_RORop	=>	L_A <= '1';			
 								L_R <= '0';
 								S_R <= '0';
-								Mux_sel <= "100";
-			-- when FUNCASL	=>	L_A <= '0';				--FUNCASL
-								-- L_R <= '1';
-								-- S_R <= '1';
-								-- Mux_sel <= "100";
-			when FUNCASR	=>	L_A <= '0';				--FUNCASR
-								L_R <= '1';
-								S_R <= '1';
-								Mux_sel <= "100";
-			when others		=>	Cin <= '0'; 			--add
-								Mux_sel <= "000";
-		end case;	
-		
+								Out_Sel <= "100";
+			when ALU_AneBop	=>	Sub <= '1';
+								Comp_Sel <= "000";
+								Out_Sel <= "101";
+			when ALU_AeqBop	=>	Sub <= '1';
+								Comp_Sel <= "001";
+								Out_Sel <= "101";
+			when ALU_AgtBop	=>	Sub <= '1';
+								Comp_Sel <= "010";
+								Out_Sel <= "101";
+			when ALU_AgeBop	=>	Sub <= '1';
+								Comp_Sel <= "011";
+								Out_Sel <= "101";
+			when ALU_AltBop	=>	Sub <= '1';
+								Comp_Sel <= "100";
+								Out_Sel <= "101";
+			when ALU_AleBop	=>	Sub <= '1';
+								Comp_Sel <= "101";
+								Out_Sel <= "101";
+			when others		=>	Out_Sel <= "111";
+		end case;
 	end process;
+	
+	AND_OP: and_gen
+		generic map(N)
+		port map(DATA1,DATA2,And_Out);
+	OR_OP: or_gen
+		generic map(N)
+		port map(DATA1,DATA2,Or_Out);
+	XOR_OP: xor_gen
+		generic map(N)
+		port map(DATA1,DATA2,Xor_Out);
+	ADDER: Add_gen
+		generic map(N)
+		port map(DATA1,DATA2,Sub,Add_Out,Cout,open,open);
+	SH_ROT:	SHIFTER_GENERIC
+		generic map(N)
+		port map(DATA1,DATA2,L_A,L_R,S_R,Shift_Out);
+	COMP: Comparator
+		generic map(N)
+		port map(Add_Out,Cout,Sign,AneB,AeqB,AgtB,AgeB,AltB,AleB);
+	-- MUL: Boothmul
+		-- generic map(N)
+		-- port map(DATA1,DATA2,Mul_Out);
+	MuxComp: mux81_logic
+		port map(AneB,AeqB,AgtB,AgeB,AltB,AleB,'0','0',Comp_sel,Comp_Out);
+		
+	Comp_ext <= (others => '0') & Comp_Out;
+		
+	MuxOut: mux81_generic
+		generic map(N)
+		port map(And_Out,Or_Out,Xor_Out,Add_Out,Shift_Out,Comp_ext,(others => '0'),(others => '0'),Out_sel,OUTALU);
+		
 end Structural;
 
 configuration CFG_ALU of ALU is
