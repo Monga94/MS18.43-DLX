@@ -3,10 +3,11 @@ use IEEE.std_logic_1164.all;
 use IEEE.std_logic_unsigned.all;
 use IEEE.std_logic_arith.all;
 use WORK.myStuff.all;
+use work.logarithm.all;
 
 entity ALU is
 	generic ( N : integer := 32);
-	port (	FUNC			: in	AluOp;
+	port (	FUNC			: in	std_logic_vector(SelALU-1 downto 0);
 			Sign			: in	std_logic;
 			DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
 			OUTALU			: out 	std_logic_vector(N-1 downto 0));
@@ -14,10 +15,12 @@ end ALU;
 
 architecture Structural of ALU is
 
-	signal Sub,L_A,L_R,S_R										: std_logic;
+	signal Sub,Cout,L_A,L_R,S_R									: std_logic;
 	signal Comp_Sel,Out_Sel										: std_logic_vector(2 downto 0);	
 	signal And_Out,Or_Out,Xor_Out,Add_Out,Shift_Out,Comp_ext	: std_logic_vector(N-1 downto 0);
 	signal AneB,AeqB,AgtB,AgeB,AltB,AleB,Comp_Out				: std_logic;
+	signal Sign_OF,Unsign_OF,OvFl								: std_logic;
+	signal Over,Add_Ok											: std_logic_vector(N-1 downto 0);
 	
 
 	component and_gen
@@ -55,7 +58,7 @@ architecture Structural of ALU is
 	component SHIFTER_GENERIC is
 		generic(N: integer := 32);
 		port(	A: in std_logic_vector(N-1 downto 0);
-				B: in std_logic_vector(N-1 downto 0);
+				B: in std_logic_vector(log2_N(N)-1 downto 0);
 				LOGIC_ARITH: in std_logic;	-- 1 = logic, 0 = arith
 				LEFT_RIGHT: in std_logic;	-- 1 = left, 0 = right
 				SHIFT_ROTATE: in std_logic;	-- 1 = shift, 0 = rotate
@@ -82,13 +85,20 @@ architecture Structural of ALU is
 	--			P 	: 	Out std_logic_vector(N+logN downto 0));
 	--end component;
 	
-	-- component MUX21_GENERIC
-		-- generic (N: integer := 32);
-		-- port (	A:	in	std_logic_vector(N-1 downto 0) ;
-				-- B:	in	std_logic_vector(N-1 downto 0);
-				-- S:	in	std_logic;
-				-- Y:	out	std_logic_vector(N-1 downto 0));
-	-- end component;
+	component MUX21
+		port (	A:	in	std_logic;
+				B:	in	std_logic;
+				S:	in	std_logic;
+				Y:	out	std_logic);
+	end component;
+	
+	component MUX21_GENERIC
+		generic (N: integer := 32);
+		port (	A:	in	std_logic_vector(N-1 downto 0) ;
+				B:	in	std_logic_vector(N-1 downto 0);
+				S:	in	std_logic;
+				Y:	out	std_logic_vector(N-1 downto 0));
+	end component;
 	
 	component mux81_logic
 		port (		A:	In	std_logic;
@@ -128,52 +138,71 @@ begin
 		S_R <= '1';
 		Comp_Sel <= "111";
 		Out_Sel <= "111";
-		case FUNC is  
-			when ALU_ANDop 	=>	Out_Sel <= "000";	
-			when ALU_ORop	=>	Out_Sel <= "001";	
-			when ALU_XORop 	=>	Out_Sel <= "010";
-			when ALU_ADDop	=>	Out_Sel <= "011";   
-			when ALU_SUBop	=>	Sub <= '1';			
+		case conv_integer(unsigned(FUNC)) is  
+			when conv_integer(unsigned(ALU_ANDop)) 	=>	
+								Out_Sel <= "000";	
+			when conv_integer(unsigned(ALU_ORop))	=>	
+								Out_Sel <= "001";	
+			when conv_integer(unsigned(ALU_XORop))	=>	
+								Out_Sel <= "010";
+			when conv_integer(unsigned(ALU_ADDop))	=>	
+								Out_Sel <= "011";   
+			when conv_integer(unsigned(ALU_SUBop))	=>	
+								Sub <= '1';			
 								Out_Sel <= "011"; 	
-			when ALU_SLLop	=>	L_A <= '1';			
+			when conv_integer(unsigned(ALU_SLLop))	=>	
+								L_A <= '1';			
 								L_R <= '1';         
 								S_R <= '1';         
 								Out_Sel <= "100";   
-			when ALU_SRLop	=>	L_A <= '1';			
+			when conv_integer(unsigned(ALU_SRLop))	=>	
+								L_A <= '1';			
 								L_R <= '0';         
 								S_R <= '1';         
 								Out_Sel <= "100";   
-			when ALU_SRAop	=>	L_A <= '0';			
-								L_R <= '1';
+			when conv_integer(unsigned(ALU_SRAop))	=>	
+								L_A <= '0';			
+								L_R <= '0';
 								S_R <= '1';
 								Out_Sel <= "100";
-			when ALU_ROLop	=>	L_A <= '1';			
+			when conv_integer(unsigned(ALU_ROLop))	=>	
+								L_A <= '1';			
 								L_R <= '1';
 								S_R <= '0';
 								Out_Sel <= "100";
-			when ALU_RORop	=>	L_A <= '1';			
+			when conv_integer(unsigned(ALU_RORop))	=>	
+								L_A <= '1';			
 								L_R <= '0';
 								S_R <= '0';
 								Out_Sel <= "100";
-			when ALU_AneBop	=>	Sub <= '1';
+			when conv_integer(unsigned(ALU_AneBop))	=>	
+								Sub <= '1';
 								Comp_Sel <= "000";
 								Out_Sel <= "101";
-			when ALU_AeqBop	=>	Sub <= '1';
+			when conv_integer(unsigned(ALU_AeqBop))	=>	
+								Sub <= '1';
 								Comp_Sel <= "001";
 								Out_Sel <= "101";
-			when ALU_AgtBop	=>	Sub <= '1';
+			when conv_integer(unsigned(ALU_AgtBop))	=>	
+								Sub <= '1';
 								Comp_Sel <= "010";
 								Out_Sel <= "101";
-			when ALU_AgeBop	=>	Sub <= '1';
+			when conv_integer(unsigned(ALU_AgeBop))	=>	
+								Sub <= '1';
 								Comp_Sel <= "011";
 								Out_Sel <= "101";
-			when ALU_AltBop	=>	Sub <= '1';
+			when conv_integer(unsigned(ALU_AltBop))	=>	
+								Sub <= '1';
 								Comp_Sel <= "100";
 								Out_Sel <= "101";
-			when ALU_AleBop	=>	Sub <= '1';
+			when conv_integer(unsigned(ALU_AleBop))	=>	
+								Sub <= '1';
 								Comp_Sel <= "101";
 								Out_Sel <= "101";
-			when others		=>	Out_Sel <= "111";
+			when conv_integer(unsigned(ALU_MULTop))	=>	
+								Out_Sel <= "110";
+			when others								=>	
+								Out_Sel <= "111";
 		end case;
 	end process;
 	
@@ -188,10 +217,10 @@ begin
 		port map(DATA1,DATA2,Xor_Out);
 	ADDER: Add_gen
 		generic map(N)
-		port map(DATA1,DATA2,Sub,Add_Out,Cout,open,open);
+		port map(DATA1,DATA2,Sub,Add_Out,Cout,Sign_OF,Unsign_OF);
 	SH_ROT:	SHIFTER_GENERIC
 		generic map(N)
-		port map(DATA1,DATA2,L_A,L_R,S_R,Shift_Out);
+		port map(DATA1,DATA2(log2_N(N)-1 downto 0),L_A,L_R,S_R,Shift_Out);
 	COMP: Comparator
 		generic map(N)
 		port map(Add_Out,Cout,Sign,AneB,AeqB,AgtB,AgeB,AltB,AleB);
@@ -201,11 +230,17 @@ begin
 	MuxComp: mux81_logic
 		port map(AneB,AeqB,AgtB,AgeB,AltB,AleB,'0','0',Comp_sel,Comp_Out);
 		
-	Comp_ext <= (others => '0') & Comp_Out;
+	Comp_ext <= (N-1 downto 1 => '0') & Comp_Out;
+	OF_Detect: MUX21
+		port map(Unsign_OF,Sign_OF,Sign,OvFl);
+	Over <= (Sub XNOR Sign) & (N-2 downto 0 => NOT(Sub));
+	OF_Manage: MUX21_GENERIC
+		generic map(N)
+		port map(Add_Out,Over,OvFl,Add_Ok);
 		
 	MuxOut: mux81_generic
 		generic map(N)
-		port map(And_Out,Or_Out,Xor_Out,Add_Out,Shift_Out,Comp_ext,(others => '0'),(others => '0'),Out_sel,OUTALU);
+		port map(And_Out,Or_Out,Xor_Out,Add_Ok,Shift_Out,Comp_ext,(others => '0'),(others => '0'),Out_sel,OUTALU);
 		
 end Structural;
 

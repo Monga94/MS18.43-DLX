@@ -3,6 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 use ieee.std_logic_arith.all;
 use work.myStuff.all;
+use work.logarithm.all;
 
 entity ExecutionUnit is 
 	generic(Nbit: 		integer := 32;
@@ -12,7 +13,7 @@ entity ExecutionUnit is
 			REG_EN_E:		in	std_logic;
 			MuxA_Sel:		in	std_logic;
 			MuxB_Sel:		in	std_logic;
-			ALU_Config:		in	AluOp;
+			ALU_Config:		in	std_logic_vector(SelALU-1 downto 0);
 			Sign:			in	std_logic;
 			Condition:		in	std_logic_vector(2 downto 0);
 			NPC_In:		    in	std_logic_vector(Nbit-1 downto 0);
@@ -48,7 +49,7 @@ architecture Behavioural of ExecutionUnit is
 	
 	component ALU is
 		generic ( N : integer := 32);
-		port (	FUNC			: in	AluOp;
+		port (	FUNC			: in	std_logic_vector(SelALU-1 downto 0);
 				Sign			: in	std_logic;
 				DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
 				OUTALU			: out 	std_logic_vector(N-1 downto 0));
@@ -64,7 +65,7 @@ begin
 		port map(DataB,DataIMM,MuxB_Sel,Op2);
 	ALUnit: ALU
 		generic map(Nbit)
-		port map(ALU_Config,Sign,Op1,Op2,ALU_res,open);
+		port map(ALU_Config,Sign,Op1,Op2,ALU_res);
 	REGALU: D_Reg_generic
 		generic map(Nbit)
 		port map(ALU_res,CLK,RST,REG_EN_E,ALU_Out);

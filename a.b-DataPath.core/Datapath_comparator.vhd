@@ -30,7 +30,7 @@ begin
 		Temp(i) <= Temp(i-1) or Diff(i);
 	end generate;
 		
-	Equal <= NOT(Temp(Nbit-1);
+	Equal <= NOT(Temp(Nbit-1));
 	Ne <= NOT(Equal);
 	Eq <= Equal;
 	

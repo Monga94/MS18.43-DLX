@@ -2,10 +2,10 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.std_logic_arith.all;
 use IEEE.std_logic_unsigned.all;
-use WORK.all;
+use work.logarithm.all;
 
 entity SHIFTER_GENERIC is
-	generic(N: integer);
+	generic(N: integer := 32);
 	port(	A: 				in std_logic_vector(N-1 downto 0);
 			B: 				in std_logic_vector(log2_N(N)-1 downto 0);
 			LOGIC_ARITH: 	in std_logic;	-- 1 = logic, 0 = arith

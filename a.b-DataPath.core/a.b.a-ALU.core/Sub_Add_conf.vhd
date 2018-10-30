@@ -38,7 +38,7 @@ begin
 	
 	CarryVector <= (others => sub);
 	
-	SUB: xor_gen
+	SUBTR: xor_gen
 		generic map (N)
 		port map (B,CarryVector, BS);
   
@@ -77,7 +77,7 @@ begin
 		
 	CarryVector <= (others => sub);
 	
-	SUB: xor_gen
+	SUBTR: xor_gen
 		generic map (N)
 		port map (B, CarryVector, BS);
   

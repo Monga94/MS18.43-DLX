@@ -20,7 +20,8 @@ package myStuff is
 	constant WB_CTRL		: integer := 2;
 	constant CW_SIZE		: integer := F_CTRL+D_CTRL+E_CTRL+M_CTRL+WB_CTRL;			-- Control Word Size
 	
-	constant NopALU			: integer := 16;
+	constant NopALU			: integer := 18;
+	constant SelALU			: integer := log2_N(NopALU);
 
 -- R-Type instruction -> OPCODE field
     constant RTYPE : std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "000000";		-- for ADD, SUB, AND, OR register-to-register operation
@@ -90,31 +91,30 @@ package myStuff is
 	constant ITYPE_SGEUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111101";		-- i,0x3d
 	
 -- Alu Possible Operations
-	subtype AluOp is std_logic_vector(log2_N(NopALU)-1 downto 0);
+	--subtype AluOp is std_logic_vector(log2_N(NopALU)-1 downto 0);
 	--(ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, FUNCASR, NOP);
 	
 -- Alu Output select codes
-	constant ALU_ADDop		: AluOp := "0000";
-	constant ALU_SUBop		: AluOp := "0001";
-	constant ALU_ANDop		: AluOp := "0010";
-	constant ALU_ORop		: AluOp := "0011";
-	constant ALU_XORop		: AluOp := "0100";
-	constant ALU_SLLop		: AluOp := "0101";
-	constant ALU_SRLop		: AluOp := "0110";
-	constant ALU_SRAop		: AluOp := "0111";
-	constant ALU_RORop		: AluOp := "1000";
-	constant ALU_ROLop		: AluOp := "1001";
-	constant ALU_AneBop		: AluOp := "1010";
-	constant ALU_AeqBop		: AluOp := "1011";
-	constant ALU_AgtBop		: AluOp := "1100";
-	constant ALU_AgeBop		: AluOp := "1101";
-	constant ALU_AltBop		: AluOp := "1110";
-	constant ALU_AleBop		: AluOp := "1111";
-	
-	constant ALU_NOPop		: AluOp := "0000";
-	-- constant ALU_ADDop		: AluOp := "0000";
-	-- constant ALU_ADDop		: AluOp := "0000";
-	-- constant ALU_ADDop		: AluOp := "0000";
+	constant ALU_ANDop		: std_logic_vector(SelALU-1 downto 0) := "00000";
+	constant ALU_ORop		: std_logic_vector(SelALU-1 downto 0) := "00001";
+	constant ALU_XORop		: std_logic_vector(SelALU-1 downto 0) := "00010";
+	constant ALU_ADDop		: std_logic_vector(SelALU-1 downto 0) := "00011";
+	constant ALU_SUBop		: std_logic_vector(SelALU-1 downto 0) := "00100";
+	constant ALU_SLLop		: std_logic_vector(SelALU-1 downto 0) := "00101";
+	constant ALU_SRLop		: std_logic_vector(SelALU-1 downto 0) := "00110";
+	constant ALU_SRAop		: std_logic_vector(SelALU-1 downto 0) := "00111";
+	constant ALU_ROLop		: std_logic_vector(SelALU-1 downto 0) := "01000";
+	constant ALU_RORop		: std_logic_vector(SelALU-1 downto 0) := "01001";
+	constant ALU_AneBop		: std_logic_vector(SelALU-1 downto 0) := "01010";
+	constant ALU_AeqBop		: std_logic_vector(SelALU-1 downto 0) := "01011";
+	constant ALU_AgtBop		: std_logic_vector(SelALU-1 downto 0) := "01100";
+	constant ALU_AgeBop		: std_logic_vector(SelALU-1 downto 0) := "01101";
+	constant ALU_AltBop		: std_logic_vector(SelALU-1 downto 0) := "01110";
+	constant ALU_AleBop		: std_logic_vector(SelALU-1 downto 0) := "01111";
+	constant ALU_MULTop		: std_logic_vector(SelALU-1 downto 0) := "10000";
+	constant ALU_NOPop		: std_logic_vector(SelALU-1 downto 0) := "11111";
+	-- constant ALU_ADDop		: std_logic_vector(SelALU-1 downto 0) := "0000";
+	-- constant ALU_ADDop		: std_logic_vector(SelALU-1 downto 0) := "0000";
 
 end myStuff;
 
