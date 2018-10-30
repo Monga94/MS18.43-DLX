@@ -10,7 +10,7 @@ use work.logarithm.all;
 -- Memory filled by a process which reads from a file
 -- file name is "test.asm.mem"
 entity IRAM is
-	generic (	RAM_DEPTH	: integer := 48;
+	generic (	RAM_DEPTH	: integer := 10;
 				I_SIZE		: integer := 32);
 	port (	Rst  : in  std_logic;
 			Addr : in  std_logic_vector(RAM_DEPTH - 1 downto 0);

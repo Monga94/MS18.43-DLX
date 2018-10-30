@@ -41,7 +41,7 @@ architecture Behavioral of FetchUnit is
 	end component;
 	
 	component RCA_gen is 
-		generic (N: integer := 32);
+		generic (N: integer := 8);
 		port (	A:	In	std_logic_vector(N-1 downto 0);
 				B:	In	std_logic_vector(N-1 downto 0);
 				Ci:	In	std_logic;

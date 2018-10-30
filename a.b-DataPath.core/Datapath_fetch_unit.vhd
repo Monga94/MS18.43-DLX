@@ -5,7 +5,8 @@ use ieee.std_logic_arith.all;
 use work.myStuff.all;
 
 entity FetchUnit is
-	generic(Nbit: integer := 32);
+	generic(Nbit:		integer := 32;
+			Iram_bit:	integer := 10);
 	port(	CLK: 			in	std_logic;
 			RST:			in	std_logic;
 			IR_EN:      	in	std_logic;
@@ -15,7 +16,7 @@ entity FetchUnit is
 			IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
 			InstrToDecode:	out std_logic_vector(Nbit-1 downto 0);
 			NPCToDecode:	out std_logic_vector(Nbit-1 downto 0);			
-			IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
+			IMem_Addr:		out std_logic_vector(Iram_bit-1 downto 0);
 			Opcode:			out std_logic_vector(OP_CODE_SIZE-1 downto 0);
 			Func:			out std_logic_vector(FUNC_SIZE-1 downto 0));
 	end FetchUnit;
@@ -69,6 +70,6 @@ begin
 		generic map(Nbit)
 		port map(AdderToNPC,CLK,RST,NPC_EN,NPCToDecode);
 		
-	IMem_Addr <= PCToAdder;
+	IMem_Addr <= PCToAdder(Iram_bit-1 downto 0);
 
 end Behavioral; 
