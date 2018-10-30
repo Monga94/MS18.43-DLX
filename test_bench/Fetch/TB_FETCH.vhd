@@ -13,7 +13,7 @@ architecture Test of TB_FETCH is
 
 	signal Clock,Rst,En_Reg : std_logic;
 	signal IMem_to_fetch,Instruction,NPC 	: std_logic_vector(Nbit-1 downto 0);
-	signal PC								: std_logic_vector(Iram_bit-1 downto 0);
+	signal PC								: std_logic_vector(IRAM_DEPTH-1 downto 0);
 	signal Opcode : std_logic_vector(5 downto 0);
 	signal Func : std_logic_vector(10 downto 0);
 
