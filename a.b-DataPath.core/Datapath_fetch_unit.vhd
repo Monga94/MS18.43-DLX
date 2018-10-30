@@ -51,7 +51,7 @@ architecture Behavioral of FetchUnit is
 	
 begin
 	
-	FOUR_SIG <= conv_std_logic_vector(4, Nbit);
+	FOUR_SIG <= conv_std_logic_vector(1, Nbit);
 	
 	Opcode <= IMem_Instr(31 downto 26);
 	Func <= IMem_Instr(10 downto 0);
