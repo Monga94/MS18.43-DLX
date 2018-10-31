@@ -52,7 +52,6 @@ begin
 					OUT2 <= REGISTERS(ADDR2);
 				end if;
 			end if;
-		end if;
 	end process;
 
 end BEHAVIORAL;
