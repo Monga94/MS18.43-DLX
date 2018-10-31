@@ -24,13 +24,15 @@ entity DLX_CU_HW is
 			E_REG_EN	: out std_logic;												-- enables the pipeline registers
 			E_MuxA_Sel	: out std_logic;												-- input selection of the first multiplexer 0=NPC 1=A
 			E_MuxB_Sel	: out std_logic;												-- input selection of the second multiplexer 0=B 1=IMM
-			E_ALU_Conf	: out AluOp;													-- alu control word
+			E_ALU_Conf	: out std_logic_vector(SelALU-1 downto 0);						-- alu control word
 			E_Signed	: out std_logic;												-- signed operation identifier 0=unsigned 1=signed
 			--E_BrCond	: out std_logic_vector(2 downto 0);								-- condition for branching and jumping
 			-- MEMORY STAGE OUTPUTS							
 			M_REG_EN	: out std_logic;												-- enables the pipeline registers
-			DMem_RD		: out std_logic;												-- select read/write mode 1=READ 0=WRITE
 			DMem_CS		: out std_logic;												-- enables the memory
+			DMem_RD		: out std_logic;												-- select read/write mode 1=READ 0=WRITE
+			DMem_WS		: out std_logic_vector(1 downto 0)	-- select type of load/store 00=Byte 01=HalfWord 10=Word
+			DMem_Sign	: out std_logic						-- equal to E_signed - needed for extension
 			-- WRITEBACK STAGE OUTPUTS							
 			WB_Mux_sel	: out std_logic;												-- input selection of the multiplexer 0=mem 1=aluout
 			D_RF_WR		: out std_logic);												-- enables the write port of the register file
@@ -38,65 +40,65 @@ end DLX_CU_HW;
 
 architecture Implementation of DLX_CU_HW is
 	type op_array is array (integer range 0 to OP_NUMB - 1) of std_logic_vector(CW_SIZE - 1 downto 0);
-	signal cw_array : op_array := (	"111 11101 1101 100 11", --ADD  --order of control signal is like the following one (not the same as in port declaration)
-									"111 11101 1100 100 11", --ADDU
-									"111 11101 1101 100 11", --SUB	
-									"111 11101 1100 100 11", --SUBU			
-									"111 11101 1100 100 11", --AND               
-									"111 11101 1100 100 11", --OR  
-									"111 11101 1100 100 11", --XOR
-									"111 11101 1100 100 11", --SLL
-									"111 11101 1100 100 11", --SRL
-									"111 11101 1101 100 11", --SRA
-									"111 11101 1101 100 11", --SGT
-									"111 11101 1100 100 11", --SGTU
-									"111 11101 1101 100 11", --SGE
-									"111 11101 1100 100 11", --SGEU
-									"111 11101 1101 100 11", --SEQ
-									"111 11101 1101 100 11", --SLE
-									"111 11101 1100 100 11", --SLEU
-									"111 11101 1101 100 11", --SLT
-									"111 11101 1100 100 11", --SLTU
-									"111 11101 1101 100 11", --SNE
-									"111 11101 1101 100 11", --MULT		///
+	signal cw_array : op_array := (	"111 11101 1101 100000 11", --ADD  --order of control signal is like the following one (not the same as in port declaration)
+									"111 11101 1100 100000 11", --ADDU
+									"111 11101 1101 100000 11", --SUB	
+									"111 11101 1100 100000 11", --SUBU			
+									"111 11101 1100 100000 11", --AND               
+									"111 11101 1100 100000 11", --OR  
+									"111 11101 1100 100000 11", --XOR
+									"111 11101 1100 100000 11", --SLL
+									"111 11101 1100 100000 11", --SRL
+									"111 11101 1101 100000 11", --SRA
+									"111 11101 1101 100000 11", --SGT
+									"111 11101 1100 100000 11", --SGTU
+									"111 11101 1101 100000 11", --SGE
+									"111 11101 1100 100000 11", --SGEU
+									"111 11101 1101 100000 11", --SEQ
+									"111 11101 1101 100000 11", --SLE
+									"111 11101 1100 100000 11", --SLEU
+									"111 11101 1101 100000 11", --SLT
+									"111 11101 1100 100000 11", --SLTU
+									"111 11101 1101 100000 11", --SNE
+									"111 11101 1101 100000 11", --MULT		///
+
+									"111 11010 1111 100000 11", --ADDI	
+									"111 11000 1110 100000 11", --ADDUI		    
+									"111 11010 1111 100000 11", --SUBI   
+									"111 11000 1110 100000 11", --SUBUI          
+									"111 11000 1110 100000 11", --ANDI             
+									"111 11000 1110 100000 11", --ORI
+									"111 11000 1110 100000 11", --XORI
+									"111 11000 1110 100000 11", --SLLI
+									"111 11000 1110 100000 11", --SRLI
+									"111 11000 1111 100000 11", --SRAI
+									"111 11010 1111 100000 11", --SGTI
+									"111 11000 1110 100000 11", --SGTUI
+									"111 11010 1111 100000 11", --SGEI
+									"111 11000 1110 100000 11", --SGEUI
+									"111 11010 1111 100000 11", --SEQI
+									"111 11010 1111 100000 11", --SLEI
+									"111 11000 1110 100000 11", --SLEUI
+									"111 11010 1111 100000 11", --SLTI
+									"111 11000 1110 100000 11", --SLTUI
+									"111 11010 1111 100000 11", --SNEI
+
+									"                        ", --BEQZ
+									"                        ", --BNEZ
+									"                        ", --J
+									"                        ", --JR
+									"                        ", --JAL
+									"                        ", --JALR
+									"                        ", --LHI
 									
-									"111 11010 1111 100 11", --ADDI	
-									"111 11000 1110 100 11", --ADDUI		    
-									"111 11010 1111 100 11", --SUBI   
-									"111 11000 1110 100 11", --SUBUI          
-									"111 11000 1110 100 11", --ANDI             
-									"111 11000 1110 100 11", --ORI
-									"111 11000 1110 100 11", --XORI
-									"111 11000 1110 100 11", --SLLI
-									"111 11000 1110 100 11", --SRLI
-									"111 11000 1111 100 11", --SRAI
-									"111 11010 1111 100 11", --SGTI
-									"111 11000 1110 100 11", --SGTUI
-									"111 11010 1111 100 11", --SGEI
-									"111 11000 1110 100 11", --SGEUI
-									"111 11010 1111 100 11", --SEQI
-									"111 11010 1111 100 11", --SLEI
-									"111 11000 1110 100 11", --SLEUI
-									"111 11010 1111 100 11", --SLTI
-									"111 11000 1110 100 11", --SLTUI
-									"111 11010 1111 100 11", --SNEI
-									
-									"-------------", --BEQZ
-									"-------------", --BNEZ
-									"-------------", --J
-									"-------------", --JR
-									"-------------", --JAL
-									"-------------", --JALR
-									
-									"                     ", --LW
-									"                     ", --LB
-									"                     ", --LBU
-									"                     ", --LH
-									"                     ", --LHI
-									"                     ", --LHU
-									"                     ", --SW
-									"                     ", --SB
-									"                     ", --SH
+									"111 11010 1111 111100 01", --LW
+									"111 11010 1111 111001 01", --LB
+									"111 11010 1111 111000 01", --LBU
+									"111 11010 1111 111011 01", --LH
+									"111 11010 1111 111010 01", --LHU
+									"111 11110 1111 010100 00", --SW
+									"111 11110 1111 010000 00", --SB
+									"111 11110 1111 010010 00", --SH
 									"0000000000000");--NOP
 									
 	signal cw : std_logic_vector(CW_SIZE - 1 downto 0); -- full control word read from cw_array
@@ -140,8 +142,10 @@ architecture Implementation of DLX_CU_HW is
 	
 	-- FOURTH PIPE STAGE OUTPUTS
 	M_REG_EN	<=	M_cw();
-	DMem_RD		<=	M_cw();
 	DMem_CS		<=	M_cw();
+	DMem_RD		<=	M_cw();
+	DMem_WS		<=	M_cw();
+	DMem_Sign	<=	M_cw();
 	
 	-- FIFTH PIPE STAGE OUTPUTS
 	WB_Mux_sel	<=	W_cw();

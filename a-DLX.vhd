@@ -71,8 +71,10 @@ architecture RTL Of DLX is
 				--E_BrCond	: out std_logic_vector(2 downto 0);	-- condition for branching and jumping
 				-- MEMORY STAGE OUTPUTS
 				M_REG_EN	: out std_logic;					-- enables the pipeline registers
-				DMem_RD		: out std_logic;					-- select read/write mode 1=READ 0=WRITE
 				DMem_CS		: out std_logic;					-- enables the memory
+				DMem_RD		: out std_logic;					-- select read/write mode 1=READ 0=WRITE
+				DMem_WS		: out std_logic_vector(1 downto 0)	-- select type of load/store 00=Byte 01=HalfWord 10=Word
+				DMem_Sign	: out std_logic						-- equal to E_signed - needed for extension
 				-- WRITEBACK STAGE OUTPUTS
 				WB_Mux_sel	: out std_logic;					-- input selection of the multiplexer 0=mem 1=aluout
 				D_RF_WR		: out std_logic);					-- enables the write port of the register file
@@ -81,11 +83,15 @@ architecture RTL Of DLX is
 	component DRAM is
 		generic (	W: integer:=8;
 					D: integer:=10);
-		port (	Data_In		: in	std_logic_vector(W-1 downto 0);
-				address		: in	std_logic_vector(D-1 downto 0);
-				rd			: in	std_logic;
-				cs			: in	std_logic;
-				data_out	: out	std_logic_vector(W-1 downto 0));
+		port (	Clk			: in	std_logic;
+				Rst_n		: in	std_logic;
+				Data_In		: in	std_logic_vector(W-1 downto 0);
+				Address		: in	std_logic_vector(D-1 downto 0);
+				CS			: in	std_logic;
+				RD			: in	std_logic;
+				WS			: in	std_logic_vector(1 downto 0);
+				Sign		: in	std_logic;
+				Data_Out	: out	std_logic_vector(W-1 downto 0));
 	end component;
 
 	component IRAM is

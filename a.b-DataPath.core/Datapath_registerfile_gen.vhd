@@ -35,22 +35,21 @@ begin
 		ADDW 	:= to_integer(unsigned(ADD_WR));
 		ADDR1 	:= to_integer(unsigned(ADD_RD1));	
 		ADDR2 	:= to_integer(unsigned(ADD_RD2));
-			if RESET = '1' then
-				for i in 0 to Nreg-1 loop
-					REGISTERS(i) <= (others => '0');
-				end loop;
-				OUT1 <= (others => '0');
-				OUT2 <= (others => '0');
-			elsif ENABLE = '1' then
-				if WR = '1' then
-					REGISTERS(ADDW) <= DATAIN;
-				end if;
-				if RD1 = '1' then
-					OUT1 <= REGISTERS(ADDR1);
-				end if;
-				if RD2 = '1' then
-					OUT2 <= REGISTERS(ADDR2);
-				end if;
+		if RESET = '1' then
+			for i in 0 to Nreg-1 loop
+				REGISTERS(i) <= (others => '0');
+			end loop;
+			OUT1 <= (others => '0');
+			OUT2 <= (others => '0');
+		elsif ENABLE = '1' then
+			if WR = '1' then
+				REGISTERS(ADDW) <= DATAIN;
+			end if;
+			if RD1 = '1' then
+				OUT1 <= REGISTERS(ADDR1);
+			end if;
+			if RD2 = '1' then
+				OUT2 <= REGISTERS(ADDR2);
 			end if;
 		end if;
 	end process;

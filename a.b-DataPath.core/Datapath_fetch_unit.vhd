@@ -22,7 +22,8 @@ entity FetchUnit is
 	end FetchUnit;
 	
 architecture Behavioral of FetchUnit is
-	signal FOUR_SIG,PCToAdder,AdderToNPC: std_logic_vector(Nbit-1 downto 0);
+	signal FOUR_SIG,PCToAdder,AdderToNPC:	std_logic_vector(Iram_bit-1 downto 0);
+	signal NPC_input:						std_logic_vector(Nbit-1 downto 0);
 	
 	component D_Reg_generic
 		generic (N: integer := 32);
@@ -52,24 +53,26 @@ architecture Behavioral of FetchUnit is
 	
 begin
 	
-	FOUR_SIG <= conv_std_logic_vector(1, Nbit);
+	FOUR_SIG <= conv_std_logic_vector(1, Iram_bit);
 	
 	Opcode <= IMem_Instr(31 downto 26);
 	Func <= IMem_Instr(10 downto 0);
 	
+	NPC_input <= (Nbit-1 downto Iram_bit => '0') & AdderToNPC;
+	
 	PC:	D_Reg_generic
-		generic map(Nbit)
+		generic map(Iram_bit)
 		port map(AdderToNPC,CLK,RST,PC_EN,PCToAdder);	
 	IR: D_Reg_generic
 		generic map(Nbit)
 		port map(IMem_Instr,CLK,RST,IR_EN,InstrToDecode);
 	ADDER: RCA_gen
-		generic map(Nbit)
+		generic map(Iram_bit)
 		port map(PCToAdder,FOUR_SIG,'0',AdderToNPC,open);
 	NPC: D_Reg_generic
 		generic map(Nbit)
-		port map(AdderToNPC,CLK,RST,NPC_EN,NPCToDecode);
+		port map(NPC_input,CLK,RST,NPC_EN,NPCToDecode);
 		
-	IMem_Addr <= PCToAdder(Iram_bit-1 downto 0);
+	IMem_Addr <= PCToAdder;
 
 end Behavioral; 

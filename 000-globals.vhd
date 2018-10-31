@@ -6,25 +6,25 @@ package myStuff is
 	constant Nbit		: integer := 32;
 	constant Nreg		: integer := 32;
 	constant IRAM_DEPTH	: integer := 10;
-	constant DRAM_DEPTH	: integer := 10;
+	constant DRAM_DEPTH	: integer := 20;
 	constant RF_SIZE	: integer := 5;
 
 -- Control unit input sizes
-    constant OP_CODE_SIZE	: integer := 6;                                     		-- OPCODE field size
-    constant FUNC_SIZE		: integer := 11;                                    		-- FUNC field size
-	constant OP_NUMB		: integer := 27;											-- Number Of Operations that can be executed
-	constant F_CTRL			: integer := 3;
-	constant D_CTRL			: integer := 5;
-	constant E_CTRL			: integer := 4;
-	constant M_CTRL			: integer := 3;
-	constant WB_CTRL		: integer := 2;
-	constant CW_SIZE		: integer := F_CTRL+D_CTRL+E_CTRL+M_CTRL+WB_CTRL;			-- Control Word Size
+    constant OP_CODE_SIZE	: integer := 6;                                     			-- OPCODE field size
+    constant FUNC_SIZE		: integer := 11;                                    			-- FUNC field size
+	constant OP_NUMB		: integer := 27;												-- Number Of Operations that can be executed
+	constant F_CTRL			: integer := 3;	
+	constant D_CTRL			: integer := 5;	
+	constant E_CTRL			: integer := 4;	
+	constant M_CTRL			: integer := 5;	
+	constant WB_CTRL		: integer := 2;	
+	constant CW_SIZE		: integer := F_CTRL+D_CTRL+E_CTRL+M_CTRL+WB_CTRL;				-- Control Word Size
+		
+	constant NopALU			: integer := 18;	
+	constant SelALU			: integer := log2_N(NopALU);	
 	
-	constant NopALU			: integer := 18;
-	constant SelALU			: integer := log2_N(NopALU);
-
--- R-Type instruction -> OPCODE field
-    constant RTYPE : std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "000000";		-- for ADD, SUB, AND, OR register-to-register operation
+-- R-Type instruction -> OPCODE field	
+    constant RTYPE : std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "000000";				-- for ADD, SUB, AND, OR register-to-register operation
 	
 -- R-Type instructions -> FUNC field
     constant RTYPE_NOP		: std_logic_vector(FUNC_SIZE - 1 downto 0) :=  "00000000000";	-- r,0x00
@@ -94,7 +94,7 @@ package myStuff is
 	-- subtype AluOp is std_logic_vector(log2_N(NopALU)-1 downto 0);
 	--(ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, FUNCASR, NOP);
 	
--- Alu Output select codes
+-- Alu Select codes
 	constant ALU_ANDop		: std_logic_vector(SelALU-1 downto 0) := "00000";
 	constant ALU_ORop		: std_logic_vector(SelALU-1 downto 0) := "00001";
 	constant ALU_XORop		: std_logic_vector(SelALU-1 downto 0) := "00010";
