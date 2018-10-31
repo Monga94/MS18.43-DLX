@@ -91,7 +91,7 @@ package myStuff is
 	constant ITYPE_SGEUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111101";		-- i,0x3d
 	
 -- Alu Possible Operations
-	--subtype AluOp is std_logic_vector(log2_N(NopALU)-1 downto 0);
+	-- subtype AluOp is std_logic_vector(log2_N(NopALU)-1 downto 0);
 	--(ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, FUNCASR, NOP);
 	
 -- Alu Output select codes
