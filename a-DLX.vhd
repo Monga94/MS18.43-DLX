@@ -28,12 +28,12 @@ architecture RTL Of DLX is
 				D_RF_RD2:		in	std_logic;
 				D_RF_WR:		in	std_logic;
 				D_IMM_Sel:		in	std_logic_vector(1 downto 0);
-				D_Rd_Sel:		in	std_logic;
+				D_Rd_Sel:		in	std_logic_vector(1 downto 0);
 				--Execution Stage
 				E_REG_EN:		in	std_logic;
 				E_MuxA_Sel:		in	std_logic_vector(1 downto 0);
-				E_MuxB_Sel:		in	std_logic;
-				E_ALU_Conf:		in	AluOp;
+				E_MuxB_Sel:		in	std_logic_vector(1 downto 0);
+				E_ALU_Conf:		in	std_logic_vector(SelALU-1 downto 0);
 				E_Signed:		in	std_logic;
 				--E_BrCond:		in	std_logic_vector(2 downto 0);
 				--E_Taken:		out std_logic;
@@ -61,11 +61,11 @@ architecture RTL Of DLX is
 				D_RF_RD1	: out std_logic;							-- enables the read port 1 of the register file
 				D_RF_RD2	: out std_logic;							-- enables the read port 2 of the register file
 				D_IMM_Sel	: out std_logic_vector(1 downto 0);			-- input selection of immediate type 00=uimm16 01=imm16 10=lhi_config 11=imm26
-				D_Rd_Sel	: out std_logic;							-- input selection of write address 0=Itype 1=Rtype
+				D_Rd_Sel	: out std_logic_vector(1 downto 0);			-- input selection of write address 00=Itype 01=Rtype 10=31 11=0
 				-- EXECUTE STAGE OUTPUTS								
 				E_REG_EN	: out std_logic;							-- enables the pipeline registers
 				E_MuxA_Sel	: out std_logic_vector(1 downto 0);			-- input selection of the first multiplexer 00=NPC 01=A 10='0' 11='-1'
-				E_MuxB_Sel	: out std_logic;							-- input selection of the second multiplexer 0=B 1=IMM
+				E_MuxB_Sel	: out std_logic_vector(1 downto 0);			-- input selection of the second multiplexer 00=B 01=IMM 10='0' 11='-1'
 				E_ALU_Conf	: out std_logic_vector(SelALU-1 downto 0);	-- alu control word
 				E_Signed	: out std_logic;							-- signed operation identifier 0=unsigned 1=signed
 				--E_BrCond	: out std_logic_vector(2 downto 0);			-- condition for branching and jumping
@@ -76,7 +76,7 @@ architecture RTL Of DLX is
 				DMem_WS		: out std_logic_vector(1 downto 0)			-- select type of load/store 00=Byte 01=HalfWord 10=Word
 				DMem_Sign	: out std_logic								-- equal to E_signed - needed for data extraction
 				-- WRITEBACK STAGE OUTPUTS                      		
-				WB_Mux_sel	: out std_logic;							-- input selection of the multiplexer 0=mem 1=aluout
+				WB_Mux_sel	: out std_logic_vector(1 downto 0);			-- input selection of the multiplexer 00=mem 01=aluout 10=PC+8 11=PC+12
 				D_RF_WR		: out std_logic);							-- enables the write port of the register file
 	end component;
 

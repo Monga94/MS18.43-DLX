@@ -14,9 +14,9 @@ package myStuff is
     constant FUNC_SIZE		: integer := 11;                                    			-- FUNC field size
 	constant OP_NUMB		: integer := 27;												-- Number Of Operations that can be executed
 	constant F_CTRL			: integer := 3;	
-	constant D_CTRL			: integer := 5;	
-	constant E_CTRL			: integer := 4;	
-	constant M_CTRL			: integer := 5;	
+	constant D_CTRL			: integer := 8;	
+	constant E_CTRL			: integer := 7;	
+	constant M_CTRL			: integer := 6;	
 	constant WB_CTRL		: integer := 2;	
 	constant CW_SIZE		: integer := F_CTRL+D_CTRL+E_CTRL+M_CTRL+WB_CTRL;				-- Control Word Size
 		
@@ -91,7 +91,7 @@ package myStuff is
 	constant ITYPE_SGEUI	: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "111101";		-- i,0x3d
 	
 -- Alu Possible Operations
-	-- subtype AluOp is std_logic_vector(log2_N(NopALU)-1 downto 0);
+	subtype AluOp is std_logic_vector(SelALU-1 downto 0);
 	--(ADD, SUB, BITAND, BITOR, BITXOR, FUNCLSL, FUNCLSR, FUNCRL, FUNCRR, FUNCASR, NOP);
 	
 -- Alu Select codes

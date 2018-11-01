@@ -15,6 +15,8 @@ entity Datapath is
 			F_PC_EN:		in	std_logic;
 			F_NPC_EN:     	in	std_logic;
 			F_IR_EN:      	in	std_logic;
+			F_Jr_Sel:		in	std_logic;
+			F_J_Sel:		in	std_logic;
 			IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
 			IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
 			--Decode Stage
@@ -23,15 +25,15 @@ entity Datapath is
 			D_RF_RD2:		in	std_logic;
 			D_RF_WR:		in	std_logic;
 			D_IMM_Sel:		in	std_logic_vector(1 downto 0);
-			D_Rd_Sel:		in	std_logic;
+			D_Rd_Sel:		in	std_logic_vector(1 downto 0);
 			--Execution Stage
 			E_REG_EN:		in	std_logic;
 			E_MuxA_Sel:		in	std_logic_vector(1 downto 0);
-			E_MuxB_Sel:		in	std_logic;
-			E_ALU_Conf:		in	AluOp;
+			E_MuxB_Sel:		in	std_logic_vector(1 downto 0);
+			E_ALU_Conf:		in	std_logic_vector(SelALU-1 downto 0);
 			E_Signed:		in	std_logic;
-			E_BrCond:		in	std_logic_vector(2 downto 0);
-			E_Taken:		out std_logic;
+			--E_BrCond:		in	std_logic_vector(2 downto 0);
+			--E_Taken:		out std_logic;
 			--Memory Stage
 			M_REG_EN:		in	std_logic;
 			DMem_DataOut:	in	std_logic_vector(Nbit-1 downto 0);
@@ -48,19 +50,24 @@ architecture Structural of Datapath is
 	signal MtoW_DataMem,MtoW_DataALU							: std_logic_vector(Nbit-1 downto 0);
 	signal WtoD_WRdata											: std_logic_vector(Nbit-1 downto 0);
 	signal DtoE_WRaddr,EtoM_WRaddr,MtoD_WRaddr					: std_logic_vector(Addr_bit-1 downto 0);
+	signal DtoF_Jraddr,EtoF_Jaddr								: std_logic_vector(Nbit-1 downto 0);
 	
 	component FetchUnit is
-		generic(Nbit: integer := 32);
+		generic(Nbit:		integer := 32;
+				Iram_bit:	integer := 10);
 		port(	CLK: 			in	std_logic;
 				RST:			in	std_logic;
 				IR_EN:      	in	std_logic;
 				NPC_EN:     	in	std_logic;
 				PC_EN:			in	std_logic;
-				--AddIn_Mux:		in	std_logic_vector(Nbit-1 downto 0);
+				Jr_Sel:			in	std_logic;
+				J_Sel:			in	std_logic;
+				Jr_addr:		in	std_logic_vector(Iram_bit-1 downto 0);
+				J_addr:			in	std_logic_vector(Iram_bit-1 downto 0);
 				IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
 				InstrToDecode:	out std_logic_vector(Nbit-1 downto 0);
 				NPCToDecode:	out std_logic_vector(Nbit-1 downto 0);			
-				IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
+				IMem_Addr:		out std_logic_vector(Iram_bit-1 downto 0);
 				Opcode:			out std_logic_vector(OP_CODE_SIZE-1 downto 0);
 				Func:			out std_logic_vector(FUNC_SIZE-1 downto 0));
 	end component;
@@ -74,8 +81,8 @@ architecture Structural of Datapath is
 				RF_RD2:			in	std_logic;
 				RF_WR:			in	std_logic;
 				REG_EN_D:		in	std_logic;	
-				MuxIMM_Sel:		in	std_logic;
-				MuxRd_Sel:		in	std_logic;
+				MuxIMM_Sel:		in	std_logic_vector(1 downto 0);
+				MuxRd_Sel:		in	std_logic_vector(1 downto 0);
 				InstrToDecode:	in	std_logic_vector(Nbit-1 downto 0);
 				NPC:		 	in	std_logic_vector(Nbit-1 downto 0);
 				WB_Data:		in	std_logic_vector(Nbit-1 downto 0);
@@ -84,6 +91,7 @@ architecture Structural of Datapath is
 				DataB:			out std_logic_vector(Nbit-1 downto 0);
 				DataIMM:		out std_logic_vector(Nbit-1 downto 0);
 				NPCOut:			out std_logic_vector(Nbit-1 downto 0);
+				Jr_addr:		out std_logic_vector(Nbit-1 downto 0);
 				Wr_Addr_D:		out std_logic_vector(Addr_bit-1 downto 0));
 	end component;
 	
@@ -95,9 +103,8 @@ architecture Structural of Datapath is
 				REG_EN_E:		in	std_logic;
 				MuxA_Sel:		in	std_logic;
 				MuxB_Sel:		in	std_logic;
-				ALU_Config:		in	AluOp;
+				ALU_Config:		in	std_logic_vector(SelALU-1 downto 0);
 				Sign:			in	std_logic;
-				Condition:		in	std_logic_vector(2 downto 0);
 				NPC_In:		    in	std_logic_vector(Nbit-1 downto 0);
 				DataA:			in	std_logic_vector(Nbit-1 downto 0);
 				DataB:		    in	std_logic_vector(Nbit-1 downto 0);
@@ -105,6 +112,7 @@ architecture Structural of Datapath is
 				Wr_Addr_D:		in	std_logic_vector(Addr_bit-1 downto 0);
 				ALU_Out:		out std_logic_vector(Nbit-1 downto 0);	
 				DataBtoDMem:	out std_logic_vector(Nbit-1 downto 0);
+				J_addr:			out std_logic_vector(Nbit-1 downto 0);
 				Wr_Addr_E:		out std_logic_vector(Addr_bit-1 downto 0);	
 				Taken:			out std_logic);
 	end component;
@@ -139,12 +147,16 @@ architecture Structural of Datapath is
 	
 begin
 	FU: FetchUnit
-		generic map(Nbit)
+		generic map(Nbit,IRAM_DEPTH)
 		port map(	CLK 			=> CLK,
 					RST				=> RST,
 					IR_EN      		=> F_IR_EN,
 					NPC_EN     		=> F_NPC_EN,
 					PC_EN			=> F_PC_EN,
+					Jr_Sel			=> F_Jr_Sel,	
+					J_Sel	        => F_J_Sel,
+					Jr_addr         => DtoF_Jraddr,
+					J_addr	        => EtoF_Jaddr,
 					IMem_Instr		=> IMem_Instr,
 					InstrToDecode	=> FtoD_instr,
 					NPCToDecode		=> FtoD_NPC,
@@ -170,6 +182,7 @@ begin
 		            DataB			=> DtoE_DataB,
 		            DataIMM			=> DtoE_imm,
 		            NPCOut			=> DtoE_NPC,
+					Jr_addr			=> DtoF_Jraddr,
 		            Wr_Addr_D		=> DtoE_WRaddr);
 					
 	EXU: ExecutionUnit
@@ -181,7 +194,6 @@ begin
 		            MuxB_Sel		=> E_MuxB_Sel,
 		            ALU_Config		=> E_ALU_Conf,
 					Sign			=> E_Signed,
-		            Condition		=> E_BrCond,
 		            NPC_In			=> DtoE_NPC,
 		            DataA			=> DtoE_DataA,
 		            DataB			=> DtoE_DataB,
@@ -189,6 +201,7 @@ begin
 		            Wr_Addr_D		=> DtoE_WRaddr,
 		            ALU_Out			=> EtoM_DataALU,
 		            DataBtoDMem		=> EtoM_DataB,
+					J_addr			=> EtoF_Jaddr,
 		            Wr_Addr_E		=> EtoM_WRaddr,
 		            Taken			=> E_Taken);
 					

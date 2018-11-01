@@ -12,10 +12,9 @@ entity ExecutionUnit is
 			RST:		    in	std_logic;
 			REG_EN_E:		in	std_logic;
 			MuxA_Sel:		in	std_logic_vector(1 downto 0);
-			MuxB_Sel:		in	std_logic;
+			MuxB_Sel:		in	std_logic_vector(1 downto 0);
 			ALU_Config:		in	std_logic_vector(SelALU-1 downto 0);
 			Sign:			in	std_logic;
-			Condition:		in	std_logic_vector(2 downto 0);
 			NPC_In:		    in	std_logic_vector(Nbit-1 downto 0);
 			DataA:			in	std_logic_vector(Nbit-1 downto 0);
 			DataB:		    in	std_logic_vector(Nbit-1 downto 0);
@@ -23,6 +22,7 @@ entity ExecutionUnit is
 			Wr_Addr_D:		in	std_logic_vector(Addr_bit-1 downto 0);
 			ALU_Out:		out std_logic_vector(Nbit-1 downto 0);
 			DataBtoDMem:	out std_logic_vector(Nbit-1 downto 0);
+			J_addr:			out std_logic_vector(Nbit-1 downto 0);
 			Wr_Addr_E:		out std_logic_vector(Addr_bit-1 downto 0);
 			Taken:			out std_logic);
 end ExecutionUnit;
@@ -37,14 +37,6 @@ architecture Behavioural of ExecutionUnit is
 				RESET:	in	std_logic;
 				ENABLE:	in	std_logic;
 				Q:		out	std_logic_vector(N-1 downto 0));
-	end component;
-	
-	component MUX21_GENERIC
-		generic (N: integer := 32);
-		port (	A:	in	std_logic_vector(N-1 downto 0) ;
-				B:	in	std_logic_vector(N-1 downto 0);
-				S:	in	std_logic;
-				Y:	out	std_logic_vector(N-1 downto 0));
 	end component;
 	
 	component mux41_generic
@@ -71,9 +63,9 @@ begin
 	MUXA: mux41_generic
 		generic map(Nbit)
 		port map(NPC_In,DataA,(others => '0'),(others => '1'),MuxA_Sel,Op1);
-	MUXB: MUX21_GENERIC
+	MUXB: mux41_generic
 		generic map(Nbit)
-		port map(DataB,DataIMM,MuxB_Sel,Op2);
+		port map(DataB,DataIMM,(others => '0'),(others => '1'),MuxB_Sel,Op2);
 	ALUnit: ALU
 		generic map(Nbit)
 		port map(ALU_Config,Sign,Op1,Op2,ALU_res);
