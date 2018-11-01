@@ -14,7 +14,7 @@ entity DecodeUnit is
 				RF_RD2:			in	std_logic;
 				RF_WR:			in	std_logic;
 				REG_EN_D:		in	std_logic;	
-				MuxIMM_Sel:		in	std_logic;
+				MuxIMM_Sel:		in	std_logic_vector(1 downto 0);
 				MuxRd_Sel:		in	std_logic;
 				InstrToDecode:	in	std_logic_vector(Nbit-1 downto 0);
 				NPCin:		 	in	std_logic_vector(Nbit-1 downto 0);
@@ -30,6 +30,7 @@ end DecodeUnit;
 architecture Structural of DecodeUnit is	
 	signal Rs1,Rs2,Rd_Itype,Rd_Rtype				: std_logic_vector(Addr_bit-1 downto 0);
 	signal U_ext16to32,S_ext16to32,MuxIMM_Out		: std_logic_vector(Nbit-1 downto 0);
+	signal lhi_extTo32,j_ext26to32					: std_logic_vector(Nbit-1 downto 0);
 	signal RF_outA,RF_outB							: std_logic_vector(Nbit-1 downto 0);
 	signal WRaddr									: std_logic_vector(Addr_bit-1 downto 0);
 
@@ -66,10 +67,22 @@ architecture Structural of DecodeUnit is
 				Y:	out	std_logic_vector(N-1 downto 0));
 	end component;
 	
+	component mux41_generic
+		generic (	N: integer:= 32);
+		port (		A:	In	std_logic_vector(N-1 downto 0);
+					B:	In	std_logic_vector(N-1 downto 0);
+					C:	In	std_logic_vector(N-1 downto 0);
+					D:	In	std_logic_vector(N-1 downto 0);
+					S:	In	std_logic_vector(1 downto 0);
+					Y:	Out	std_logic_vector(N-1 downto 0));
+	end component;
+	
 begin
 	
-	U_ext16to32 <= (31 downto 16 => InstrToDecode(15)) & InstrToDecode(15 downto 0);
-	S_ext16to32 <= (31 downto 16 => '0') & InstrToDecode(15 downto 0);
+	U_ext16to32 <= (31 downto 16 => '0') & InstrToDecode(15 downto 0);
+	S_ext16to32 <= (31 downto 16 => InstrToDecode(15)) & InstrToDecode(15 downto 0);
+	lhi_extTo32 <= InstrToDecode(15 downto 0) & (15 downto 0 => '0');
+	j_ext26to32 <= (31 downto 26 => InstrToDecode(25)) & InstrToDecode(25 downto 0);
 	Rs1 <= InstrToDecode(25 downto 21);
 	Rs2 <= InstrToDecode(20 downto 16);
 	Rd_Itype <= InstrToDecode(20 downto 16);
@@ -81,9 +94,9 @@ begin
 	MUXWR: MUX21_GENERIC
 		generic map(Addr_bit)
 		port map(Rd_Itype,Rd_Rtype,MuxRd_Sel,WRaddr);
-	MUXIMM: MUX21_GENERIC
+	MUXIMM: mux41_generic
 		generic map(Nbit)
-		port map(U_ext16to32,S_ext16to32,MuxIMM_Sel,MuxIMM_Out);
+		port map(U_ext16to32,S_ext16to32,lhi_extTo32,j_ext26to32,MuxIMM_Sel,MuxIMM_Out);
 	REGA: D_Reg_generic
 		generic map(Nbit)
 		port map(RF_outA,CLK,RST,REG_EN_D,DataA);

@@ -115,6 +115,69 @@ package myStuff is
 	constant ALU_NOPop		: std_logic_vector(SelALU-1 downto 0) := "11111";
 	-- constant ALU_ADDop		: std_logic_vector(SelALU-1 downto 0) := "0000";
 	-- constant ALU_ADDop		: std_logic_vector(SelALU-1 downto 0) := "0000";
-
-end myStuff;
-
+	
+-- CW word
+	constant CW_RTYPE_ADD	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_ADDU	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";	
+	constant CW_RTYPE_SUB	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_SUBU	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";	
+	constant CW_RTYPE_AND	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";
+	constant CW_RTYPE_OR 	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";
+	constant CW_RTYPE_XOR	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";
+	constant CW_RTYPE_SLL	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";
+	constant CW_RTYPE_SRL	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";
+	constant CW_RTYPE_SRA	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_SGT	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_SGTU	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";	
+	constant CW_RTYPE_SGE	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_SGEU	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";	
+	constant CW_RTYPE_SEQ	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_SLE	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_SLEU	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";	
+	constant CW_RTYPE_SLT	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_SLTU	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1100 100000 11";	
+	constant CW_RTYPE_SNE	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_MULT	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11101 1101 100000 11";
+	constant CW_RTYPE_NOP	: std_logic_vector(CW_SIZE-1 downto 0) := "000 00000 0000 000000 00";
+	
+	constant CW_ITYPE_ADDI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 100000 11";	
+	constant CW_ITYPE_ADDUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_SUBI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 100000 11";
+	constant CW_ITYPE_SUBUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_ANDI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_ORI   : std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_XORI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_SLLI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_SRLI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_SRAI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1111 100000 11";
+	constant CW_ITYPE_SGTI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 100000 11";
+	constant CW_ITYPE_SGTUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_SGEI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 100000 11";
+	constant CW_ITYPE_SGEUI : std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_SEQI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 100000 11";
+	constant CW_ITYPE_SLEI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 100000 11";
+	constant CW_ITYPE_SLEUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_SLTI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 100000 11";
+	constant CW_ITYPE_SLTUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11000 1110 100000 11";
+	constant CW_ITYPE_SNEI	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 100000 11";
+	
+	constant CW_ITYPE_BEQZ  : std_logic_vector(CW_SIZE-1 downto 0) := "";
+	constant CW_ITYPE_BNEZ  : std_logic_vector(CW_SIZE-1 downto 0) := "";
+	constant CW_JTYPE_J	    : std_logic_vector(CW_SIZE-1 downto 0) := "";
+	constant CW_JTYPE_JR	: std_logic_vector(CW_SIZE-1 downto 0) := "";
+	constant CW_JTYPE_JAL	: std_logic_vector(CW_SIZE-1 downto 0) := "";	
+	constant CW_JTYPE_JALR  : std_logic_vector(CW_SIZE-1 downto 0) := "";
+	constant CW_ITYPE_LHI   : std_logic_vector(CW_SIZE-1 downto 0) := "";
+	
+	constant CW_ITYPE_LW	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 111100 01";
+	constant CW_ITYPE_LB	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 111001 01";
+	constant CW_ITYPE_LBU	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 111000 01";
+	constant CW_ITYPE_LH	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 111011 01";
+	constant CW_ITYPE_LHU	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11010 1111 111010 01";
+	constant CW_ITYPE_SW    : std_logic_vector(CW_SIZE-1 downto 0) := "111 11110 1111 010100 00";
+	constant CW_ITYPE_SB	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11110 1111 010000 00";
+	constant CW_ITYPE_SH	: std_logic_vector(CW_SIZE-1 downto 0) := "111 11110 1111 010010 00";
+	
+	constant CW_ITYPE_NOP   : std_logic_vector(CW_SIZE-1 downto 0) := "000 00000 0000 000000 00";
+                            
+end myStuff;                

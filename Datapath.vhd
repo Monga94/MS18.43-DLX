@@ -22,11 +22,11 @@ entity Datapath is
 			D_RF_RD1:		in	std_logic;
 			D_RF_RD2:		in	std_logic;
 			D_RF_WR:		in	std_logic;
-			D_IMM_Sel:		in	std_logic;
+			D_IMM_Sel:		in	std_logic_vector(1 downto 0);
 			D_Rd_Sel:		in	std_logic;
 			--Execution Stage
 			E_REG_EN:		in	std_logic;
-			E_MuxA_Sel:		in	std_logic;
+			E_MuxA_Sel:		in	std_logic_vector(1 downto 0);
 			E_MuxB_Sel:		in	std_logic;
 			E_ALU_Conf:		in	AluOp;
 			E_Signed:		in	std_logic;

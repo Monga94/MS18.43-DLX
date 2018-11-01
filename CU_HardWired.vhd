@@ -9,96 +9,96 @@ entity DLX_CU_HW is
 			OPCODE		: in  std_logic_vector(OP_CODE_SIZE-1 downto 0);
 			FUNC		: in  std_logic_vector(FUNC_SIZE-1 downto 0);              
 			Clk			: in  std_logic;
-			Rst			: in  std_logic;												-- Active Low
+			Rst			: in  std_logic;								-- Active Low
 			-- FETCH STAGE OUTPUTS							
-			F_PC_EN		: out std_logic;												-- enables the PC register
-			F_NPC_EN	: out std_logic;												-- enables the NPC register
-			F_IR_EN		: out std_logic;												-- enables the instruction register
+			F_PC_EN		: out std_logic;								-- enables the PC register
+			F_NPC_EN	: out std_logic;								-- enables the NPC register
+			F_IR_EN		: out std_logic;								-- enables the instruction register
 			-- DECODE STAGE OUTPUTS							
-			D_REG_EN	: out std_logic;												-- enables the register file and the pipeline registers
-			D_RF_RD1	: out std_logic;												-- enables the read port 1 of the register file
-			D_RF_RD2	: out std_logic;												-- enables the read port 2 of the register file
-			D_IMM_Sel	: out std_logic;												-- input selection of immediate type 0=unsigned 1=signed
-			D_Rd_Sel	: out std_logic;												-- input selection of write address 0=Itype 1=Rtype
-			-- EXECUTE STAGE OUTPUTS													
-			E_REG_EN	: out std_logic;												-- enables the pipeline registers
-			E_MuxA_Sel	: out std_logic;												-- input selection of the first multiplexer 0=NPC 1=A
-			E_MuxB_Sel	: out std_logic;												-- input selection of the second multiplexer 0=B 1=IMM
-			E_ALU_Conf	: out std_logic_vector(SelALU-1 downto 0);						-- alu control word
-			E_Signed	: out std_logic;												-- signed operation identifier 0=unsigned 1=signed
-			--E_BrCond	: out std_logic_vector(2 downto 0);								-- condition for branching and jumping
+			D_REG_EN	: out std_logic;								-- enables the register file and the pipeline registers
+			D_RF_RD1	: out std_logic;								-- enables the read port 1 of the register file
+			D_RF_RD2	: out std_logic;								-- enables the read port 2 of the register file
+			D_IMM_Sel	: out std_logic_vector(1 downto 0);				-- input selection of immediate type 00=uimm16 01=imm16 10=lhi_config 11=imm26
+			D_Rd_Sel	: out std_logic;								-- input selection of write address 0=Itype 1=Rtype
+			-- EXECUTE STAGE OUTPUTS									
+			E_REG_EN	: out std_logic;								-- enables the pipeline registers
+			E_MuxA_Sel	: out std_logic_vector(1 downto 0);				-- input selection of the first multiplexer 00=NPC 01=A 10='0' 11='-1'
+			E_MuxB_Sel	: out std_logic;								-- input selection of the second multiplexer 0=B 1=IMM
+			E_ALU_Conf	: out std_logic_vector(SelALU-1 downto 0);		-- alu control word
+			E_Signed	: out std_logic;								-- signed operation identifier 0=unsigned 1=signed
+			--E_BrCond	: out std_logic_vector(2 downto 0);				-- condition for branching and jumping
 			-- MEMORY STAGE OUTPUTS							
-			M_REG_EN	: out std_logic;												-- enables the pipeline registers
-			DMem_CS		: out std_logic;												-- enables the memory
-			DMem_RD		: out std_logic;												-- select read/write mode 1=READ 0=WRITE
-			DMem_WS		: out std_logic_vector(1 downto 0)	-- select type of load/store 00=Byte 01=HalfWord 10=Word
-			DMem_Sign	: out std_logic						-- equal to E_signed - needed for extension
+			M_REG_EN	: out std_logic;								-- enables the pipeline registers
+			DMem_CS		: out std_logic;								-- enables the memory
+			DMem_RD		: out std_logic;								-- select read/write mode 1=READ 0=WRITE
+			DMem_WS		: out std_logic_vector(1 downto 0)				-- select type of load/store 00=Byte 01=HalfWord 10=Word
+			DMem_Sign	: out std_logic									-- equal to E_signed - needed for data extraction
 			-- WRITEBACK STAGE OUTPUTS							
-			WB_Mux_sel	: out std_logic;												-- input selection of the multiplexer 0=mem 1=aluout
-			D_RF_WR		: out std_logic);												-- enables the write port of the register file
+			WB_Mux_sel	: out std_logic;								-- input selection of the multiplexer 0=mem 1=aluout
+			D_RF_WR		: out std_logic);								-- enables the write port of the register file
 end DLX_CU_HW;
 
 architecture Implementation of DLX_CU_HW is
 	type op_array is array (integer range 0 to OP_NUMB - 1) of std_logic_vector(CW_SIZE - 1 downto 0);
-	signal cw_array : op_array := (	"111 11101 1101 100000 11", --ADD  --order of control signal is like the following one (not the same as in port declaration)
-									"111 11101 1100 100000 11", --ADDU
-									"111 11101 1101 100000 11", --SUB	
-									"111 11101 1100 100000 11", --SUBU			
-									"111 11101 1100 100000 11", --AND               
-									"111 11101 1100 100000 11", --OR  
-									"111 11101 1100 100000 11", --XOR
-									"111 11101 1100 100000 11", --SLL
-									"111 11101 1100 100000 11", --SRL
-									"111 11101 1101 100000 11", --SRA
-									"111 11101 1101 100000 11", --SGT
-									"111 11101 1100 100000 11", --SGTU
-									"111 11101 1101 100000 11", --SGE
-									"111 11101 1100 100000 11", --SGEU
-									"111 11101 1101 100000 11", --SEQ
-									"111 11101 1101 100000 11", --SLE
-									"111 11101 1100 100000 11", --SLEU
-									"111 11101 1101 100000 11", --SLT
-									"111 11101 1100 100000 11", --SLTU
-									"111 11101 1101 100000 11", --SNE
-									"111 11101 1101 100000 11", --MULT		///
+	signal cw_array : op_array := (	"111 111001 10101 100000 11", --ADD  --order of control signal is like the following one (not the same as in port declaration)
+									"111 111001 10100 100000 11", --ADDU
+									"111 111001 10101 100000 11", --SUB	
+									"111 111001 10100 100000 11", --SUBU			
+									"111 111001 10100 100000 11", --AND               
+									"111 111001 10100 100000 11", --OR  
+									"111 111001 10100 100000 11", --XOR
+									"111 111001 10100 100000 11", --SLL
+									"111 111001 10100 100000 11", --SRL
+									"111 111001 10101 100000 11", --SRA
+									"111 111001 10101 100000 11", --SGT
+									"111 111001 10100 100000 11", --SGTU
+									"111 111001 10101 100000 11", --SGE
+									"111 111001 10100 100000 11", --SGEU
+									"111 111001 10101 100000 11", --SEQ
+									"111 111001 10101 100000 11", --SLE
+									"111 111001 10100 100000 11", --SLEU
+									"111 111001 10101 100000 11", --SLT
+									"111 111001 10100 100000 11", --SLTU
+									"111 111001 10101 100000 11", --SNE
+									"111 111001 10101 100000 11", --MULT		///
 
-									"111 11010 1111 100000 11", --ADDI	
-									"111 11000 1110 100000 11", --ADDUI		    
-									"111 11010 1111 100000 11", --SUBI   
-									"111 11000 1110 100000 11", --SUBUI          
-									"111 11000 1110 100000 11", --ANDI             
-									"111 11000 1110 100000 11", --ORI
-									"111 11000 1110 100000 11", --XORI
-									"111 11000 1110 100000 11", --SLLI
-									"111 11000 1110 100000 11", --SRLI
-									"111 11000 1111 100000 11", --SRAI
-									"111 11010 1111 100000 11", --SGTI
-									"111 11000 1110 100000 11", --SGTUI
-									"111 11010 1111 100000 11", --SGEI
-									"111 11000 1110 100000 11", --SGEUI
-									"111 11010 1111 100000 11", --SEQI
-									"111 11010 1111 100000 11", --SLEI
-									"111 11000 1110 100000 11", --SLEUI
-									"111 11010 1111 100000 11", --SLTI
-									"111 11000 1110 100000 11", --SLTUI
-									"111 11010 1111 100000 11", --SNEI
+									"111 110010 10111 100000 11", --ADDI	
+									"111 110000 10110 100000 11", --ADDUI		    
+									"111 110010 10111 100000 11", --SUBI   
+									"111 110000 10110 100000 11", --SUBUI          
+									"111 110000 10110 100000 11", --ANDI             
+									"111 110000 10110 100000 11", --ORI
+									"111 110000 10110 100000 11", --XORI
+									"111 110000 10110 100000 11", --SLLI
+									"111 110000 10110 100000 11", --SRLI
+									"111 110000 10111 100000 11", --SRAI
+									"111 110010 10111 100000 11", --SGTI
+									"111 110000 10110 100000 11", --SGTUI
+									"111 110010 10111 100000 11", --SGEI
+									"111 110000 10110 100000 11", --SGEUI
+									"111 110010 10111 100000 11", --SEQI
+									"111 110010 10111 100000 11", --SLEI
+									"111 110000 10110 100000 11", --SLEUI
+									"111 110010 10111 100000 11", --SLTI
+									"111 110000 10110 100000 11", --SLTUI
+									"111 110010 10111 100000 11", --SNEI
 
-									"                        ", --BEQZ
-									"                        ", --BNEZ
-									"                        ", --J
-									"                        ", --JR
-									"                        ", --JAL
-									"                        ", --JALR
-									"                        ", --LHI
+									"                          ", --BEQZ
+									"                          ", --BNEZ
+									"                          ", --J
+									"                          ", --JR
+									"                          ", --JAL
+									"                          ", --JALR
+									"111 101100 11010 100000 11", --LHI
 									
-									"111 11010 1111 111100 01", --LW
-									"111 11010 1111 111001 01", --LB
-									"111 11010 1111 111000 01", --LBU
-									"111 11010 1111 111011 01", --LH
-									"111 11010 1111 111010 01", --LHU
-									"111 11110 1111 010100 00", --SW
-									"111 11110 1111 010000 00", --SB
-									"111 11110 1111 010010 00", --SH
+									"111 110010 10111 111100 01", --LW
+									"111 110010 10111 111001 01", --LB
+									"111 110010 10111 111000 01", --LBU
+									"111 110010 10111 111011 01", --LH
+									"111 110010 10111 111010 01", --LHU
+									"111 111010 10111 010100 00", --SW
+									"111 111010 10111 010000 00", --SB
+									"111 111010 10111 010010 00", --SH
 									"0000000000000");--NOP
 									
 	signal cw : std_logic_vector(CW_SIZE - 1 downto 0); -- full control word read from cw_array
@@ -191,179 +191,179 @@ architecture Implementation of DLX_CU_HW is
 			when conv_integer(unsigned(RTYPE)) =>
 				case conv_integer(unsigned(FUNC)) is
 					when conv_integer(unsigned(RTYPE_NOP))	=> 
-						cw <= ;
+						cw <= CW_RTYPE_NOP;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SLL))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SLL;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SRL))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SRL;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SRA))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SRA;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_ADD))	=>
-						cw <= ;
+						cw <= CW_RTYPE_ADD;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_ADDU)) =>
-						cw <= ;
+						cw <= CW_RTYPE_ADDU;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SUB))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SUB;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SUBU)) =>
-						cw <= ;
+						cw <= CW_RTYPE_SUBU;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_AND))	=>
-						cw <= ;
+						cw <= CW_RTYPE_AND;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_OR)) 	=>
-						cw <= ;
+						cw <= CW_RTYPE_OR;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_XOR))	=>
-						cw <= ;
+						cw <= CW_RTYPE_XOR;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SEQ))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SEQ;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SNE))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SNE;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SLT))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SLT;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SGT))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SGT;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SLE))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SLE;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SGE))	=>
-						cw <= ;
+						cw <= CW_RTYPE_SGE;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SLTU)) =>
-						cw <= ;
+						cw <= CW_RTYPE_SLTU;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SGTU)) =>
-						cw <= ;
+						cw <= CW_RTYPE_SGTU;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SLEU)) =>
-						cw <= ;
+						cw <= CW_RTYPE_SLEU;
 						aluOpcode_i <= ;
 					when conv_integer(unsigned(RTYPE_SGEU)) =>
-						cw <= ;
+						cw <= CW_RTYPE_SGEU;
 						aluOpcode_i <= ;
 					when others => 
-						cw <= ;
+						cw <= (others => '0');
 						aluOpcode_i <= ;
 				end case;
 			when conv_integer(unsigned(JTYPE_J))	 =>
-				cw <= ;
+				cw <= CW_JTYPE_J;
 				aluOpcode_i <= ;	
 			when conv_integer(unsigned(JTYPE_JAL))	 =>
-				cw <= ;
+				cw <= CW_JTYPE_JAL;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(JTYPE_JR))	 =>
-				cw <= ;
+				cw <= CW_JTYPE_JR;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(JTYPE_JALR))	 =>
-				cw <= ;
+				cw <= CW_JTYPE_JALR;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_BEQZ))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_BEQZ;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_BNEZ))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_BNEZ;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_ADDI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_ADDI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_ADDUI)) =>
-				cw <= ;
+				cw <= CW_ITYPE_ADDUI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SUBI))  =>
-				cw <= ;
+				cw <= CW_ITYPE_SUBI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SUBUI)) =>
-				cw <= ;
+				cw <= CW_ITYPE_SUBUI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_ANDI))  =>
-				cw <= ;
+				cw <= CW_ITYPE_ANDI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_ORI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_ORI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_XORI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_XORI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_LHI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_LHI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SLLI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SLLI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_NOP))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_NOP;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SRLI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SRLI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SRAI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SRAI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SEQI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SEQI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SNEI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SNEI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SLTI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SLTI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SGTI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SGTI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SLEI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SLEI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SGEI))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SGEI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_LB))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_LB;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_LH))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_LH;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_LW))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_LW;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_LBU))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_LBU;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_LHU))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_LHU;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SB))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SB;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SH))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SH;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SW))	 =>
-				cw <= ;
+				cw <= CW_ITYPE_SW;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SLTUI)) =>
-				cw <= ;
+				cw <= CW_ITYPE_SLTUI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SGTUI)) =>
-				cw <= ;
+				cw <= CW_ITYPE_SGTUI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SLEUI)) =>
-				cw <= ;
+				cw <= CW_ITYPE_SLEUI;
 				aluOpcode_i <= ;
 			when conv_integer(unsigned(ITYPE_SGEUI)) =>
-				cw <= ;
+				cw <= CW_ITYPE_SGEUI;
 				aluOpcode_i <= ;			
 			when others => 
 				cw <= (others => '0');

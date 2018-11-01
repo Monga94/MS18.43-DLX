@@ -9,6 +9,7 @@ entity ALU is
 	generic ( N : integer := 32);
 	port (	FUNC			: in	std_logic_vector(SelALU-1 downto 0);
 			Sign			: in	std_logic;
+			MemOp			: in	std_logic;
 			DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
 			OUTALU			: out 	std_logic_vector(N-1 downto 0));
 end ALU;
@@ -19,7 +20,7 @@ architecture Structural of ALU is
 	signal Comp_Sel,Out_Sel										: std_logic_vector(2 downto 0);	
 	signal And_Out,Or_Out,Xor_Out,Add_Out,Shift_Out,Comp_ext	: std_logic_vector(N-1 downto 0);
 	signal AneB,AeqB,AgtB,AgeB,AltB,AleB,Comp_Out				: std_logic;
-	signal Sign_OF,Unsign_OF,OvFl								: std_logic;
+	signal Sign_OF,Unsign_OF,OvFl,OvFl_Sel						: std_logic;
 	signal Over,Add_Ok											: std_logic_vector(N-1 downto 0);
 	
 
@@ -231,12 +232,16 @@ begin
 		port map(AneB,AeqB,AgtB,AgeB,AltB,AleB,'0','0',Comp_sel,Comp_Out);
 		
 	Comp_ext <= (N-1 downto 1 => '0') & Comp_Out;
+	
 	OF_Detect: MUX21
 		port map(Unsign_OF,Sign_OF,Sign,OvFl);
+		
 	Over <= (Sub XNOR Sign) & (N-2 downto 0 => NOT(Sub));
+	OvFl_Sel <= OvFl AND NOT(MemOp);
+	
 	OF_Manage: MUX21_GENERIC
 		generic map(N)
-		port map(Add_Out,Over,OvFl,Add_Ok);
+		port map(Add_Out,Over,OvFl_Sel,Add_Ok);
 		
 	MuxOut: mux81_generic
 		generic map(N)
