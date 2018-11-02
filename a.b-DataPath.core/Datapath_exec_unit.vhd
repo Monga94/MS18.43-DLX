@@ -15,20 +15,29 @@ entity ExecutionUnit is
 			MuxB_Sel:		in	std_logic_vector(1 downto 0);
 			ALU_Config:		in	std_logic_vector(SelALU-1 downto 0);
 			Sign:			in	std_logic;
+			BrCond:			in	std_logic_vector(1 downto 0);
 			NPC_In:		    in	std_logic_vector(Nbit-1 downto 0);
 			DataA:			in	std_logic_vector(Nbit-1 downto 0);
 			DataB:		    in	std_logic_vector(Nbit-1 downto 0);
 			DataIMM:		in	std_logic_vector(Nbit-1 downto 0);
 			Wr_Addr_D:		in	std_logic_vector(Addr_bit-1 downto 0);
+			NPC_Out:		out std_logic_vector(Nbit-1 downto 0);
 			ALU_Out:		out std_logic_vector(Nbit-1 downto 0);
 			DataBtoDMem:	out std_logic_vector(Nbit-1 downto 0);
 			J_addr:			out std_logic_vector(Nbit-1 downto 0);
 			Wr_Addr_E:		out std_logic_vector(Addr_bit-1 downto 0);
-			Taken:			out std_logic);
+			Br_taken:		out std_logic);
 end ExecutionUnit;
 
 architecture Behavioural of ExecutionUnit is
 	signal Op1,Op2,ALU_res	: std_logic_vector(Nbit-1 downto 0);
+	
+	component Br_Comp
+		generic ( Nbit : integer := 32);
+		port(	A:			in 	std_logic_vector(Nbit-1 downto 0);
+				Br_cond:	in	std_logic_vector(1 downto 0);
+				Taken:		out std_logic);
+	end component;
 	
 	component D_Reg_generic
 		generic (N: integer := 32);
@@ -60,6 +69,9 @@ architecture Behavioural of ExecutionUnit is
 
 begin
 	
+	BrZ: Br_Comp
+		generic map(Nbit)
+		port map(DataA,BrCond,Br_taken);
 	MUXA: mux41_generic
 		generic map(Nbit)
 		port map(NPC_In,DataA,(others => '0'),(others => '1'),MuxA_Sel,Op1);
@@ -69,6 +81,9 @@ begin
 	ALUnit: ALU
 		generic map(Nbit)
 		port map(ALU_Config,Sign,Op1,Op2,ALU_res);
+	REGNPC: D_Reg_generic
+		generic map(Nbit)
+		port map(NPC_In,CLK,RST,REG_EN_E,NPC_Out);
 	REGALU: D_Reg_generic
 		generic map(Nbit)
 		port map(ALU_res,CLK,RST,REG_EN_E,ALU_Out);

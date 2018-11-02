@@ -35,15 +35,14 @@ architecture RTL Of DLX is
 				E_MuxB_Sel:		in	std_logic_vector(1 downto 0);
 				E_ALU_Conf:		in	std_logic_vector(SelALU-1 downto 0);
 				E_Signed:		in	std_logic;
-				--E_BrCond:		in	std_logic_vector(2 downto 0);
-				--E_Taken:		out std_logic;
+				E_BrCond:		in	std_logic_vector(1 downto 0);
 				--Memory Stage
 				M_REG_EN:		in	std_logic;
 				DMem_DataOut:	in	std_logic_vector(Nbit-1 downto 0);
 				DMem_DataIn:	out std_logic_vector(Nbit-1 downto 0);
 				DMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
 				--Writeback Stage
-				WB_Mux_sel:		in	std_logic);
+				WB_Mux_sel:		in	std_logic_vector(1 downto 0));
 	end component;
 
 	component DLX_CU_HW is 
@@ -68,7 +67,7 @@ architecture RTL Of DLX is
 				E_MuxB_Sel	: out std_logic_vector(1 downto 0);			-- input selection of the second multiplexer 00=B 01=IMM 10='0' 11='-1'
 				E_ALU_Conf	: out std_logic_vector(SelALU-1 downto 0);	-- alu control word
 				E_Signed	: out std_logic;							-- signed operation identifier 0=unsigned 1=signed
-				--E_BrCond	: out std_logic_vector(2 downto 0);			-- condition for branching and jumping
+				E_BrCond	: out std_logic_vector(1 downto 0);			-- condition for branching 00,01=noBranch 10=BrZ 11=BrNZ
 				-- MEMORY STAGE OUTPUTS                         		
 				M_REG_EN	: out std_logic;							-- enables the pipeline registers
 				DMem_CS		: out std_logic;							-- enables the memory

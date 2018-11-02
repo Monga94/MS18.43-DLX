@@ -14,6 +14,7 @@ entity FetchUnit is
 			PC_EN:			in	std_logic;
 			Jr_Sel:			in	std_logic;
 			J_Sel:			in	std_logic;
+			Br_taken:		in	std_logic;
 			Jr_addr:		in	std_logic_vector(Iram_bit-1 downto 0);
 			J_addr:			in	std_logic_vector(Iram_bit-1 downto 0);
 			IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
@@ -27,7 +28,8 @@ entity FetchUnit is
 architecture Behavioral of FetchUnit is
 	signal FOUR_SIG,PCToAdder,AdderToNPC:	std_logic_vector(Iram_bit-1 downto 0);
 	signal NPC_input:						std_logic_vector(Nbit-1 downto 0);
-	signal JRtoJ_PC,JtoPC					std_logic_vector(Iram_bit-1 downto 0);
+	signal JRtoJ_PC,JtoPC:					std_logic_vector(Iram_bit-1 downto 0);
+	signal J_Br_Sel:						std_logic;
 	
 	component D_Reg_generic
 		generic (N: integer := 32);
@@ -64,12 +66,14 @@ begin
 	
 	NPC_input <= (Nbit-1 downto Iram_bit => '0') & AdderToNPC;
 	
+	J_Br_Sel <= J_Sel OR Br_taken;
+	
 	MuxJR: MUX21_GENERIC
 		generic map(Iram_bit)
 		port map(AdderToNPC,Jr_addr,Jr_Sel,JRtoJ_PC);
 	MuxJ: MUX21_GENERIC
 		generic map(Iram_bit)
-		port map(JRtoJ_PC,J_addr,J_Sel,JtoPC);
+		port map(JRtoJ_PC,J_addr,J_Br_Sel,JtoPC);
 	PC:	D_Reg_generic
 		generic map(Iram_bit)
 		port map(AdderToNPC,CLK,RST,PC_EN,PCToAdder);	
