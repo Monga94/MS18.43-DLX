@@ -10,7 +10,6 @@ entity MemoryUnit is
 	port(	CLK: 			in	std_logic;
 			RST:			in	std_logic;
 			REG_EN_M:		in	std_logic;
-			--Branch_taken:	in	std_logic;
 			DataIn_DMem:	in	std_logic_vector(Nbit-1 downto 0);
 			DataIn_ALU:		in	std_logic_vector(Nbit-1 downto 0);
 			DataIn_RegB:	in	std_logic_vector(Nbit-1 downto 0);

@@ -32,15 +32,14 @@ entity Datapath is
 			E_MuxB_Sel:		in	std_logic_vector(1 downto 0);
 			E_ALU_Conf:		in	std_logic_vector(SelALU-1 downto 0);
 			E_Signed:		in	std_logic;
-			--E_BrCond:		in	std_logic_vector(2 downto 0);
-			--E_Taken:		out std_logic;
+			E_BrCond:		in	std_logic_vector(1 downto 0);
 			--Memory Stage
 			M_REG_EN:		in	std_logic;
 			DMem_DataOut:	in	std_logic_vector(Nbit-1 downto 0);
 			DMem_DataIn:	out std_logic_vector(Nbit-1 downto 0);
 			DMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
 			--Writeback Stage
-			WB_Mux_sel:		in	std_logic);
+			WB_Mux_sel:		in	std_logic_vector(1 downto 0));
 end Datapath;
             	
 architecture Structural of Datapath is
@@ -51,6 +50,7 @@ architecture Structural of Datapath is
 	signal WtoD_WRdata											: std_logic_vector(Nbit-1 downto 0);
 	signal DtoE_WRaddr,EtoM_WRaddr,MtoD_WRaddr					: std_logic_vector(Addr_bit-1 downto 0);
 	signal DtoF_Jraddr,EtoF_Jaddr								: std_logic_vector(Nbit-1 downto 0);
+	signal EtoF_Br_taken										: std_logic;
 	
 	component FetchUnit is
 		generic(Nbit:		integer := 32;
@@ -62,6 +62,7 @@ architecture Structural of Datapath is
 				PC_EN:			in	std_logic;
 				Jr_Sel:			in	std_logic;
 				J_Sel:			in	std_logic;
+				Br_taken:		in	std_logic;
 				Jr_addr:		in	std_logic_vector(Iram_bit-1 downto 0);
 				J_addr:			in	std_logic_vector(Iram_bit-1 downto 0);
 				IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
@@ -105,16 +106,18 @@ architecture Structural of Datapath is
 				MuxB_Sel:		in	std_logic;
 				ALU_Config:		in	std_logic_vector(SelALU-1 downto 0);
 				Sign:			in	std_logic;
+				BrCond:			in	std_logic_vector(1 downto 0);
 				NPC_In:		    in	std_logic_vector(Nbit-1 downto 0);
 				DataA:			in	std_logic_vector(Nbit-1 downto 0);
 				DataB:		    in	std_logic_vector(Nbit-1 downto 0);
 				DataIMM:		in	std_logic_vector(Nbit-1 downto 0);
 				Wr_Addr_D:		in	std_logic_vector(Addr_bit-1 downto 0);
+				NPC_Out:		out std_logic_vector(Nbit-1 downto 0);
 				ALU_Out:		out std_logic_vector(Nbit-1 downto 0);	
 				DataBtoDMem:	out std_logic_vector(Nbit-1 downto 0);
 				J_addr:			out std_logic_vector(Nbit-1 downto 0);
 				Wr_Addr_E:		out std_logic_vector(Addr_bit-1 downto 0);	
-				Taken:			out std_logic);
+				Br_taken:		out std_logic);
 	end component;
 	
 	component MemoryUnit is
@@ -123,7 +126,6 @@ architecture Structural of Datapath is
 		port(	CLK: 			in	std_logic;
 				RST:			in	std_logic;
 				REG_EN_M:		in	std_logic;
-				--Branch_taken:	in	std_logic;
 				DataIn_DMem:	in	std_logic_vector(Nbit-1 downto 0);
 				DataIn_ALU:		in	std_logic_vector(Nbit-1 downto 0);
 				DataIn_RegB:	in	std_logic_vector(Nbit-1 downto 0);
@@ -139,7 +141,9 @@ architecture Structural of Datapath is
 		generic(Nbit: integer := 32);
 		port(	CLK:			in	std_logic;
 				RST:			in	std_logic;
-				WBMux_sel:		in	std_logic;
+				WBMux_sel:		in	std_logic_vector(1 downto 0);
+				NPC8:			in	std_logic_vector(Nbit-1 downto 0);
+				NPC12:			in	std_logic_vector(Nbit-1 downto 0);
 				DataIn_DMem:	in	std_logic_vector(Nbit-1 downto 0);
 				DataIn_ALU:		in	std_logic_vector(Nbit-1 downto 0);
 				WB_DataOut:		out std_logic_vector(Nbit-1 downto 0));			
@@ -155,8 +159,9 @@ begin
 					PC_EN			=> F_PC_EN,
 					Jr_Sel			=> F_Jr_Sel,	
 					J_Sel	        => F_J_Sel,
-					Jr_addr         => DtoF_Jraddr,
-					J_addr	        => EtoF_Jaddr,
+					Br_taken		=> EtoF_Br_taken,
+					Jr_addr         => DtoF_Jraddr(IRAM_DEPTH-1 downto 0),
+					J_addr	        => EtoF_Jaddr(IRAM_DEPTH-1 downto 0),
 					IMem_Instr		=> IMem_Instr,
 					InstrToDecode	=> FtoD_instr,
 					NPCToDecode		=> FtoD_NPC,
@@ -194,16 +199,18 @@ begin
 		            MuxB_Sel		=> E_MuxB_Sel,
 		            ALU_Config		=> E_ALU_Conf,
 					Sign			=> E_Signed,
+					BrCond			=> E_BrCond,
 		            NPC_In			=> DtoE_NPC,
 		            DataA			=> DtoE_DataA,
 		            DataB			=> DtoE_DataB,
 		            DataIMM			=> DtoE_imm,
 		            Wr_Addr_D		=> DtoE_WRaddr,
+					NPC_Out			=> EtoW_NPC,
 		            ALU_Out			=> EtoM_DataALU,
 		            DataBtoDMem		=> EtoM_DataB,
 					J_addr			=> EtoF_Jaddr,
 		            Wr_Addr_E		=> EtoM_WRaddr,
-		            Taken			=> E_Taken);
+		            Br_taken		=> EtoF_Br_taken);
 					
 	MEMU: MemoryUnit
 		generic map(Nbit, Addr_bit)
@@ -225,6 +232,8 @@ begin
 		port map(	CLK				=> CLK,
 		            RST				=> RST,
 		            WBMux_sel		=> WB_Mux_sel,
+					NPC8			=> EtoW_NPC,
+					NPC12			=> DtoE_NPC,
 		            DataIn_DMem		=> MtoW_DataMem,
 		            DataIn_ALU		=> MtoW_DataALU,
 		            WB_DataOut		=> WtoD_WRdata);
