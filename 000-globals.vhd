@@ -6,7 +6,7 @@ package myStuff is
 	constant Nbit		: integer := 32;
 	constant Nreg		: integer := 32;
 	constant IRAM_DEPTH	: integer := 10;
-	constant DRAM_DEPTH	: integer := 20;
+	constant DRAM_DEPTH	: integer := 10;
 	constant RF_SIZE	: integer := 5;
 
 -- Control unit input sizes
@@ -15,7 +15,7 @@ package myStuff is
 	constant OP_NUMB		: integer := 27;												-- Number Of Operations that can be executed
 	constant F_CTRL			: integer := 3;	
 	constant D_CTRL			: integer := 8;	
-	constant E_CTRL			: integer := 9;	
+	constant E_CTRL			: integer := 10;	
 	constant M_CTRL			: integer := 6;	
 	constant WB_CTRL		: integer := 3;	
 	constant CW_SIZE		: integer := F_CTRL+D_CTRL+E_CTRL+M_CTRL+WB_CTRL;				-- Control Word Size
@@ -102,15 +102,15 @@ package myStuff is
 	constant ALU_SLLop		: std_logic_vector(SelALU-1 downto 0) := "00101";
 	constant ALU_SRLop		: std_logic_vector(SelALU-1 downto 0) := "00110";
 	constant ALU_SRAop		: std_logic_vector(SelALU-1 downto 0) := "00111";
-	constant ALU_ROLop		: std_logic_vector(SelALU-1 downto 0) := "01000"; ???
-	constant ALU_RORop		: std_logic_vector(SelALU-1 downto 0) := "01001"; ???
+	constant ALU_ROLop		: std_logic_vector(SelALU-1 downto 0) := "01000"; --???
+	constant ALU_RORop		: std_logic_vector(SelALU-1 downto 0) := "01001"; --???
 	constant ALU_AneBop		: std_logic_vector(SelALU-1 downto 0) := "01010";
 	constant ALU_AeqBop		: std_logic_vector(SelALU-1 downto 0) := "01011";
 	constant ALU_AgtBop		: std_logic_vector(SelALU-1 downto 0) := "01100";
 	constant ALU_AgeBop		: std_logic_vector(SelALU-1 downto 0) := "01101";
 	constant ALU_AltBop		: std_logic_vector(SelALU-1 downto 0) := "01110";
 	constant ALU_AleBop		: std_logic_vector(SelALU-1 downto 0) := "01111";
-	constant ALU_MULTop		: std_logic_vector(SelALU-1 downto 0) := "10000"; ???
+	constant ALU_MULTop		: std_logic_vector(SelALU-1 downto 0) := "10000"; --???
 	constant ALU_NOPop		: std_logic_vector(SelALU-1 downto 0) := "11111";
 
 -- CW word

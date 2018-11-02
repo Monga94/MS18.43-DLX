@@ -18,7 +18,7 @@ entity MemoryUnit is
 			DataOut_Branch:	out std_logic_vector(Nbit-1 downto 0);
 			WB_Address:		out std_logic_vector(Addr_bit-1 downto 0);
 			DataOut_Store:	out std_logic_vector(Nbit-1 downto 0);
-			Addr_DMem:		out	std_logic_vector(Nbit-1 downto 0));
+			Addr_DMem:		out	std_logic_vector(DRAM_DEPTH-1 downto 0));
 end MemoryUnit;
 
 architecture Structural of MemoryUnit is
@@ -33,7 +33,7 @@ architecture Structural of MemoryUnit is
 	end component;
 	
 begin
-	Addr_DMem <= DataIn_ALU;
+	Addr_DMem <= DataIn_ALU(DRAM_DEPTH-1 downto 0);
 	DataOut_Store <= DataIn_RegB;
 	
 	LMD: D_Reg_generic

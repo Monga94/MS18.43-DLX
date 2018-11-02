@@ -18,7 +18,7 @@ entity Datapath is
 			F_Jr_Sel:		in	std_logic;
 			F_J_Sel:		in	std_logic;
 			IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
-			IMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
+			IMem_Addr:		out std_logic_vector(IRAM_DEPTH-1 downto 0);
 			--Decode Stage
 			D_REG_EN:		in	std_logic;	
 			D_RF_RD1:		in	std_logic;
@@ -38,7 +38,7 @@ entity Datapath is
 			M_REG_EN:		in	std_logic;
 			DMem_DataOut:	in	std_logic_vector(Nbit-1 downto 0);
 			DMem_DataIn:	out std_logic_vector(Nbit-1 downto 0);
-			DMem_Addr:		out std_logic_vector(Nbit-1 downto 0);
+			DMem_Addr:		out std_logic_vector(DRAM_DEPTH-1 downto 0);
 			--Writeback Stage
 			WB_Mux_sel:		in	std_logic_vector(1 downto 0));
 end Datapath;
@@ -50,7 +50,7 @@ architecture Structural of Datapath is
 	signal MtoW_DataMem,MtoW_DataALU							: std_logic_vector(Nbit-1 downto 0);
 	signal WtoD_WRdata											: std_logic_vector(Nbit-1 downto 0);
 	signal DtoE_WRaddr,EtoM_WRaddr,MtoD_WRaddr					: std_logic_vector(Addr_bit-1 downto 0);
-	signal DtoF_Jraddr,EtoF_Jaddr								: std_logic_vector(Nbit-1 downto 0);
+	signal DtoF_Jraddr,EtoF_Jaddr,EtoW_NPC						: std_logic_vector(Nbit-1 downto 0);
 	signal EtoF_Br_taken										: std_logic;
 	
 	component FetchUnit is
@@ -86,7 +86,7 @@ architecture Structural of Datapath is
 				MuxIMM_Sel:		in	std_logic_vector(1 downto 0);
 				MuxRd_Sel:		in	std_logic_vector(1 downto 0);
 				InstrToDecode:	in	std_logic_vector(Nbit-1 downto 0);
-				NPC:		 	in	std_logic_vector(Nbit-1 downto 0);
+				NPCin:		 	in	std_logic_vector(Nbit-1 downto 0);
 				WB_Data:		in	std_logic_vector(Nbit-1 downto 0);
 				WB_Addr:		in	std_logic_vector(Addr_bit-1 downto 0);
 				DataA:			out std_logic_vector(Nbit-1 downto 0);
@@ -103,8 +103,8 @@ architecture Structural of Datapath is
 		port(	CLK:			in	std_logic;
 				RST:		    in	std_logic;
 				REG_EN_E:		in	std_logic;
-				MuxA_Sel:		in	std_logic;
-				MuxB_Sel:		in	std_logic;
+				MuxA_Sel:		in	std_logic_vector(1 downto 0);
+				MuxB_Sel:		in	std_logic_vector(1 downto 0);
 				ALU_Config:		in	std_logic_vector(SelALU-1 downto 0);
 				Sign:			in	std_logic;
 				BrCond:			in	std_logic_vector(1 downto 0);
@@ -136,7 +136,7 @@ architecture Structural of Datapath is
 				DataOut_Branch:	out std_logic_vector(Nbit-1 downto 0);
 				WB_Address:		out std_logic_vector(Addr_bit-1 downto 0);
 				DataOut_Store:	out std_logic_vector(Nbit-1 downto 0);
-				Addr_DMem:		out	std_logic_vector(Nbit-1 downto 0));	
+				Addr_DMem:		out	std_logic_vector(DRAM_DEPTH-1 downto 0));	
 	end component;
 	
 	component WritebackUnit is 
@@ -182,7 +182,7 @@ begin
 		            MuxIMM_Sel		=> D_IMM_Sel,
 		            MuxRd_Sel		=> D_Rd_Sel,
 		            InstrToDecode	=> FtoD_instr,
-		            NPC	 			=> FtoD_NPC,
+		            NPCin 			=> FtoD_NPC,
 		            WB_Data			=> WtoD_WRdata,
 		            WB_Addr			=> MtoD_WRaddr,
 		            DataA			=> DtoE_DataA,

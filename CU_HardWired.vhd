@@ -35,7 +35,7 @@ entity DLX_CU_HW is
 			DMem_CS		: out std_logic;								-- enables the memory
 			DMem_RD		: out std_logic;								-- select read/write mode 1=READ 0=WRITE
 			DMem_WS		: out std_logic_vector(1 downto 0);				-- select type of load/store 00=Byte 01=HalfWord 10=Word
-			DMem_Sign	: out std_logic									-- equal to E_signed - needed for data extraction
+			DMem_Sign	: out std_logic;								-- equal to E_signed - needed for data extraction
 			-- WRITEBACK STAGE OUTPUTS							
 			WB_Mux_sel	: out std_logic_vector(1 downto 0);				-- input selection of the multiplexer 00=mem 01=aluout 10=PC+8 11=PC+12
 			D_RF_WR		: out std_logic);								-- enables the write port of the register file
@@ -52,10 +52,10 @@ architecture Implementation of DLX_CU_HW is
 	signal M_cw : std_logic_vector(CW_SIZE - 1 - F_CTRL - D_CTRL - E_CTRL downto 0); -- fourth stage
 	signal W_cw : std_logic_vector(CW_SIZE - 1 - F_CTRL - D_CTRL - E_CTRL - M_CTRL downto 0); -- fifth stage
 	
-	signal aluOpcode_i : aluOp := IDLE; -- ALUOP defined in package
-	signal aluOpcode1 : aluOp := IDLE;
-	signal aluOpcode2 : aluOp := IDLE;
-	signal aluOpcode3 : aluOp := IDLE;
+	signal aluOpcode_i : aluOp := ALU_NOPop; -- ALUOP defined in package
+	signal aluOpcode1 : aluOp := ALU_NOPop;
+	signal aluOpcode2 : aluOp := ALU_NOPop;
+	signal aluOpcode3 : aluOp := ALU_NOPop;
 	
 	begin
 	
@@ -94,24 +94,24 @@ architecture Implementation of DLX_CU_HW is
 	D_RF_WR		<=	W_cw(0);
 	
 	-- first stage combinational outputs
-	F_cw <= cw;
-	aluOpcode1 <= aluOpcode_i;
 
 	-- process to pipeline control words
 	CW_PIPE: process (Clk, Rst)
 	begin  -- process Clk			
-		if Clk'event and Clk = '1' then  		-- raising clock edge
+		if Clk'event and Clk = '0' then  		-- raising clock edge
 			if Rst = '0' then					-- synchronous reset (active low)
-				F_cw <= '1' & (others => '0');
-				D_cw <= '1' & (others => '0');
-				E_cw <= '1' & (others => '0');
-				M_cw <= '1' & (others => '0');
-				W_cw <= '1' & (others => '0');
+				F_cw <= '1' & (CW_SIZE-2 downto 0 => '0');
+				D_cw <= (others => '0');
+				E_cw <= (others => '0');
+				M_cw <= (others => '0');
+				W_cw <= (others => '0');
 				
+				aluOpcode1 <= aluOpcode_i;
 				aluOpcode1 <= ALU_NOPop;	
 				aluOpcode2 <= ALU_NOPop;
 				aluOpcode3 <= ALU_NOPop;		
 			else
+				F_cw <= cw;
 				D_cw <= F_cw(CW_SIZE - 1 - F_CTRL downto 0);
 				E_cw <= D_cw(CW_SIZE - 1 - F_CTRL - D_CTRL downto 0);
 				M_cw <= E_cw(CW_SIZE - 1 - F_CTRL - D_CTRL - E_CTRL downto 0);

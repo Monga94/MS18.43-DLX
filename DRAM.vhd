@@ -24,7 +24,7 @@ ARCHITECTURE Behavior OF DRAM IS
 	SIGNAL Memory : Mem_Typ;
 	
 BEGIN
-	PROCESS(Clk, Rst) --WRITING
+	PROCESS(Clk, Rst_n) --WRITING
 		VARIABLE Adj_Addr : MemLoc;
 	BEGIN
 		Adj_Addr := TO_INTEGER(UNSIGNED(Address));
