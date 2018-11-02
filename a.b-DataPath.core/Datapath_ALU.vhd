@@ -23,7 +23,6 @@ architecture Structural of ALU is
 	signal Sign_OF,Unsign_OF,OvFl,OvFl_Sel						: std_logic;
 	signal Over,Add_Ok											: std_logic_vector(N-1 downto 0);
 	
-
 	component and_gen
 		generic ( N : integer := 32);
 		port (	A	: in	std_logic_vector(N-1 downto 0);
@@ -244,7 +243,7 @@ begin
 		
 	MuxOut: mux81_generic
 		generic map(N)
-		port map(And_Out,Or_Out,Xor_Out,Add_Ok,Shift_Out,Comp_ext,(others => '0'),Mul_Out,Out_sel,OUTALU);
+		port map(And_Out,Or_Out,Xor_Out,Add_Ok,Shift_Out,Comp_ext,Mul_Out,(others => '0'),Out_sel,OUTALU);
 		
 end Structural;
 
