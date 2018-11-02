@@ -58,6 +58,8 @@ begin
 		Wr_Addr_D <= "00110";
 		wait for 4 ns;
 		Func <= ALU_ORop;
+		A_mp_i <= "11111000001010001001100000111010";
+		B_mp_i <= "11000100101000011111110000000000";
 		wait for 4 ns;
 		Func <= ALU_XORop;
 		wait for 4 ns;
@@ -88,6 +90,8 @@ begin
 		Func <= ALU_AleBop;
 		wait for 4 ns;
 		Func <= ALU_NOPop;
+		wait for 4 ns;
+		Func <= ALU_MULTop;
 		wait for 4 ns;
 		Func <= ALU_ANDop;
 		wait;

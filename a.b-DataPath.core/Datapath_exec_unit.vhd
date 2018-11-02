@@ -29,7 +29,7 @@ end ExecutionUnit;
 
 architecture Behavioural of ExecutionUnit is
 	signal Op1,Op2,ALU_res	: std_logic_vector(Nbit-1 downto 0);
-	
+	signal Mem : std_logic;
 	component D_Reg_generic
 		generic (N: integer := 32);
 		port (	D:		in	std_logic_vector(N-1 downto 0);
@@ -68,7 +68,7 @@ begin
 		port map(DataB,DataIMM,(others => '0'),(others => '1'),MuxB_Sel,Op2);
 	ALUnit: ALU
 		generic map(Nbit)
-		port map(ALU_Config,Sign,Op1,Op2,ALU_res);
+		port map(ALU_Config,Sign,Mem,Op1,Op2,ALU_res);
 	REGALU: D_Reg_generic
 		generic map(Nbit)
 		port map(ALU_res,CLK,RST,REG_EN_E,ALU_Out);
