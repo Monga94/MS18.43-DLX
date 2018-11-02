@@ -9,7 +9,7 @@ entity ALU is
 	generic ( N : integer := 32);
 	port (	FUNC			: in	std_logic_vector(SelALU-1 downto 0);
 			Sign			: in	std_logic;
-			MemOp			: in	std_logic;
+			AddrComp		: in	std_logic;
 			DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
 			OUTALU			: out 	std_logic_vector(N-1 downto 0));
 end ALU;
@@ -235,7 +235,7 @@ begin
 		port map(Unsign_OF,Sign_OF,Sign,OvFl);
 		
 	Over <= (Sub XNOR Sign) & (N-2 downto 0 => NOT(Sub));
-	OvFl_Sel <= OvFl AND NOT(MemOp);
+	OvFl_Sel <= OvFl AND NOT(AddrComp);
 	
 	OF_Manage: MUX21_GENERIC
 		generic map(N)

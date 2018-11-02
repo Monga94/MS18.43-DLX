@@ -114,69 +114,69 @@ package myStuff is
 	constant ALU_NOPop		: std_logic_vector(SelALU-1 downto 0) := "11111";
 
 -- CW word
-																	-- FFFDDDDDDDDEEEEEEEEEMMMMMMWWW 
-																	-- 12312345678123456789123456123
-	constant CW_RTYPE_ADD	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --ADD 
-	constant CW_RTYPE_ADDU	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --ADDU
-	constant CW_RTYPE_SUB	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --SUB	
-	constant CW_RTYPE_SUBU	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --SUBU	
-	constant CW_RTYPE_AND	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --AND    
-	constant CW_RTYPE_OR 	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --OR  
-	constant CW_RTYPE_XOR	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --XOR
-	constant CW_RTYPE_SLL	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --SLL
-	constant CW_RTYPE_SRL	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --SRL
-	constant CW_RTYPE_SRA	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --SRA
-	constant CW_RTYPE_SGT	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --SGT
-	constant CW_RTYPE_SGTU	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --SGTU
-	constant CW_RTYPE_SGE	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --SGE
-	constant CW_RTYPE_SGEU	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --SGEU
-	constant CW_RTYPE_SEQ	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --SEQ
-	constant CW_RTYPE_SLE	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --SLE
-	constant CW_RTYPE_SLEU	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --SLEU
-	constant CW_RTYPE_SLT	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --SLT
-	constant CW_RTYPE_SLTU	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101000000100000011"; --SLTU
-	constant CW_RTYPE_SNE	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --SNE
-	constant CW_RTYPE_MULT	: std_logic_vector(CW_SIZE-1 downto 0) := "11111100010101001000100000011"; --MULT	
-	constant CW_RTYPE_NOP	: std_logic_vector(CW_SIZE-1 downto 0) := "01010000000100000000000000000"; --NOP
+																	-- FFFDDDDDDDDEEEEEEEEEEMMMMMMWWW 
+																	-- 123123456781234567890123456123
+	constant CW_RTYPE_ADD	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --ADD 
+	constant CW_RTYPE_ADDU	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --ADDU
+	constant CW_RTYPE_SUB	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SUB	
+	constant CW_RTYPE_SUBU	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SUBU	
+	constant CW_RTYPE_AND	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --AND    
+	constant CW_RTYPE_OR 	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --OR  
+	constant CW_RTYPE_XOR	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --XOR
+	constant CW_RTYPE_SLL	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SLL
+	constant CW_RTYPE_SRL	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SRL
+	constant CW_RTYPE_SRA	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SRA
+	constant CW_RTYPE_SGT	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SGT
+	constant CW_RTYPE_SGTU	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SGTU
+	constant CW_RTYPE_SGE	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SGE
+	constant CW_RTYPE_SGEU	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SGEU
+	constant CW_RTYPE_SEQ	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SEQ
+	constant CW_RTYPE_SLE	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SLE
+	constant CW_RTYPE_SLEU	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SLEU
+	constant CW_RTYPE_SLT	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SLT
+	constant CW_RTYPE_SLTU	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SLTU
+	constant CW_RTYPE_SNE	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SNE
+	constant CW_RTYPE_MULT	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --MULT	
+	constant CW_RTYPE_NOP	: std_logic_vector(CW_SIZE-1 downto 0) := "010100000001000000000000000000"; --NOP
 	
-	constant CW_ITYPE_ADDI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000100000011"; --ADDI		
-	constant CW_ITYPE_ADDUI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --ADDUI  
-	constant CW_ITYPE_SUBI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000100000011"; --SUBI   
-	constant CW_ITYPE_SUBUI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --SUBUI  
-	constant CW_ITYPE_ANDI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --ANDI 
-	constant CW_ITYPE_ORI   : std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --ORI
-	constant CW_ITYPE_XORI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --XORI
-	constant CW_ITYPE_SLLI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --SLLI
-	constant CW_ITYPE_SRLI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --SRLI
-	constant CW_ITYPE_SRAI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101011000100000011"; --SRAI
-	constant CW_ITYPE_SGTI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000100000011"; --SGTI
-	constant CW_ITYPE_SGTUI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --SGTUI
-	constant CW_ITYPE_SGEI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000100000011"; --SGEI
-	constant CW_ITYPE_SGEUI : std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --SGEUI
-	constant CW_ITYPE_SEQI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000100000011"; --SEQI
-	constant CW_ITYPE_SLEI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000100000011"; --SLEI
-	constant CW_ITYPE_SLEUI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --SLEUI
-	constant CW_ITYPE_SLTI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000100000011"; --SLTI
-	constant CW_ITYPE_SLTUI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111000000101010000100000011"; --SLTUI
-	constant CW_ITYPE_SNEI	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000100000011"; --SNEI
+	constant CW_ITYPE_ADDI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --ADDI		
+	constant CW_ITYPE_ADDUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --ADDUI  
+	constant CW_ITYPE_SUBI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --SUBI   
+	constant CW_ITYPE_SUBUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SUBUI  
+	constant CW_ITYPE_ANDI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --ANDI 
+	constant CW_ITYPE_ORI   : std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --ORI
+	constant CW_ITYPE_XORI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --XORI
+	constant CW_ITYPE_SLLI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SLLI
+	constant CW_ITYPE_SRLI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SRLI
+	constant CW_ITYPE_SRAI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010110000100000011"; --SRAI
+	constant CW_ITYPE_SGTI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --SGTI
+	constant CW_ITYPE_SGTUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SGTUI
+	constant CW_ITYPE_SGEI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --SGEI
+	constant CW_ITYPE_SGEUI : std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SGEUI
+	constant CW_ITYPE_SEQI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --SEQI
+	constant CW_ITYPE_SLEI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --SLEI
+	constant CW_ITYPE_SLEUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SLEUI
+	constant CW_ITYPE_SLTI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --SLTI
+	constant CW_ITYPE_SLTUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SLTUI
+	constant CW_ITYPE_SNEI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --SNEI
 	
-	constant CW_ITYPE_BEQZ  : std_logic_vector(CW_SIZE-1 downto 0) := "11111001000000011010000000000"; --BEQZ
-	constant CW_ITYPE_BNEZ  : std_logic_vector(CW_SIZE-1 downto 0) := "11111001000000011011000000000"; --BNEZ
-	constant CW_JTYPE_J	    : std_logic_vector(CW_SIZE-1 downto 0) := "11110011000000011100000000000"; --J
-	constant CW_JTYPE_JR	: std_logic_vector(CW_SIZE-1 downto 0) := "11101000001000000000000000000"; --JR
-	constant CW_JTYPE_JAL	: std_logic_vector(CW_SIZE-1 downto 0) := "11110011000100011100100000111"; --JAL
-	constant CW_JTYPE_JALR  : std_logic_vector(CW_SIZE-1 downto 0) := "11111000101100000000100000101"; --JALR
-	constant CW_ITYPE_LHI   : std_logic_vector(CW_SIZE-1 downto 0) := "11110110000110010000100000011"; --LHI
+	constant CW_ITYPE_BEQZ  : std_logic_vector(CW_SIZE-1 downto 0) := "111110010000000110101000000000"; --BEQZ
+	constant CW_ITYPE_BNEZ  : std_logic_vector(CW_SIZE-1 downto 0) := "111110010000000110111000000000"; --BNEZ
+	constant CW_JTYPE_J	    : std_logic_vector(CW_SIZE-1 downto 0) := "111100110000000111001000000000"; --J
+	constant CW_JTYPE_JR	: std_logic_vector(CW_SIZE-1 downto 0) := "111010000010000000000000000000"; --JR
+	constant CW_JTYPE_JAL	: std_logic_vector(CW_SIZE-1 downto 0) := "111100110001000111001100000111"; --JAL
+	constant CW_JTYPE_JALR  : std_logic_vector(CW_SIZE-1 downto 0) := "111110001011000000000100000101"; --JALR
+	constant CW_ITYPE_LHI   : std_logic_vector(CW_SIZE-1 downto 0) := "111101100001100100000100000011"; --LHI
 	
-	constant CW_ITYPE_LW	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000111100001"; --LW
-	constant CW_ITYPE_LB	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000111001001"; --LB
-	constant CW_ITYPE_LBU	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000111000001"; --LBU
-	constant CW_ITYPE_LH	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000111011001"; --LH
-	constant CW_ITYPE_LHU	: std_logic_vector(CW_SIZE-1 downto 0) := "11111001000101011000111010001"; --LHU
-	constant CW_ITYPE_SW    : std_logic_vector(CW_SIZE-1 downto 0) := "11111101000101011000010100000"; --SW
-	constant CW_ITYPE_SB	: std_logic_vector(CW_SIZE-1 downto 0) := "11111101000101011000010000000"; --SB
-	constant CW_ITYPE_SH	: std_logic_vector(CW_SIZE-1 downto 0) := "11111101000101011000010010000"; --SH
+	constant CW_ITYPE_LW	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110001111100001"; --LW
+	constant CW_ITYPE_LB	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110001111001001"; --LB
+	constant CW_ITYPE_LBU	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110001111000001"; --LBU
+	constant CW_ITYPE_LH	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110001111011001"; --LH
+	constant CW_ITYPE_LHU	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110001111010001"; --LHU
+	constant CW_ITYPE_SW    : std_logic_vector(CW_SIZE-1 downto 0) := "111111010001010110001010100000"; --SW
+	constant CW_ITYPE_SB	: std_logic_vector(CW_SIZE-1 downto 0) := "111111010001010110001010000000"; --SB
+	constant CW_ITYPE_SH	: std_logic_vector(CW_SIZE-1 downto 0) := "111111010001010110001010010000"; --SH
 	
-	constant CW_ITYPE_NOP   : std_logic_vector(CW_SIZE-1 downto 0) := "01010000000100000000000000000"; --NOP
+	constant CW_ITYPE_NOP   : std_logic_vector(CW_SIZE-1 downto 0) := "010100000001000000000000000000"; --NOP
 	
 end myStuff;                

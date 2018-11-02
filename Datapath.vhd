@@ -33,6 +33,7 @@ entity Datapath is
 			E_ALU_Conf:		in	std_logic_vector(SelALU-1 downto 0);
 			E_Signed:		in	std_logic;
 			E_BrCond:		in	std_logic_vector(1 downto 0);
+			E_AddrComp:		in	std_logic;
 			--Memory Stage
 			M_REG_EN:		in	std_logic;
 			DMem_DataOut:	in	std_logic_vector(Nbit-1 downto 0);
@@ -107,6 +108,7 @@ architecture Structural of Datapath is
 				ALU_Config:		in	std_logic_vector(SelALU-1 downto 0);
 				Sign:			in	std_logic;
 				BrCond:			in	std_logic_vector(1 downto 0);
+				AddrComp:		in	std_logic;
 				NPC_In:		    in	std_logic_vector(Nbit-1 downto 0);
 				DataA:			in	std_logic_vector(Nbit-1 downto 0);
 				DataB:		    in	std_logic_vector(Nbit-1 downto 0);
@@ -200,6 +202,7 @@ begin
 		            ALU_Config		=> E_ALU_Conf,
 					Sign			=> E_Signed,
 					BrCond			=> E_BrCond,
+					AddrComp		=> E_AddrComp,
 		            NPC_In			=> DtoE_NPC,
 		            DataA			=> DtoE_DataA,
 		            DataB			=> DtoE_DataB,

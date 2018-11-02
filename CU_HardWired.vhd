@@ -29,6 +29,7 @@ entity DLX_CU_HW is
 			E_Signed	: out std_logic;								-- signed operation identifier 0=unsigned 1=signed
 			F_J_Sel		: out std_logic;								-- input selection of PC 0=continue 1=Jump
 			E_BrCond	: out std_logic_vector(1 downto 0);				-- condition for branching 00,01=noBranch 10=BrZ 11=BrNZ
+			E_AddrComp	: out std_logic;								-- needed to deactivate overflow 0=standard calc 1=addr calc
 			-- MEMORY STAGE OUTPUTS							
 			M_REG_EN	: out std_logic;								-- enables the pipeline registers
 			DMem_CS		: out std_logic;								-- enables the memory
@@ -59,26 +60,27 @@ architecture Implementation of DLX_CU_HW is
 	begin
 	
 	-- FIRST PIPE STAGE OUTPUTS			--order here is the same as in cw_array
-	F_IR_EN		<=	F_cw(28);
-	F_NPC_EN	<=	F_cw(27);
-	F_PC_EN		<=	F_cw(26);
+	F_IR_EN		<=	F_cw(29);
+	F_NPC_EN	<=	F_cw(28);
+	F_PC_EN		<=	F_cw(27);
 	
 	-- SECOND PIPE STAGE OUTPUTS
-	D_REG_EN	<=	D_cw(25);
-	D_RF_RD1	<=	D_cw(24);
-	D_RF_RD2	<=	D_cw(23);
-	D_IMM_Sel	<=	D_cw(22 downto 21);
-	D_Rd_Sel	<=	D_cw(20 downto 19);
-	F_Jr_Sel	<=	D_cw(18);
+	D_REG_EN	<=	D_cw(26);
+	D_RF_RD1	<=	D_cw(25);
+	D_RF_RD2	<=	D_cw(24);
+	D_IMM_Sel	<=	D_cw(23 downto 22);
+	D_Rd_Sel	<=	D_cw(21 downto 20);
+	F_Jr_Sel	<=	D_cw(19);
 	
 	-- THIRD PIPE STAGE OUTPUTS	
-	E_REG_EN	<=	E_cw(17);
-	E_MuxA_Sel	<=	E_cw(16 downto 15);
-	E_MuxB_Sel	<=	E_cw(14 downto 13);
+	E_REG_EN	<=	E_cw(18);
+	E_MuxA_Sel	<=	E_cw(17 downto 16);
+	E_MuxB_Sel	<=	E_cw(15 downto 14);
 	E_ALU_Conf	<=	aluOpcode3;
-	E_Signed	<=	E_cw(12);
-	F_J_Sel		<=	E_cw(11);
-	E_BrCond	<=	E_cw(10 downto 9);
+	E_Signed	<=	E_cw(13);
+	F_J_Sel		<=	E_cw(12);
+	E_BrCond	<=	E_cw(11 downto 10);
+	E_AddrComp	<=	E_cw(9);
 	
 	-- FOURTH PIPE STAGE OUTPUTS
 	M_REG_EN	<=	M_cw(8);
