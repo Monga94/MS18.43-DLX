@@ -114,7 +114,7 @@ package myStuff is
 	constant ALU_AgeBop		: std_logic_vector(SelALU-1 downto 0) := "01101";
 	constant ALU_AltBop		: std_logic_vector(SelALU-1 downto 0) := "01110";
 	constant ALU_AleBop		: std_logic_vector(SelALU-1 downto 0) := "01111";
-	constant ALU_MULTop		: std_logic_vector(SelALU-1 downto 0) := "10000"; --???
+	constant ALU_MULTop		: std_logic_vector(SelALU-1 downto 0) := "10000";
 	constant ALU_NOPop		: std_logic_vector(SelALU-1 downto 0) := "11111";
 
 -- CW word

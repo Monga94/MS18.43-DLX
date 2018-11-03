@@ -1,6 +1,5 @@
 library IEEE;
 use IEEE.std_logic_1164.all; --  libreria IEEE con definizione tipi standard logic
---use WORK.constants.all; -- libreria WORK user-defined
 
 entity Boothencoder is
 	port( 	B	:	In std_logic_vector(2 downto 0);

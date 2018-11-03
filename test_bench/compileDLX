@@ -23,6 +23,7 @@ vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Datapath_AL
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Sub_Add_conf.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/01-generic_shifter.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Datapath_ALU_comparator.vhd
+vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Boothencoder.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Boothmul.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Datapath_ALU.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Datapath_Branch_comp.vhd

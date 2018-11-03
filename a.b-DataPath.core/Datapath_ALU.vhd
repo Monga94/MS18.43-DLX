@@ -16,12 +16,12 @@ end ALU;
 
 architecture Structural of ALU is
 
-	signal Sub,Cout,L_A,L_R,S_R									: std_logic;
-	signal Comp_Sel,Out_Sel										: std_logic_vector(2 downto 0);	
-	signal And_Out,Or_Out,Xor_Out,Add_Out,Shift_Out,Comp_ext	: std_logic_vector(N-1 downto 0);
-	signal AneB,AeqB,AgtB,AgeB,AltB,AleB,Comp_Out				: std_logic;
-	signal Sign_OF,Unsign_OF,OvFl,OvFl_Sel						: std_logic;
-	signal Over,Add_Ok											: std_logic_vector(N-1 downto 0);
+	signal Sub,Cout,L_A,L_R,S_R											: std_logic;
+	signal Comp_Sel,Out_Sel												: std_logic_vector(2 downto 0);	
+	signal And_Out,Or_Out,Xor_Out,Add_Out,Shift_Out,Comp_ext,Mul_Out	: std_logic_vector(N-1 downto 0);
+	signal AneB,AeqB,AgtB,AgeB,AltB,AleB,Comp_Out						: std_logic;
+	signal Sign_OF,Unsign_OF,OvFl,OvFl_Sel								: std_logic;
+	signal Over,Add_Ok													: std_logic_vector(N-1 downto 0);
 	
 	component and_gen
 		generic ( N : integer := 32);
@@ -78,11 +78,11 @@ architecture Structural of ALU is
 				Le:		out std_logic);
 	end component;
 	
-	-- component Boothmul is 
-		-- generic (	N : 	integer := 16);
-		-- port( 	A,B : 	In std_logic_vector(N-1 downto 0);
-				-- P 	: 	Out std_logic_vector(N+logN downto 0));
-	-- end component;
+	entity Boothmul is 
+		generic (	N : 	integer := 32);
+		port( 	A,B : 	In std_logic_vector(N-1 downto 0);
+				P 	: 	Out std_logic_vector((2*N)-1 downto 0));
+	end Boothmul;
 	
 	component MUX21
 		port (	A:	in	std_logic;
@@ -222,9 +222,9 @@ begin
 	COMP: Comparator
 		generic map(N)
 		port map(Add_Out,Cout,Sign,AneB,AeqB,AgtB,AgeB,AltB,AleB);
-	-- MUL: Boothmul
-		-- generic map(N)
-		-- port map(DATA1,DATA2,Mul_Out);
+	MUL: Boothmul
+		generic map(N/2)
+		port map(DATA1(N/2-1 downto 0),DATA2(N/2-1 downto 0),Mul_Out);
 	MuxComp: mux81_logic
 		port map(AneB,AeqB,AgtB,AgeB,AltB,AleB,'0','0',Comp_sel,Comp_Out);
 		
@@ -242,7 +242,7 @@ begin
 		
 	MuxOut: mux81_generic
 		generic map(N)
-		port map(And_Out,Or_Out,Xor_Out,Add_Ok,Shift_Out,Comp_ext,(others => '0'),(others => '0'),Out_sel,OUTALU);
+		port map(And_Out,Or_Out,Xor_Out,Add_Ok,Shift_Out,Comp_ext,Mul_Out,(others => '0'),Out_sel,OUTALU);
 		
 end Structural;
 
