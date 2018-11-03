@@ -16,6 +16,7 @@ entity ExecutionUnit is
 			ALU_Config:		in	std_logic_vector(SelALU-1 downto 0);
 			Sign:			in	std_logic;
 			BrCond:			in	std_logic_vector(1 downto 0);
+			AddrComp:		in	std_logic;
 			NPC_In:		    in	std_logic_vector(Nbit-1 downto 0);
 			DataA:			in	std_logic_vector(Nbit-1 downto 0);
 			DataB:		    in	std_logic_vector(Nbit-1 downto 0);
@@ -31,9 +32,6 @@ end ExecutionUnit;
 
 architecture Behavioural of ExecutionUnit is
 	signal Op1,Op2,ALU_res	: std_logic_vector(Nbit-1 downto 0);
-<<<<<<< HEAD
-	signal Mem : std_logic;
-=======
 	
 	component Br_Comp
 		generic ( Nbit : integer := 32);
@@ -42,7 +40,6 @@ architecture Behavioural of ExecutionUnit is
 				Taken:		out std_logic);
 	end component;
 	
->>>>>>> 5a5c8dd93bb77fa16e6c779a33bfb7a9b2d26a04
 	component D_Reg_generic
 		generic (N: integer := 32);
 		port (	D:		in	std_logic_vector(N-1 downto 0);
@@ -66,7 +63,7 @@ architecture Behavioural of ExecutionUnit is
 		generic ( N : integer := 32);
 		port (	FUNC			: in	std_logic_vector(SelALU-1 downto 0);
 				Sign			: in	std_logic;
-				MemOp			: in	std_logic;
+				AddrComp		: in	std_logic;
 				DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
 				OUTALU			: out 	std_logic_vector(N-1 downto 0));
 	end component;
@@ -84,14 +81,10 @@ begin
 		port map(DataB,DataIMM,(others => '0'),(others => '1'),MuxB_Sel,Op2);
 	ALUnit: ALU
 		generic map(Nbit)
-<<<<<<< HEAD
-		port map(ALU_Config,Sign,Mem,Op1,Op2,ALU_res);
-=======
-		port map(ALU_Config,Sign,Op1,Op2,ALU_res);
+		port map(ALU_Config,Sign,AddrComp,Op1,Op2,ALU_res);
 	REGNPC: D_Reg_generic
 		generic map(Nbit)
 		port map(NPC_In,CLK,RST,REG_EN_E,NPC_Out);
->>>>>>> 5a5c8dd93bb77fa16e6c779a33bfb7a9b2d26a04
 	REGALU: D_Reg_generic
 		generic map(Nbit)
 		port map(ALU_res,CLK,RST,REG_EN_E,ALU_Out);

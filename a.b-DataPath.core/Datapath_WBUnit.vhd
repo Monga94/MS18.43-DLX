@@ -19,11 +19,13 @@ end WritebackUnit;
 architecture Structural of WritebackUnit is
 
 	component mux41_generic
-		generic (N: integer := 32);
-		port (	A:	in	std_logic_vector(N-1 downto 0) ;
-				B:	in	std_logic_vector(N-1 downto 0);
-				S:	in	std_logic;
-				Y:	out	std_logic_vector(N-1 downto 0));
+		generic (	N: integer:= 32);
+		port (		A:	In	std_logic_vector(N-1 downto 0);
+					B:	In	std_logic_vector(N-1 downto 0);
+					C:	In	std_logic_vector(N-1 downto 0);
+					D:	In	std_logic_vector(N-1 downto 0);
+					S:	In	std_logic_vector(1 downto 0);
+					Y:	Out	std_logic_vector(N-1 downto 0));
 	end component;
 	
 begin
