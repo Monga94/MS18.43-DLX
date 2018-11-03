@@ -80,7 +80,7 @@ BEGIN
 				Data_Out(31 DOWNTO 24) <= Memory(Adj_Addr+3);
 			END IF;
 		ELSE
-			Data_Out <= (OTHERS => 'Z');
+			Data_Out <= (OTHERS => '0');
 		END IF;
 	END PROCESS;
 END Behavior;

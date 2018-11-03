@@ -94,5 +94,7 @@ begin
 	REGWR: D_Reg_generic
 		generic map(Addr_bit)
 		port map(Wr_Addr_D,CLK,RST,REG_EN_E,Wr_Addr_E);
+		
+	J_addr <= ALU_res;
 	
 end Behavioural; 

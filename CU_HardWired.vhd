@@ -60,9 +60,9 @@ architecture Implementation of DLX_CU_HW is
 	begin
 	
 	-- FIRST PIPE STAGE OUTPUTS			--order here is the same as in cw_array
-	F_IR_EN		<=	F_cw(29);
+	F_PC_EN		<=	F_cw(29);
 	F_NPC_EN	<=	F_cw(28);
-	F_PC_EN		<=	F_cw(27);
+	F_IR_EN		<=	F_cw(27);
 	
 	-- SECOND PIPE STAGE OUTPUTS
 	D_REG_EN	<=	D_cw(26);
@@ -100,13 +100,12 @@ architecture Implementation of DLX_CU_HW is
 	begin  -- process Clk			
 		if Clk'event and Clk = '0' then  		-- raising clock edge
 			if Rst = '0' then					-- synchronous reset (active low)
-				F_cw <= '1' & (CW_SIZE-2 downto 0 => '0');
+				F_cw <= (others => '0');
 				D_cw <= (others => '0');
 				E_cw <= (others => '0');
 				M_cw <= (others => '0');
 				W_cw <= (others => '0');
 				
-				aluOpcode1 <= aluOpcode_i;
 				aluOpcode1 <= ALU_NOPop;	
 				aluOpcode2 <= ALU_NOPop;
 				aluOpcode3 <= ALU_NOPop;		
@@ -117,6 +116,7 @@ architecture Implementation of DLX_CU_HW is
 				M_cw <= E_cw(CW_SIZE - 1 - F_CTRL - D_CTRL - E_CTRL downto 0);
 				W_cw <= M_cw(CW_SIZE - 1 - F_CTRL - D_CTRL - E_CTRL - M_CTRL downto 0);
 			
+				aluOpcode1 <= aluOpcode_i;
 				aluOpcode2 <= aluOpcode1;
 				aluOpcode3 <= aluOpcode2;
 			end if;

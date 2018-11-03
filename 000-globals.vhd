@@ -143,7 +143,7 @@ package myStuff is
 	constant CW_RTYPE_SLTU	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SLTU
 	constant CW_RTYPE_SNE	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SNE
 	constant CW_RTYPE_MULT	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --MULT	
-	constant CW_RTYPE_NOP	: std_logic_vector(CW_SIZE-1 downto 0) := "010100000001000000000000000000"; --NOP
+	constant CW_RTYPE_NOP	: std_logic_vector(CW_SIZE-1 downto 0) := "111100000001000000000000000000"; --NOP
 	
 	constant CW_ITYPE_ADDI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --ADDI		
 	constant CW_ITYPE_ADDUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --ADDUI  
@@ -185,6 +185,6 @@ package myStuff is
 	constant CW_ITYPE_SB	: std_logic_vector(CW_SIZE-1 downto 0) := "111111010001010110001010000000"; --SB
 	constant CW_ITYPE_SH	: std_logic_vector(CW_SIZE-1 downto 0) := "111111010001010110001010010000"; --SH
 	
-	constant CW_ITYPE_NOP   : std_logic_vector(CW_SIZE-1 downto 0) := "010100000001000000000000000000"; --NOP
+	constant CW_ITYPE_NOP   : std_logic_vector(CW_SIZE-1 downto 0) := "111100000001000000000000000000"; --NOP
 	
 end myStuff;                

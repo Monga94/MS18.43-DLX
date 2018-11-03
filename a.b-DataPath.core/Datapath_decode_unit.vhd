@@ -34,6 +34,7 @@ architecture Structural of DecodeUnit is
 	signal lhi_extTo32,j_ext26to32					: std_logic_vector(Nbit-1 downto 0);
 	signal RF_outA,RF_outB							: std_logic_vector(Nbit-1 downto 0);
 	signal WRaddr									: std_logic_vector(Addr_bit-1 downto 0);
+	signal RF_EN									: std_logic;
 
 	component register_file_gen
 		generic (	Nbit:	integer := 32;
@@ -89,10 +90,11 @@ begin
 	Rd_Itype <= InstrToDecode(20 downto 16);
 	Rd_Rtype <= InstrToDecode(15 downto 11);
 	Rd_Jtype <= (others => '1');
+	RF_EN <= REG_EN_D OR RF_WR;
 	
 	REG_FILE: register_file_gen
 		generic map(Nbit,2**Addr_bit)
-		port map(RST,REG_EN_D,RF_WR,RF_RD1,RF_RD2,WB_Addr,Rs1,Rs2,WB_Data,RF_outA,RF_outB);
+		port map(RST,RF_EN,RF_WR,RF_RD1,RF_RD2,WB_Addr,Rs1,Rs2,WB_Data,RF_outA,RF_outB);
 	MUXWR: mux41_generic
 		generic map(Addr_bit)
 		port map(Rd_Itype,Rd_Rtype,Rd_Jtype,(others => '0'),MuxRd_Sel,WRaddr);
@@ -114,5 +116,7 @@ begin
 	REGWR: D_Reg_generic
 		generic map(Addr_bit)
 		port map(WRaddr,CLK,RST,REG_EN_D,Wr_Addr_D);
+		
+	Jr_addr <= RF_outA;
 		
 end Structural;

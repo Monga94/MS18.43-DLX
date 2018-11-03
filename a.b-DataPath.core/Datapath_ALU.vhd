@@ -230,19 +230,19 @@ begin
 		
 	Comp_ext <= (N-1 downto 1 => '0') & Comp_Out;
 	
-	OF_Detect: MUX21
-		port map(Unsign_OF,Sign_OF,Sign,OvFl);
+	-- OF_Detect: MUX21
+		-- port map(Unsign_OF,Sign_OF,Sign,OvFl);
 		
-	Over <= (Sub XNOR Sign) & (N-2 downto 0 => NOT(Sub));
-	OvFl_Sel <= OvFl AND NOT(AddrComp);
+	-- Over <= (Sub XNOR Sign) & (N-2 downto 0 => NOT(Sub));
+	-- OvFl_Sel <= OvFl AND NOT(AddrComp);
 	
-	OF_Manage: MUX21_GENERIC
-		generic map(N)
-		port map(Add_Out,Over,OvFl_Sel,Add_Ok);
+	-- OF_Manage: MUX21_GENERIC
+		-- generic map(N)
+		-- port map(Add_Out,Over,OvFl_Sel,Add_Ok);
 		
 	MuxOut: mux81_generic
 		generic map(N)
-		port map(And_Out,Or_Out,Xor_Out,Add_Ok,Shift_Out,Comp_ext,Mul_Out,(others => '0'),Out_sel,OUTALU);
+		port map(And_Out,Or_Out,Xor_Out,Add_Out,Shift_Out,Comp_ext,Mul_Out,(others => '0'),Out_sel,OUTALU); --Add_Ok
 		
 end Structural;
 

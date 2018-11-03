@@ -25,17 +25,17 @@ architecture BEHAVIORAL of register_file_gen is
         -- suggested structures
     subtype REG_ADDR is natural range 0 to Nreg-1; -- using natural type
 	type REG_ARRAY is array(REG_ADDR) of std_logic_vector(Nbit-1 downto 0); 
-	signal REGISTERS:	REG_ARRAY; 
+	signal REGISTERS : REG_ARRAY; 
 	
 begin 
 
-	process(RESET,ENABLE,WR,RD1,RD2, ADD_WR, ADD_RD1, ADD_RD2)
+	process(RESET,ENABLE,WR,RD1,RD2,ADD_WR,ADD_RD1,ADD_RD2,DATAIN)
 		variable ADDW, ADDR1, ADDR2 : REG_ADDR;
 	begin 
 		ADDW 	:= to_integer(unsigned(ADD_WR));
 		ADDR1 	:= to_integer(unsigned(ADD_RD1));	
 		ADDR2 	:= to_integer(unsigned(ADD_RD2));
-		if RESET = '1' then
+		if RESET = '0' then
 			for i in 0 to Nreg-1 loop
 				REGISTERS(i) <= (others => '0');
 			end loop;
