@@ -31,6 +31,8 @@ package myStuff is
     constant RTYPE_SLL		: std_logic_vector(FUNC_SIZE - 1 downto 0) :=  "00000000100";	-- r,0x04
     constant RTYPE_SRL		: std_logic_vector(FUNC_SIZE - 1 downto 0) :=  "00000000110";	-- r,0x06
     constant RTYPE_SRA		: std_logic_vector(FUNC_SIZE - 1 downto 0) :=  "00000000111";	-- r,0x07
+    constant RTYPE_ROL		: std_logic_vector(FUNC_SIZE - 1 downto 0) :=  "00000001000";	-- r,0x08
+    constant RTYPE_ROR		: std_logic_vector(FUNC_SIZE - 1 downto 0) :=  "00000001001";	-- r,0x09
 	constant RTYPE_MULT		: std_logic_vector(FUNC_SIZE - 1 downto 0) :=  "00000001110";	-- r,0x0e
 	constant RTYPE_ADD		: std_logic_vector(FUNC_SIZE - 1 downto 0) :=  "00000100000";	-- r,0x20
     constant RTYPE_ADDU		: std_logic_vector(FUNC_SIZE - 1 downto 0) :=  "00000100001";	-- r,0x21
@@ -77,6 +79,8 @@ package myStuff is
 	constant ITYPE_SGTI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011011";		-- i,0x1b
 	constant ITYPE_SLEI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011100";		-- i,0x1c
 	constant ITYPE_SGEI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011101";		-- i,0x1d
+	constant ITYPE_ROLI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011110";		-- i,0x1e
+	constant ITYPE_RORI		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "011111";		-- i,0x1f
 	constant ITYPE_LB		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100000";		-- l,0x20
 	constant ITYPE_LH		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100001";		-- l,0x21
 	constant ITYPE_LW		: std_logic_vector(OP_CODE_SIZE - 1 downto 0) :=  "100011";		-- l,0x23
@@ -102,8 +106,8 @@ package myStuff is
 	constant ALU_SLLop		: std_logic_vector(SelALU-1 downto 0) := "00101";
 	constant ALU_SRLop		: std_logic_vector(SelALU-1 downto 0) := "00110";
 	constant ALU_SRAop		: std_logic_vector(SelALU-1 downto 0) := "00111";
-	constant ALU_ROLop		: std_logic_vector(SelALU-1 downto 0) := "01000"; --???
-	constant ALU_RORop		: std_logic_vector(SelALU-1 downto 0) := "01001"; --???
+	constant ALU_ROLop		: std_logic_vector(SelALU-1 downto 0) := "01000";
+	constant ALU_RORop		: std_logic_vector(SelALU-1 downto 0) := "01001";
 	constant ALU_AneBop		: std_logic_vector(SelALU-1 downto 0) := "01010";
 	constant ALU_AeqBop		: std_logic_vector(SelALU-1 downto 0) := "01011";
 	constant ALU_AgtBop		: std_logic_vector(SelALU-1 downto 0) := "01100";
@@ -126,6 +130,8 @@ package myStuff is
 	constant CW_RTYPE_SLL	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SLL
 	constant CW_RTYPE_SRL	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SRL
 	constant CW_RTYPE_SRA	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SRA
+	constant CW_RTYPE_ROL	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --ROL
+	constant CW_RTYPE_ROR	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --ROR
 	constant CW_RTYPE_SGT	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SGT
 	constant CW_RTYPE_SGTU	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010000000100000011"; --SGTU
 	constant CW_RTYPE_SGE	: std_logic_vector(CW_SIZE-1 downto 0) := "111111000101010010000100000011"; --SGE
@@ -149,6 +155,8 @@ package myStuff is
 	constant CW_ITYPE_SLLI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SLLI
 	constant CW_ITYPE_SRLI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SRLI
 	constant CW_ITYPE_SRAI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010110000100000011"; --SRAI
+	constant CW_ITYPE_ROLI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --ROLI
+	constant CW_ITYPE_RORI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --RORI
 	constant CW_ITYPE_SGTI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --SGTI
 	constant CW_ITYPE_SGTUI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110000001010100000100000011"; --SGTUI
 	constant CW_ITYPE_SGEI	: std_logic_vector(CW_SIZE-1 downto 0) := "111110010001010110000100000011"; --SGEI
