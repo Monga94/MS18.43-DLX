@@ -347,7 +347,7 @@ line:
       if ($out ne "") {
 	# Output the current value
 	if ($asmfile ne "") {
-	  if ($curaddr != ($prevaddr + 4)) {
+	  if ($curaddr != ($prevaddr + 4)) { #was 4
 	    printf (ASM "%08x", $curaddr);
 	  }
 	  my $data = unpack ("H*", $out);
@@ -514,11 +514,11 @@ sub forminstr {
       $src1 = 0;
       $dst = &getimm ($a[1]);
 	   }
-    $dst -= $addr{t} + 4;
+    $dst -= $addr{t} + 4; #was 4
     $out = ($op << 26) | ($src1 << 21) | ($dst & 0xffff);
   } elsif ($itype eq "j") {
     $dst = &getimm ($a[1]);
-    $dst -= $addr{t} + 4;
+    $dst -= $addr{t} + 4; #was 4
     $out = ($op << 26) | ($dst & 0x3ffffff);
   } elsif ($itype eq "jr") {
     $dst = &getreg ($a[1]);

@@ -76,7 +76,7 @@ begin
 		port map(JRtoJ_PC,J_addr,J_Br_Sel,JtoPC);
 	PC:	D_Reg_generic
 		generic map(Iram_bit)
-		port map(AdderToNPC,CLK,RST,PC_EN,PCToAdder);	
+		port map(JtoPC,CLK,RST,PC_EN,PCToAdder);	
 	IR: D_Reg_generic
 		generic map(Nbit)
 		port map(IMem_Instr,CLK,RST,IR_EN,InstrToDecode);
