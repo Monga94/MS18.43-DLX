@@ -1,76 +1,88 @@
 library ieee; 
 use ieee.std_logic_1164.all; 
-use ieee.std_logic_unsigned.all;
 use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
 
 entity Boothmul is 
-	generic (	N : 	integer := 8);
+	generic (	N : 	integer := 32);
 	port( 	A,B : 	In std_logic_vector(N-1 downto 0);
-			P 	: 	Out std_logic_vector(N+logN downto 0));
+			P 	: 	Out std_logic_vector((2*N)-1 downto 0));
 end Boothmul;
 
 architecture BEHAVIORAL of Boothmul is
-	constant logN : integer := log2_N(N);
 
-	type SignalVector1 is array(logN-1 downto 0) of std_logic_vector(logN-1 downto 0);
-	type SignalVector2 is array(logN-1 downto 0) of std_logic_vector(N+logN downto 0);
-		signal Ben:						std_logic_vector(logN-1 downto 0);
-		signal Sel:						SignalVector1;
-		signal ANplusi:					std_logic_vector(N+logN-1 downto 0);
-		signal Adouble,Adoubledouble:	std_logic_vector(N+logN downto 0);
-		signal count:					integer := 1; 
-		signal Addend:					SignalVector2;
-
+	type SignalVector1 is array((N/2)-1 downto 0) of std_logic_vector(2 downto 0);
+	type SignalVector2 is array((N/2)-1 downto 0) of std_logic_vector((2*N)-1 downto 0);
+	type SignalVector3 is array((N/2) downto 1) of std_logic_vector((2*N)-1 downto 0);
+		signal Sel, Ben										: SignalVector1;
+		signal Aext1, Aext2, Addend, MinusAExt1, MinusAExt2	: SignalVector2;
+		signal Sum											: SignalVector3;
+		signal ext											: std_logic_vector(N-1 downto 0);
+		signal Co											: std_logic_vector(N/2-1 downto 1);
+		
 	component mux51_generic is
-		generic (	N: integer:= 32;
-					DELAY_MUX: Time:= 0 ns);
+		generic (	N: integer:= 8);
 		port (	A:	In	std_logic_vector(N-1 downto 0);
 				B:	In	std_logic_vector(N-1 downto 0);
 				C:	In	std_logic_vector(N-1 downto 0);
 				D:	In	std_logic_vector(N-1 downto 0);
 				E:	In	std_logic_vector(N-1 downto 0);
-				S:	In	std_logic_vector(3 downto 0);
+				S:	In	std_logic_vector(2 downto 0);
 				Y:	Out	std_logic_vector(N-1 downto 0));
 	end component;
 	
-	component CSAdd is 
-	generic (	N : integer := 32);
-	port ( 	A, B 	: In	std_logic_vector(N-1 downto 0);	
-			Ci		: In	std_logic; 
-			S		: Out	std_logic_vector(N-1 downto 0));
-	component CSAdd;
+	component p4adder is
+		generic ( N: integer := 32); -- 4n bits
+		port (	A	: in	std_logic_vector(N-1 downto 0);
+				B	: in	std_logic_vector(N-1 downto 0);
+				Cin	: in	std_logic;
+				S	: out	std_logic_vector(N-1 downto 0);
+				Cout: out	std_logic);
+	end component;
 	
 	component Boothencoder is
-	port( 	B	:	In std_logic_vector(3);
-			S	:	Out std_logic_vector(3);)
-	end Boothencoder;
+		port( 	B	:	In std_logic_vector(2 downto 0);
+				S	:	Out std_logic_vector(2 downto 0));
+	end component;
 	
 	
-	begin
+begin
 	
-	Ben <= B(1 downto 0) & '0';
+	ext <= (others => A(N-1));
 	
-	Encoder: for i in 0 to logN-1 generate
-				inner1: if i=0 generate	
-							ANplusi(N downto 0) <= A(N-1) & A;
-							gensignal1: for j in 1 to logN-1 generate 
-											ANplusi(N+j downto 0) <= A(N-1) & ANplusi;
-											Adouble <= ANplusi & '0';
-							end generate;
-							En0: 	Boothencoder 	port map 	(Ben,Sel(i)(logN-1 downto 0));
-							Mux0:	mux51_generic	generic map (N+logN);
-													port map 	((others <= '0'),ANplusi,-ANplusi,Adouble,-Adouble,Sel(i)(logN-1 downto 0),Addend(i)(N+logN downto 0));							
-						end generate inner1;
-				inner2:	if i>0 generate	
-											Adouble <= Adouble(N+logN-1 downto 0) & '0';
-											Adoubledouble <= Adouble(N+logN-1 downto 0) & '0';
-							Eni: 	Boothencoder 	port map 	(B((count+2) downto count),Sel(i)(logN-1 downto 0));
-							Muxi:	mux51_generic	generic map (N+logN);
-													port map 	((others <= '0'),Adouble,-Adouble,Adoubledouble,-Adoubledouble,Sel(i)(logN-1 downto 0),Addend(i)(N+logN downto 0));
-							Addi:	CSAdd			generic map	(N+logN);
-													port map	(Addend(i-1)(N+logN downto 0),Addend(i)(N+logN downto 0),'0',P);
-							count <= count+2;
-						end generate inner2;
+	Ben(0) <= B(1 downto 0) & '0';
+	Bgen: for i in 1 to (N/2)-1 generate
+		Ben(i)(0) <= B(2*i-1);
+		Ben(i)(1) <= B(2*i);
+		Ben(i)(2) <= B(2*i+1);
+	end generate Bgen;	
 
+	Datapath: for i in 0 to N/2-1 generate
+		inner1: if i=0 generate	
+			Aext1(i) <= ext & A;
+			MinusAExt1(i) <= not(Aext1(i))+1;
+			Aext2(i) <= Aext1(i)((2*N)-2 downto 0) & '0';
+			MinusAExt2(i) <= not(Aext2(i))+1;
+			
+			En0: 	Boothencoder 	port map 	(Ben(i),Sel(i));
+			Mux0:	mux51_generic	generic map (2*N)
+									port map 	((others => '0'), Aext1(i), MinusAExt1(i), Aext2(i), MinusAExt2(i), Sel(i), Sum(i+1));							
+		end generate inner1;
+		inner2: if i>0 generate
+			Aext1(i) <= Aext2(i-1)((2*N)-2 downto 0) & '0';
+			MinusAExt1(i) <= not(Aext1(i))+1;
+			Aext2(i) <= Aext1(i)((2*N)-2 downto 0) & '0';
+			MinusAExt2(i) <= not(Aext2(i))+1;
+			
+			Eni: 	Boothencoder 	port map 	(Ben(i),Sel(i));
+			Muxi:	mux51_generic	generic map (2*N)
+									port map 	((others => '0'), Aext1(i), MinusAExt1(i), Aext2(i), MinusAExt2(i), Sel(i), Addend(i));
+			Addi:	p4adder			generic map	(2*N)
+									port map	(Addend(i), Sum(i), '0', Sum(i+1), Co(i));
+		end generate inner2;
+	end generate Datapath;
+	
+	P <= Sum(N/2);
 	
 end BEHAVIORAL;
