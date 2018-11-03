@@ -70,6 +70,8 @@ architecture Structural of ALU is
 		port(	Diff:	in 	std_logic_vector(Nbit-1 downto 0);
 				Cout:	in	std_logic;
 				Sign:	in	std_logic;
+				a:		in	std_logic;
+				b:		in	std_logic;
 				Ne:		out std_logic;
 				Eq:		out std_logic;
 				Gt:		out std_logic;
@@ -221,7 +223,7 @@ begin
 		port map(DATA1,DATA2(log2_N(N)-1 downto 0),L_A,L_R,S_R,Shift_Out);
 	COMP: Comparator
 		generic map(N)
-		port map(Add_Out,Cout,Sign,AneB,AeqB,AgtB,AgeB,AltB,AleB);
+		port map(Add_Out,Cout,Sign,DATA1(N-1),DATA2(N-1),AneB,AeqB,AgtB,AgeB,AltB,AleB);
 	MUL: Boothmul
 		generic map(N/2)
 		port map(DATA1(N/2-1 downto 0),DATA2(N/2-1 downto 0),Mul_Out);

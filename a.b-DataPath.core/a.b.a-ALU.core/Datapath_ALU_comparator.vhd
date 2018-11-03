@@ -9,6 +9,8 @@ entity Comparator is
 	port(	Diff:	in 	std_logic_vector(Nbit-1 downto 0);
 			Cout:	in	std_logic;
 			Sign:	in	std_logic;
+			a:		in	std_logic;
+			b:		in	std_logic;
 			Ne:		out std_logic;
 			Eq:		out std_logic;
 			Gt:		out std_logic;
@@ -19,7 +21,7 @@ end Comparator;
 
 architecture Structural of Comparator is
 
-	signal Equal,Grequal,Lequal	: std_logic;
+	signal Equal,Grequal,Less	: std_logic;
 	signal Temp					: std_logic_vector(Nbit-1 downto 0);
 
 begin
@@ -34,12 +36,12 @@ begin
 	Ne <= NOT(Equal);
 	Eq <= Equal;
 	
-	Grequal <= Sign XOR Cout;
-	Gt <= Grequal AND (NOT Equal);
+	Grequal <= (Sign AND (Cout XOR a XOR b)) OR (NOT(Sign) AND Cout);
+	Gt <= Grequal AND (NOT(Equal));
 	Ge <= Grequal;
 	
-	Lequal <= Sign XNOR Cout;
-	Lt <= Lequal AND (NOT Equal);
-	Le <= Lequal;
+	Less <= (Sign AND (NOT(Cout) XOR a XOR b)) OR (NOT(sign) AND NOT(Cout));
+	Lt <= Less;
+	Le <= Less OR Equal;
 	
 end Structural;
