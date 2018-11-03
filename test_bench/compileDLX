@@ -5,6 +5,7 @@ vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Datapath_mu
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Datapath_mux21_gen_mux21.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Datapath_mux21_gen.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/mux41_generic.vhd
+vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/mux51_generic.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/mux81_generic.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/mux81_logic.vhd
 vcom -reportprogress 300 -work work /home/ms18.43/DLX/test_bench/DLX/Datapath_ALU_and.vhd
