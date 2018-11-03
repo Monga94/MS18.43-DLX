@@ -78,11 +78,11 @@ architecture Structural of ALU is
 				Le:		out std_logic);
 	end component;
 	
-	entity Boothmul is 
+	component Boothmul
 		generic (	N : 	integer := 32);
 		port( 	A,B : 	In std_logic_vector(N-1 downto 0);
 				P 	: 	Out std_logic_vector((2*N)-1 downto 0));
-	end Boothmul;
+	end component;
 	
 	component MUX21
 		port (	A:	in	std_logic;
