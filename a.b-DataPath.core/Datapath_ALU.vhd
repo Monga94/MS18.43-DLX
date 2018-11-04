@@ -10,7 +10,8 @@ entity ALU is
 	port (	FUNC			: in	std_logic_vector(SelALU-1 downto 0);
 			Sign			: in	std_logic;
 			AddrComp		: in	std_logic;
-			DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
+			DATA1			: in	std_logic_vector(N-1 downto 0);
+			DATA2			: in 	std_logic_vector(N-1 downto 0);
 			OUTALU			: out 	std_logic_vector(N-1 downto 0));
 end ALU;
 
@@ -22,6 +23,8 @@ architecture Structural of ALU is
 	signal AneB,AeqB,AgtB,AgeB,AltB,AleB,Comp_Out						: std_logic;
 	signal Sign_OF,Unsign_OF,OvFl,OvFl_Sel								: std_logic;
 	signal Over,Add_Ok													: std_logic_vector(N-1 downto 0);
+	signal DataA_mul,DataB_mul											: std_logic_vector((N/2)-1 downto 0);
+	signal DataB_sh														: std_logic_vector(log2_N(N)-1 downto 0);
 	
 	component and_gen
 		generic ( N : integer := 32);
@@ -206,6 +209,10 @@ begin
 		end case;
 	end process;
 	
+	DataA_mul <= DATA1(N/2-1 downto 0);
+	DataB_mul <= DATA2(N/2-1 downto 0);
+	DataB_sh  <= DATA2(log2_N(N)-1 downto 0);
+	
 	AND_OP: and_gen
 		generic map(N)
 		port map(DATA1,DATA2,And_Out);
@@ -220,13 +227,13 @@ begin
 		port map(DATA1,DATA2,Sub,Add_Out,Cout,Sign_OF,Unsign_OF);
 	SH_ROT:	SHIFTER_GENERIC
 		generic map(N)
-		port map(DATA1,DATA2(log2_N(N)-1 downto 0),L_A,L_R,S_R,Shift_Out);
+		port map(DATA1,DataB_sh,L_A,L_R,S_R,Shift_Out);
 	COMP: Comparator
 		generic map(N)
 		port map(Add_Out,Cout,Sign,DATA1(N-1),DATA2(N-1),AneB,AeqB,AgtB,AgeB,AltB,AleB);
 	MUL: Boothmul
 		generic map(N/2)
-		port map(DATA1(N/2-1 downto 0),DATA2(N/2-1 downto 0),Mul_Out);
+		port map(DataA_mul,DataB_mul,Mul_Out);
 	MuxComp: mux81_logic
 		port map(AneB,AeqB,AgtB,AgeB,AltB,AleB,'0','0',Comp_sel,Comp_Out);
 		

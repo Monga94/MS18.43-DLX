@@ -6,9 +6,7 @@ use work.myStuff.all;
 
 entity WritebackUnit is 
 	generic(Nbit: integer := 32);
-	port(	CLK:			in	std_logic;
-			RST:			in	std_logic;
-			WBMux_sel:		in	std_logic_vector(1 downto 0);
+	port(	WBMux_sel:		in	std_logic_vector(1 downto 0);
 			NPC8:			in	std_logic_vector(Nbit-1 downto 0);
 			NPC12:			in	std_logic_vector(Nbit-1 downto 0);
 			DataIn_DMem:	in	std_logic_vector(Nbit-1 downto 0);

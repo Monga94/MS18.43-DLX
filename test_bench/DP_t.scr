@@ -1,0 +1,72 @@
+##############################################################
+#SCRIPT FOR SPEEDING UP and RECORDING the DataPath SYNTHESIS#
+# analyzing and checking vhdl netlist#
+# here the analyze command is used for each file from bottom to top #
+##############################################################
+analyze -library WORK -format vhdl {001-logarithm.vhd}
+analyze -library WORK -format vhdl {000-globals.vhd}
+analyze -library WORK -format vhdl {Datapath_mux21_gen_mux21_iv.vhd}
+analyze -library WORK -format vhdl {Datapath_mux21_gen_mux21_nd2.vhd}
+analyze -library WORK -format vhdl {Datapath_mux21_gen_mux21.vhd}
+analyze -library WORK -format vhdl {Datapath_mux21_gen.vhd}
+analyze -library WORK -format vhdl {mux41_generic.vhd}
+analyze -library WORK -format vhdl {mux51_generic.vhd}
+analyze -library WORK -format vhdl {mux81_generic.vhd}
+analyze -library WORK -format vhdl {mux81_logic.vhd}
+analyze -library WORK -format vhdl {Datapath_Reg_generic.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_and.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_or.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_xor.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder_SumGen_CSAdd_rca_gen_fa.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder_SumGen_CSAdd_rca_gen.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder_SumGen_CSAdd.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder_SumGen.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder_CarryGen_PGblock.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder_CarryGen_Gstart.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder_CarryGen_genG.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder_CarryGen_genP.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder_CarryGen.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_p4adder.vhd}
+analyze -library WORK -format vhdl {Sub_Add_conf.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU_comparator.vhd}
+analyze -library WORK -format vhdl {01-generic_shifter.vhd}
+analyze -library WORK -format vhdl {Boothencoder.vhd}
+analyze -library WORK -format vhdl {Boothmul.vhd}
+analyze -library WORK -format vhdl {Datapath_ALU.vhd}
+analyze -library WORK -format vhdl {Datapath_Branch_comp.vhd}
+analyze -library WORK -format vhdl {Datapath_registerfile_gen.vhd}
+analyze -library WORK -format vhdl {Datapath_fetch_unit.vhd}
+analyze -library WORK -format vhdl {Datapath_decode_unit.vhd}
+analyze -library WORK -format vhdl {Datapath_exec_unit.vhd}
+analyze -library WORK -format vhdl {Datapath_memory_unit.vhd}
+analyze -library WORK -format vhdl {Datapath_WBUnit.vhd}
+analyze -library WORK -format vhdl {Datapath.vhd}
+#analyze -library WORK -format vhdl {CU_HardWired.vhd}
+##############################################################
+# elaborating the top entity -- here supposed DP#
+# choose the architecture you want
+elaborate Datapath -architecture Structural 
+##########################################
+# first compilation, without constraints #
+compile 
+# reporting timing and power after the first synthesis without constraints #
+report_timing > DP_timeopt_1t_scr.rpt
+report_area > DP_timeopt_1a_scr.rpt
+forces a clock signal
+create_clock -name ”CLK” -period 0.2 CLK 
+compile
+report_timing > DP_real_timing_scr.rpt
+#forces a combinational max delay of REQUIRED_TIME from each of the inputs
+#to each of the output, that is a delay lower than the one found after
+#the first compilation step #
+#often this is the working clock period of your system #
+set_max_delay 0.08 -from [all inputs] -to [all outputs]
+# optimize
+compile -map_effort high
+# save report
+report_timing > DP_real_timing_opt_scr.rpt
+report_area > DP_area_opt_scr.rpt
+# saving files
+write -hierarchy -format ddc -output DP-behavioral-topt.ddc
+write -hierarchy -format vhdl -output DP-behavioral-topt.vhdl
+write -hierarchy -format verilog -output DP-behavioral-topt.v

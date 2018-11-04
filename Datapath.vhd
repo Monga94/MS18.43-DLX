@@ -141,9 +141,7 @@ architecture Structural of Datapath is
 	
 	component WritebackUnit is 
 		generic(Nbit: integer := 32);
-		port(	CLK:			in	std_logic;
-				RST:			in	std_logic;
-				WBMux_sel:		in	std_logic_vector(1 downto 0);
+		port(	WBMux_sel:		in	std_logic_vector(1 downto 0);
 				NPC8:			in	std_logic_vector(Nbit-1 downto 0);
 				NPC12:			in	std_logic_vector(Nbit-1 downto 0);
 				DataIn_DMem:	in	std_logic_vector(Nbit-1 downto 0);
@@ -232,9 +230,7 @@ begin
 					
 	WBU: WritebackUnit
 		generic map(Nbit)
-		port map(	CLK				=> CLK,
-		            RST				=> RST,
-		            WBMux_sel		=> WB_Mux_sel,
+		port map(	WBMux_sel		=> WB_Mux_sel,
 					NPC8			=> EtoW_NPC,
 					NPC12			=> DtoE_NPC,
 		            DataIn_DMem		=> MtoW_DataMem,

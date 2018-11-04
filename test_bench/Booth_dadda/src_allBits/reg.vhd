@@ -2,7 +2,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use WORK.all;
+use work.myStuff.all;
 
 entity reg is
     generic(N : integer := 32);

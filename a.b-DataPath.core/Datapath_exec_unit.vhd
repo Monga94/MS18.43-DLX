@@ -59,12 +59,13 @@ architecture Behavioural of ExecutionUnit is
 					Y:	Out	std_logic_vector(N-1 downto 0));
 	end component;
 	
-	component ALU is
+	component ALU
 		generic ( N : integer := 32);
 		port (	FUNC			: in	std_logic_vector(SelALU-1 downto 0);
 				Sign			: in	std_logic;
 				AddrComp		: in	std_logic;
-				DATA1, DATA2	: in 	std_logic_vector(N-1 downto 0);
+				DATA1			: in	std_logic_vector(N-1 downto 0);
+				DATA2			: in 	std_logic_vector(N-1 downto 0);
 				OUTALU			: out 	std_logic_vector(N-1 downto 0));
 	end component;
 

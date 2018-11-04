@@ -1,7 +1,7 @@
 library IEEE;
 
 use IEEE.std_logic_1164.all;
-use WORK.all;
+use work.myStuff.all;
 
 entity tb_dlx is
 end tb_dlx;
