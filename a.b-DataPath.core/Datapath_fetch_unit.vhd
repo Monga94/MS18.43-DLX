@@ -6,7 +6,7 @@ use work.myStuff.all;
 
 entity FetchUnit is
 	generic(Nbit:		integer := 32;
-			Iram_bit:	integer := 10);
+			Iram_bit:	integer := 12);
 	port(	CLK: 			in	std_logic;
 			RST:			in	std_logic;
 			IR_EN:      	in	std_logic;
@@ -59,7 +59,7 @@ architecture Behavioral of FetchUnit is
 	
 begin
 	
-	FOUR_SIG <= conv_std_logic_vector(1, Iram_bit);
+	FOUR_SIG <= conv_std_logic_vector(4, Iram_bit);
 	
 	Opcode <= IMem_Instr(31 downto 26);
 	Func <= IMem_Instr(10 downto 0);

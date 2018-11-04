@@ -20,7 +20,7 @@ architecture RTL Of DLX is
 	signal DPtoDM_Addr																							: std_logic_vector(DRAM_DEPTH-1 downto 0);
 	signal CUtoDM_CS,CUtoDM_RD,CUtoDM_Sign																		: std_logic;
 	signal CUtoDM_Width																							: std_logic_vector(1 downto 0);
-	signal DPtoIM_Addr																							: std_logic_vector(IRAM_DEPTH-1 downto 0);
+	signal DPtoIM_Addr																							: std_logic_vector(IRAM_DEPTH+1 downto 0);
 	signal IMtoDP_Instr																							: std_logic_vector(Nbit-1 downto 0);
 
 	component Datapath is
@@ -37,7 +37,7 @@ architecture RTL Of DLX is
 				F_Jr_Sel:		in	std_logic;
 				F_J_Sel:		in	std_logic;
 				IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
-				IMem_Addr:		out std_logic_vector(IRAM_DEPTH-1 downto 0);
+				IMem_Addr:		out std_logic_vector(IRAM_DEPTH+1 downto 0);
 				--Decode Stage
 				D_REG_EN:		in	std_logic;	
 				D_RF_RD1:		in	std_logic;
@@ -199,7 +199,7 @@ begin
 	IM: IRAM
 		generic map(IRAM_DEPTH,Nbit)
 		port map(	Rst  			=> RST,
-					Addr 			=> DPtoIM_Addr,
+					Addr 			=> DPtoIM_Addr(IRAM_DEPTH+1 downto 2),
 					Dout 			=> IMtoDP_Instr);
 					
 end RTL;

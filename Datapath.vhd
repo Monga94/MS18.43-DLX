@@ -18,7 +18,7 @@ entity Datapath is
 			F_Jr_Sel:		in	std_logic;
 			F_J_Sel:		in	std_logic;
 			IMem_Instr:		in	std_logic_vector(Nbit-1 downto 0);
-			IMem_Addr:		out std_logic_vector(IRAM_DEPTH-1 downto 0);
+			IMem_Addr:		out std_logic_vector(IRAM_DEPTH+1 downto 0);
 			--Decode Stage
 			D_REG_EN:		in	std_logic;	
 			D_RF_RD1:		in	std_logic;
@@ -55,7 +55,7 @@ architecture Structural of Datapath is
 	
 	component FetchUnit is
 		generic(Nbit:		integer := 32;
-				Iram_bit:	integer := 10);
+				Iram_bit:	integer := 12);
 		port(	CLK: 			in	std_logic;
 				RST:			in	std_logic;
 				IR_EN:      	in	std_logic;
@@ -153,7 +153,7 @@ architecture Structural of Datapath is
 	
 begin
 	FU: FetchUnit
-		generic map(Nbit,IRAM_DEPTH)
+		generic map(Nbit,IRAM_DEPTH+2)
 		port map(	CLK 			=> CLK,
 					RST				=> RST,
 					IR_EN      		=> F_IR_EN,
@@ -162,8 +162,8 @@ begin
 					Jr_Sel			=> F_Jr_Sel,	
 					J_Sel	        => F_J_Sel,
 					Br_taken		=> EtoF_Br_taken,
-					Jr_addr         => DtoF_Jraddr(IRAM_DEPTH-1 downto 0),
-					J_addr	        => EtoF_Jaddr(IRAM_DEPTH-1 downto 0),
+					Jr_addr         => DtoF_Jraddr(IRAM_DEPTH+1 downto 0),
+					J_addr	        => EtoF_Jaddr(IRAM_DEPTH+1 downto 0),
 					IMem_Instr		=> IMem_Instr,
 					InstrToDecode	=> FtoD_instr,
 					NPCToDecode		=> FtoD_NPC,
