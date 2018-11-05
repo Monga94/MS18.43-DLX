@@ -172,7 +172,7 @@ package myStuff is
 	constant CW_ITYPE_BNEZ  : std_logic_vector(CW_SIZE-1 downto 0) := "111110010000000110111000000000"; --BNEZ
 	constant CW_JTYPE_J	    : std_logic_vector(CW_SIZE-1 downto 0) := "111100110000000111001000000000"; --J
 	constant CW_JTYPE_JR	: std_logic_vector(CW_SIZE-1 downto 0) := "111010000010000000000000000000"; --JR
-	constant CW_JTYPE_JAL	: std_logic_vector(CW_SIZE-1 downto 0) := "111100110001000111001100000111"; --JAL
+	constant CW_JTYPE_JAL	: std_logic_vector(CW_SIZE-1 downto 0) := "111100111001000111001100000111"; --JAL
 	constant CW_JTYPE_JALR  : std_logic_vector(CW_SIZE-1 downto 0) := "111110001011000000000100000101"; --JALR
 	constant CW_ITYPE_LHI   : std_logic_vector(CW_SIZE-1 downto 0) := "111101100001100100000100000011"; --LHI
 	

@@ -1,11 +1,42 @@
-seq r25, r25, r25 ; r25 <= 1
-sne r20, r25, r20 ; just to try 
-myloop:
-add r1, r1, r25     ; r1 <= 1, 17 , 145
-add r1, r25, r1     ; r1 <= 2, 18 , 146
-add r1, r1, r1      ; r1 <= 4, 36 , 292
-add r1, r1, r1      ; r1 <= 8, 72 , 584
-add r1, r1, r1      ; r1 <= 16,144, 1168
-xor r20, r20, r25   ; toggle lsb of r20.
-addi r7, r0, myloop ;move label into r7
-jr r7        	    ;jump
+addi r1, r0, 0		;r1 index
+addi r2, r0, 1      ;r2 value
+nop                 ;
+nop                 ;
+nop                 ;
+nop                 ;
+sw 0(r1), r2        ;store in 0 <- 1
+jal two             ;jump but execute both following instruction
+addui r1, r1, 4     ;
+addui r2, r2, 2     ;r2 = 3
+j exit              ;
+addui r2, r2, 3     ;r2 = 6
+nop                 ;
+nop                 ;
+nop                 ;
+two:                ;
+nop                 ;
+nop                 ;
+nop                 ;
+nop                 ;
+sw 0(r1), r2        ;4 <- 3 - 12<-
+jalr r31            ;jumps up to j exit
+addui r1, r1, 4     ;
+addui r2, r2, 4     ;r2 = 10
+nop                 ;
+exit:               ;
+nop                 ;
+nop                 ;
+nop                 ;
+sw 0(r1), r2        ;8 <- 6 - 12 <- 10
+jalr r31            ;
+addui r1, r1, 4	    ;
+addui r2, r2, 5     ;r2 = 15
+nop                 ;
+nop                 ;
+nop                 ;
+nop                 ;
+sw 0(r1), r2        ;16 <- 15
+nop                 ;
+nop                 ;
+nop                 ;
+nop                 ;
